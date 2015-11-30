@@ -1,0 +1,47 @@
+.code-blue {
+  color: white;
+  background-color: #465298 !important;
+}
+
+.code-blue-stripe {
+  color: white;
+  background: repeating-linear-gradient(
+    45deg,
+    #606dbc,
+    #606dbc 10px,
+    #465298 10px,
+    #465298 20px
+  );
+}
+
+.code-red {
+  color: white;
+  background-color: #983529 !important;
+}
+
+.code-red-stripe {
+  color: white;
+  background: repeating-linear-gradient(
+                  45deg,
+                  #f74836,
+                  #df4433 10px,
+                  #ba3b2d 10px,
+                  #983529 20px
+  );
+}
+
+.code-green {
+  color: white;
+  background-color: #27612a !important;
+}
+
+.code-green-stripe {
+  color: white;
+  background: repeating-linear-gradient(
+                  45deg,
+                  #46d24c,
+                  #39a73e 10px,
+                  #328535 10px,
+                  #27612a 20px
+  );
+}

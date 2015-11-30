@@ -13,7 +13,11 @@
   {
     "groupName" : "activity",
     "fr" : {
-      "title" : "Activité"
+      "title" : "Activité",
+      "createEvent" : "Créer une activité",
+      "activityTitle" : "Titre",
+      "activityTitle-tips" : "Pas trop long ,)",
+      "activityTitle-placeholder" : "Un titre pour l'activité"
     },
     "en" : {
       "title" : "Activity"

@@ -71,22 +71,9 @@
             }
         },
 
-        /**
-         * @param {object} p_params
-         * @param p_params.id
-         * @returns {$.Oda.App}
-         */
-        exemple: function (p_params) {
-            try {
-                return this;
-            } catch (er) {
-                $.Oda.Log.error("$.Oda.App.exemple : " + er.message);
-                return null;
-            }
-        },
-
         "Controler" : {
             "Activity" : {
+                "dayClickData" : null,
                 /**
                  */
                 start: function () {
@@ -95,26 +82,91 @@
                             lang: 'fr',
                             weekNumbers : true,
                             dayClick: function(date, jsEvent, view) {
-
-                                alert('Clicked on: ' + date.format());
-
-                                alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
-
-                                alert('Current view: ' + view.name);
-
-                                // change the day's background color just for fun
-                                $(this).css('background-color', 'red');
-
+                                $.Oda.App.Controler.Activity.dayClickData = {"date":date, "jsEvent":jsEvent, "view":view, "cell" : $(this)}
+                                $.Oda.App.Controler.Activity.createEvent();
                             },
                             events: function(start, end, timezone, callback) {
-                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/userId/"+3, {functionRetour : function(response){
+                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/userId/"+ $.Oda.Session.id, {functionRetour : function(response){
+                                    for(var index in response.data){
+                                        var elt = response.data[index];
+                                        if(elt.tmp === "1"){
+                                            elt.className += "-stripe";
+                                        }
+                                    }
                                     callback(response.data);
                                 }});
                             },
+                            eventClick: function(calEvent, jsEvent, view) {
+
+                                alert('Event: ' + calEvent.title);
+                                alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
+                                alert('View: ' + view.name);
+
+                                // change the border color just for fun
+                                $(this).css('border-color', 'red');
+
+                            }
                         })
                         return this;
                     } catch (er) {
                         $.Oda.Log.error("$.Oda.App.Controler.Activity.start : " + er.message);
+                        return null;
+                    }
+                },
+                /**
+                 * @returns {$.Oda.App.Controler.Activity}
+                 */
+                createEvent: function () {
+                    try {
+                        var strHtml = $.Oda.Display.TemplateHtml.create({
+                            template : "formCreateEvent"
+                            , scope : {}
+                        });
+
+                        $.Oda.Display.Popup.open({
+                            "name" : "createEvent",
+                            "label" : $.Oda.I8n.get('activity','createEvent'),
+                            "details" : strHtml,
+                            "footer" : '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controler.Activity.submitNewActivity();" class="btn btn-primary disabled" disabled>Submit</button >',
+                            "callback" : function(){
+                                $.Oda.Scope.Gardian.add({
+                                    id : "createEvent",
+                                    listElt : ["title"],
+                                    function : function(){
+                                        if( ($("#title").data("isOk")) ){
+                                            $("#submit").removeClass("disabled");
+                                            $("#submit").removeAttr("disabled");
+                                        }else{
+                                            $("#submit").addClass("disabled");
+                                            $("#submit").attr("disabled", true);
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                        return this;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.Activity.createEvent : " + er.message);
+                        return null;
+                    }
+                },
+                /**
+                 * @returns {$.Oda.App.Controler.Activity}
+                 */
+                submitNewActivity: function () {
+                    try {
+                        var tabInput = {
+                            "title" : $('#title').val(),
+                            "start" : $.Oda.App.Controler.Activity.dayClickData.date.format(),
+                            "autorId" : $.Oda.Session.id
+                        }
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/activityNew.php", {functionRetour : function(response){
+                            $.Oda.Display.Popup.close({name:"createEvent"});
+                            $('#calendar').fullCalendar( 'refetchEvents' );
+                        }},tabInput);
+                        return this;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.Activity.submitNewActivity : " + er.message);
                         return null;
                     }
                 },

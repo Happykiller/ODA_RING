@@ -7,6 +7,17 @@
     </div>
 </div>
 
+<script id="formCreateEvent" type="text/template">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="title" oda-label="activity.activityTitle">activity.activityTitle</label>
+                <input required type="text" class="form-control" oda-input-text="title" oda-input-text-tips="activity.activityTitle-tips" oda-input-text-placeholder="activity.activityTitle-placeholder" oda-input-text-check="Oda.Regexs:noInjection">
+            </div>
+        </div>
+    </div>
+</script>
+
 <script>
     $.Oda.App.Controler.Activity.start();
 </script>
