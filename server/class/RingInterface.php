@@ -1,10 +1,6 @@
 <?php
 namespace Ring;
 
-require '../header.php';
-require '../vendor/autoload.php';
-require '../include/config.php';
-
 use \stdClass, \Oda\OdaLibInterface;
 
 /**

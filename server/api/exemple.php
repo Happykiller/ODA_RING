@@ -72,7 +72,7 @@ $params->bindsValue = [
     "param_name" => [ "value" => "nom_site", "type" => \PDO::PARAM_STR ]
 ];
 $params->typeSQL = OdaLibBd::SQL_GET_ONE;
-$params->className = "\Oda\objRetour";
+$params->className = "\Ring\objRetour";
 $retour = $INTERFACE->BD_ENGINE->reqODASQL($params);
 
 $params = new stdClass();

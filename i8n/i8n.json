@@ -13,12 +13,10 @@
   {
     "groupName" : "activity",
     "fr" : {
-      "title" : "Accueil",
-      "hello" : "Bonjour avec le FrameWork Oda"
+      "title" : "Activité"
     },
     "en" : {
-      "title" : "Home",
-      "hello" : "Hello with Oda FrameWork"
+      "title" : "Activity"
     }
   }
 ]
