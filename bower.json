@@ -1,0 +1,17 @@
+{
+  "name": "ring",
+  "version": "0.0.1",
+  "homepage": "http://pro-happykiller.rhcloud.com/RING/",
+  "authors": ["Fabrice Rositoi <fabrice.rosito@gmail.com>"],
+  "description": "Management",
+  "keywords": ["tracking activity"],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules"
+  ],
+  "dependencies": {
+    "Oda" : "*"
+  }
+}
