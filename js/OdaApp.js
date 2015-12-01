@@ -102,14 +102,92 @@
                                 }});
                             },
                             eventClick: function(calEvent, jsEvent, view) {
+                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/"+ calEvent.id, {functionRetour : function(response){
 
-                                alert('Event: ' + calEvent.title);
-                                alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
-                                alert('View: ' + view.name);
+                                    var testHours = (response.data.end !== "0000-00-00 00:00:00");
+                                    var date = response.data.start.substr(0,10);
 
-                                // change the border color just for fun
-                                $(this).css('border-color', 'red');
+                                    function getStrHtmlHours(timeSelected){
+                                        var strHtmlHours = "";
+                                        for (var iter = 0; iter < 24; iter++) {
+                                            var time = $.Oda.Tooling.pad2(iter)+':00';
+                                            strHtmlHours += '<option value="'+ time +'" '+ ((testHours && timeSelected.indexOf(time)>0)?'selected':'') +'>'+ time +'</option>';
+                                            var time = $.Oda.Tooling.pad2(iter)+':30';
+                                            strHtmlHours += '<option value="'+ time +'" '+ ((testHours && timeSelected.indexOf(time)>0)?'selected':'') +'>'+ time +'</option>';
+                                        }
+                                        return strHtmlHours;
+                                    }
 
+                                    var strHtmlTypes = "";
+                                    for(var index in $.Oda.App.Controler.Activity.activityTypes){
+                                        var elt = $.Oda.App.Controler.Activity.activityTypes[index];
+                                        var label = $.Oda.I8n.getByString(elt.label);
+                                        strHtmlTypes += '<option value="'+ elt.id +'" '+ ((response.data.typeId === elt.id)?'selected':'') +'>'+ label + '</option>';
+                                    }
+
+                                    var strHtml = $.Oda.Display.TemplateHtml.create({
+                                        template : "formEditEvent"
+                                        , scope : {
+                                            "title" : response.data.title,
+                                            "allDay" : (response.data.allDay === "1")?"checked":"",
+                                            "tmp" : (response.data.tmp === "1")?"checked":"",
+                                            "valuesHoursStart" : getStrHtmlHours(response.data.start),
+                                            "valuesHoursEnd" : getStrHtmlHours(response.data.end),
+                                            "types" : strHtmlTypes,
+                                            "time" : response.data.time,
+                                            "cmt" : response.data.cmt
+                                        }
+                                    });
+
+                                    $.Oda.Display.Popup.open({
+                                        "name" : "editEvent",
+                                        "label" : $.Oda.I8n.get('activity','editEvent'),
+                                        "details" : strHtml,
+                                        "footer" : '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controler.Activity.submitEditEvent({id:'+response.data.id+', date:\''+date+'\'});" class="btn btn-primary disabled" disabled>Submit</button >',
+                                        "callback" : function(){
+                                            $.Oda.Scope.Gardian.add({
+                                                id : "editEvent",
+                                                listElt : ["title", "allDay", "type", "start", "end", "tmp", "time", "cmt"],
+                                                function : function(e){
+                                                    if($("#allDay").prop("checked")){
+                                                        $('#start').addClass("disabled");
+                                                        $('#start').attr("disabled", true);
+                                                        $('#end').addClass("disabled");
+                                                        $('#end').attr("disabled", true);
+                                                    }else {
+                                                        $('#start').removeClass("disabled");
+                                                        $('#start').removeAttr("disabled", true);
+                                                        $('#end').removeClass("disabled");
+                                                        $('#end').removeAttr("disabled", true);
+                                                    }
+
+                                                    if($("#allDay").prop("checked")){
+                                                        if( ($("#title").data("isOk")) && ($("#type").data("isOk")) && ($("#time").data("isOk")) && ($("#cmt").data("isOk")) ){
+                                                            $("#submit").removeClass("disabled");
+                                                            $("#submit").removeAttr("disabled");
+                                                        }else{
+                                                            $("#submit").addClass("disabled");
+                                                            $("#submit").attr("disabled", true);
+                                                        }
+                                                    }else{
+                                                        if( ($("#title").data("isOk")) && ($("#start").data("isOk")) && ($("#end").data("isOk")) && ($("#start").val() !== $("#end").val()) && ($("#type").data("isOk")) && ($("#time").data("isOk")) && ($("#cmt").data("isOk")) ){
+                                                            $("#submit").removeClass("disabled");
+                                                            $("#submit").removeAttr("disabled");
+                                                        }else{
+                                                            $("#submit").addClass("disabled");
+                                                            $("#submit").attr("disabled", true);
+                                                        }
+                                                    }
+
+                                                    if ( (!$("#allDay").prop("checked")) && ($("#start").data("isOk")) && ($("#end").data("isOk")) && ($("#start").val() === $("#end").val())){
+                                                        $.Oda.Display.Notification.warning($.Oda.I8n.get('activity','conflictHours'));
+                                                    }
+                                                }
+                                            });
+                                            $.Oda.Scope.Gardian.inventory.editEvent.function();
+                                        }
+                                    });
+                                }});
                             }
                         })
                         return this;
@@ -132,8 +210,10 @@
                         var strHtmlTypes = "";
                         for(var index in $.Oda.App.Controler.Activity.activityTypes){
                             var elt = $.Oda.App.Controler.Activity.activityTypes[index];
-                            var label = $.Oda.I8n.getByString(elt.label);
-                            strHtmlTypes += '<option value="'+ elt.id +'">'+ label + '</option>';
+                            if(elt.active === "1"){
+                                var label = $.Oda.I8n.getByString(elt.label);
+                                strHtmlTypes += '<option value="'+ elt.id +'">'+ label + '</option>';
+                            }
                         }
 
                         var strHtml = $.Oda.Display.TemplateHtml.create({
@@ -146,14 +226,14 @@
 
                         $.Oda.Display.Popup.open({
                             "name" : "createEvent",
-                            "label" : $.Oda.I8n.get('activity','createEvent'),
+                            "label" : $.Oda.I8n.get('activity','createEvent') + ', ' + $.Oda.App.Controler.Activity.dayClickData.date.format(),
                             "details" : strHtml,
                             "footer" : '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controler.Activity.submitNewActivity();" class="btn btn-primary disabled" disabled>Submit</button >',
                             "callback" : function(){
                                 $.Oda.Scope.Gardian.add({
                                     id : "createEvent",
                                     listElt : ["title", "allDay", "type", "start", "end", "tmp", "time", "cmt"],
-                                    function : function(){
+                                    function : function(e){
                                         if($("#allDay").prop("checked")){
                                             $('#start').addClass("disabled");
                                             $('#start').attr("disabled", true);
@@ -228,6 +308,43 @@
                         return this;
                     } catch (er) {
                         $.Oda.Log.error("$.Oda.App.Controler.Activity.submitNewActivity : " + er.message);
+                        return null;
+                    }
+                },
+                /**
+                 * @param {object} p_params
+                 * @param p_params.id
+                 * @param p_params.date
+                 * @returns {$.Oda.App.Controler.Activity}
+                 */
+                submitEditEvent: function (p_params) {
+                    try {
+                        var start = p_params.date;
+                        var end = null;
+                        var allDay = $('#allDay');
+                        if(!allDay.prop("checked")){
+                            start +=  " " +  $("#start").val() +  ":00";
+                            end = p_params.date + " " +  $("#end").val() +  ":00";
+                        }
+
+                        var tabInput = {
+                            "title" : $('#title').val(),
+                            "allDay" : (allDay.prop("checked"))?1:0,
+                            "start" : start,
+                            "end" : end,
+                            "type" : $('#type').val(),
+                            "tmp" : ($('#tmp').prop("checked"))?1:0,
+                            "time" : $('#time').val(),
+                            "cmt" : $('#cmt').val(),
+                            "id" : p_params.id
+                        };
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/activityUpdate.php", {functionRetour : function(response){
+                            $.Oda.Display.Popup.close({name:"editEvent"});
+                            $('#calendar').fullCalendar( 'refetchEvents' );
+                        }},tabInput);
+                        return this;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.Activity.submitEditEvent : " + er.message);
                         return null;
                     }
                 },

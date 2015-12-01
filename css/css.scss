@@ -1,47 +1,143 @@
 .code-blue {
-  color: white;
+  color: white !important;
   background-color: #465298 !important;
 }
 
 .code-blue-stripe {
-  color: white;
+  color: white !important;
   background: repeating-linear-gradient(
     45deg,
     #606dbc,
     #606dbc 10px,
     #465298 10px,
     #465298 20px
-  );
+  ) !important;
 }
 
 .code-red {
-  color: white;
+  color: white !important;
   background-color: #983529 !important;
 }
 
 .code-red-stripe {
-  color: white;
+  color: white !important;
   background: repeating-linear-gradient(
-                  45deg,
-                  #f74836,
-                  #df4433 10px,
-                  #ba3b2d 10px,
-                  #983529 20px
-  );
+    45deg,
+    #f74836,
+    #df4433 10px,
+    #ba3b2d 10px,
+    #983529 20px
+  ) !important;
 }
 
 .code-green {
-  color: white;
+  color: white !important;
   background-color: #27612a !important;
 }
 
 .code-green-stripe {
-  color: white;
+  color: white !important;
   background: repeating-linear-gradient(
-                  45deg,
-                  #46d24c,
-                  #39a73e 10px,
-                  #328535 10px,
-                  #27612a 20px
-  );
+    45deg,
+    #46d24c,
+    #39a73e 10px,
+    #328535 10px,
+    #27612a 20px
+  ) !important;
+}
+
+.code-yellow {
+  color: white !important;
+  background-color: #dcd400 !important;
+}
+
+.code-yellow-stripe {
+  color: white !important;
+  background: repeating-linear-gradient(
+    45deg,
+    #7a7200,
+    #aca400 10px,
+    #b9b100 10px,
+    #dcd400 20px
+  ) !important;
+}
+
+.code-orange {
+  color: white !important;
+  background-color: #dc6d00 !important;
+}
+
+.code-orange-stripe {
+  color: white !important;
+  background: repeating-linear-gradient(
+    45deg,
+    #904200,
+    #9b4e00 10px,
+    #c06000 10px,
+    #dc6d00 20px
+  ) !important;
+}
+
+.code-violet {
+  color: white !important;
+  background-color: #ba008b !important;
+}
+
+.code-violet-stripe {
+  color: white !important;
+  background: repeating-linear-gradient(
+    45deg,
+    #52003b,
+    #790059 10px,
+    #9a0072 10px,
+    #ba008b 20px
+  ) !important;
+}
+
+.code-aqua {
+  color: white !important;
+  background-color: #00baa8 !important;
+}
+
+.code-aqua-stripe {
+  color: white !important;
+  background: repeating-linear-gradient(
+      45deg,
+      #005345,
+      #007c6b 10px,
+      #009786 10px,
+      #00baa8 20px
+  ) !important;
+}
+
+.code-black {
+  color: white !important;
+  background-color: #000000 !important;
+}
+
+.code-black-stripe {
+  color: white !important;
+  background: repeating-linear-gradient(
+    45deg,
+    #909090,
+    #6c6c6c 10px,
+    #555555 10px,
+    #000000 20px
+  ) !important;
+}
+
+.code-grey {
+  color: white !important;
+  background-color: #696969 !important;
+}
+
+.code-grey-stripe {
+  color: white !important;
+  background: repeating-linear-gradient(
+    45deg,
+    #a3a3a3,
+    #a1a1a1 10px,
+    #8c8c8c 10px,
+    #696969 20px
+  ) !important;
 }

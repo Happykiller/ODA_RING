@@ -17,14 +17,21 @@ CREATE TABLE IF NOT EXISTS `@prefix@tab_events_type` (
   `code` varchar(255) NOT NULL,
   `className` varchar(255) NOT NULL,
   `label` varchar(255) NOT NULL,
-  `active` TINYINT(1) NOT NULL DEFAULT '1' ,
+  `active` TINYINT(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 INSERT INTO `@prefix@tab_events_type` (`code`, `className`, `label`)
 VALUES
   ('free', 'code-green', 'activity.type-free'),
-  ('billable', 'code-blue', 'activity.type-billable')
+  ('expertise', 'code-yellow', 'activity.type-expertise'),
+  ('trip', 'code-blue', 'activity.type-trip'),
+  ('case', 'code-red', 'activity.type-case'),
+  ('training', 'code-orange', 'activity.type-training'),
+  ('pre-up', 'code-violet', 'activity.type-preup'),
+  ('corporate', 'code-aqua', 'activity.type-corporate'),
+  ('assist', 'code-black', 'activity.type-assist'),
+  ('abs', 'code-grey', 'activity.type-abs')
 ;
 
 --
@@ -34,16 +41,19 @@ VALUES
 CREATE TABLE IF NOT EXISTS `@prefix@tab_events` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(500) NOT NULL,
-  `allDay` tinyint(1) NOT NULL,
-  `start` varchar(500) NOT NULL,
-  `end` varchar(500) NOT NULL,
-  `url` varchar(500) NOT NULL,
+  `allDay` tinyint(1) NOT NULL DEFAULT '0',
+  `start` datetime NOT NULL,
+  `end` datetime NOT NULL,
+  `url` varchar(500),
   `typeId` int(11) NOT NULL,
   `tmp` tinyint(1) NOT NULL,
-  `time` DECIMAL(2,2) NOT NULL,
+  `time` DECIMAL(4,2) NOT NULL,
   `cmt` TEXT NOT NULL,
-  `active` tinyint(1) NOT NULL,
-  `dateRecord` date NOT NULL,
+  `billable` tinyint(1) NOT NULL DEFAULT '0',
+  `googleCalendarId` varchar(500),
+  `salesForceId` varchar(500),
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  `dateRecord` datetime NOT NULL,
   `autorId` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `autorId` (`autorId`),

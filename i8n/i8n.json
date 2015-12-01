@@ -24,14 +24,23 @@
       "activityEnd" : "Fin",
       "activityType" : "Type d'activité",
       "activityModeTmp" : "Stabilité",
-      "activityTmp" : "Stable",
+      "activityTmp" : "Non confirmé",
       "type-free" : "Gratuit",
       "type-billable" : "Facturable",
+      "type-expertise" : "Expertise",
+      "type-trip" : "Voyage",
+      "type-case" : "Cas",
+      "type-training" : "Donne formation",
+      "type-preup" : "Pre-expertise",
+      "type-corporate" : "Corporate",
+      "type-assist" : "Assiste",
+      "type-abs" : "Absent",
       "conflictHours" : "Les heures sélectionées sont identiques.",
       "activityTime" : "Affectation",
       "activityTime-tips" : "En heure (0,5 = 30min)",
       "activityTime-placeholder" : "0,00",
-      "activityCmt" : "Commentaire"
+      "activityCmt" : "Commentaire",
+      "editEvent" : "Editer une activité"
     },
     "en" : {
       "title" : "Activity"

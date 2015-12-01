@@ -31,17 +31,31 @@ $app->notFound(function () use ($INTERFACE) {
     $INTERFACE->dieInError('not found');
 });
 
-$app->get('/event/userId/:id', function ($id) use ($INTERFACE, $odaOffset, $odaLimit) {
+$app->get('/event/:id', function ($id) use ($INTERFACE, $odaOffset, $odaLimit) {
     $params = new OdaPrepareReqSql();
-    $params->sql = "SELECT a.`id`, a.`title`, a.`allDay`, a.`start`, a.`end`, a.`url`, b.`className`, a.`tmp`, a.`active`
-        FROM `tab_events` a, `tab_events_type` b
+    $params->sql = "SELECT a.`id`, a.`title`, a.`allDay`, a.`start`, a.`end`, a.`url`, a.`typeId`, a.`tmp`, a.`time`, a.`cmt`, a.`active`
+        FROM `tab_events` a
         WHERE 1=1
-        AND a.`typeId` = b.`id`
-        AND a.`autorId` = :id
+        AND a.`id` = :id
     ;";
     $params->bindsValue = [
         "id" => $id
     ];
+    $params->typeSQL = OdaLibBd::SQL_GET_ONE;
+    $retour = $INTERFACE->BD_ENGINE->reqODASQL($params);
+
+    $params = new stdClass();
+    $params->retourSql = $retour;
+    $INTERFACE->addDataObject($retour->data);
+});
+
+$app->get('/event/type/', function () use ($INTERFACE, $odaOffset, $odaLimit) {
+    $params = new OdaPrepareReqSql();
+    $params->sql = "SELECT a.`id`, a.`code`, a.`className`, a.`label`, a.`active`
+        FROM `tab_events_type` a
+        WHERE 1=1
+        ORDER BY a.`code`
+    ;";
     $params->typeSQL = OdaLibBd::SQL_GET_ALL;
     $retour = $INTERFACE->BD_ENGINE->reqODASQL($params);
 
@@ -50,12 +64,18 @@ $app->get('/event/userId/:id', function ($id) use ($INTERFACE, $odaOffset, $odaL
     $INTERFACE->addDataObject($retour->data->data);
 });
 
-$app->get('/event/type/', function () use ($INTERFACE, $odaOffset, $odaLimit) {
+$app->get('/event/userId/:id', function ($id) use ($INTERFACE, $odaOffset, $odaLimit) {
     $params = new OdaPrepareReqSql();
-    $params->sql = "SELECT a.`id`, a.`code`, a.`className`, a.`label`, a.`active`
-        FROM `tab_events_type` a
+    $params->sql = "SELECT a.`id`, a.`title`, a.`allDay`, a.`start`, a.`end`, a.`url`, b.`className`, a.`tmp`, a.`active`
+        FROM `tab_events` a, `tab_events_type` b
         WHERE 1=1
+        AND a.`typeId` = b.`id`
+        AND a.`autorId` = :id
+        ORDER BY a.`id`
     ;";
+    $params->bindsValue = [
+        "id" => $id
+    ];
     $params->typeSQL = OdaLibBd::SQL_GET_ALL;
     $retour = $INTERFACE->BD_ENGINE->reqODASQL($params);
 

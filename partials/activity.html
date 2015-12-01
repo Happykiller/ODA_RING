@@ -87,6 +87,86 @@
     </div>
 </script>
 
+<script id="formEditEvent" type="text/template">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="title" oda-label="activity.activityTitle">activity.activityTitle</label>
+                <input value="{{title}}" required type="text" class="form-control" oda-input-text="title" oda-input-text-tips="activity.activityTitle-tips" oda-input-text-placeholder="activity.activityTitle-placeholder" oda-input-text-check="Oda.Regexs:noInjection">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label oda-label="activity.activityModeDay">activity.activityModeDay</label>
+                <div class="checkbox">
+                    <input type="checkbox" oda-input-checkbox="allDay" {{allDay}}>
+                    <label oda-label="activity.activityAllDay">
+                        activity.activityAllDay
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="start" oda-label="activity.activityStart">activity.activityStart</label>
+                <select class="form-control" oda-input-select="start" required>
+                    <option value="" oda-label="oda-main.select-default"></option>
+                    {{valuesHoursStart}}
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="end" oda-label="activity.activityEnd">activity.activityEnd</label>
+                <select class="form-control" oda-input-select="end" required>
+                    <option value="" oda-label="oda-main.select-default"></option>
+                    {{valuesHoursEnd}}
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="type" oda-label="activity.activityType">activity.activityType</label>
+                <select class="form-control" oda-input-select="type" required>
+                    <option value="" oda-label="oda-main.select-default"></option>
+                    {{types}}
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label oda-label="activity.activityModeTmp">activity.activityModeTmp</label>
+                <div class="checkbox">
+                    <input type="checkbox" oda-input-checkbox="tmp" {{tmp}}>
+                    <label oda-label="activity.activityTmp">
+                        activity.activityTmp
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="time" oda-label="activity.activityTime">activity.activityTime</label>
+                <input value="{{time}}" required type="number" step="0.5" min="0.5" class="form-control" oda-input-text="time" oda-input-text-tips="activity.activityTime-tips" oda-input-text-placeholder="activity.activityTime-placeholder" oda-input-text-check="Oda.Regexs:noInjection">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="cmt" oda-label="activity.activityCmt">activity.activityCmt</label>
+                <textarea class="form-control" rows="5" oda-input-text="cmt" oda-input-text-check="Oda.Regexs:noInjection">{{cmt}}</textarea>
+            </div>
+        </div>
+    </div>
+</script>
+
 <script>
     $.Oda.App.Controler.Activity.start();
 </script>
