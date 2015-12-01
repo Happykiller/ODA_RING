@@ -74,10 +74,15 @@
         "Controler" : {
             "Activity" : {
                 "dayClickData" : null,
+                "activityTypes" : null,
                 /**
                  */
                 start: function () {
                     try {
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/type/", {functionRetour : function(response){
+                            $.Oda.App.Controler.Activity.activityTypes = response.data;
+                        }});
+
                         $('#calendar').fullCalendar({
                             lang: 'fr',
                             weekNumbers : true,
@@ -118,9 +123,25 @@
                  */
                 createEvent: function () {
                     try {
+                        var strHtmlHours = "";
+                        for (var iter = 0; iter < 24; iter++) {
+                            strHtmlHours += '<option value="'+ $.Oda.Tooling.pad2(iter)+':00">'+ $.Oda.Tooling.pad2(iter)+':00</option>';
+                            strHtmlHours += '<option value="'+ $.Oda.Tooling.pad2(iter)+':30">'+ $.Oda.Tooling.pad2(iter)+':30</option>';
+                        }
+
+                        var strHtmlTypes = "";
+                        for(var index in $.Oda.App.Controler.Activity.activityTypes){
+                            var elt = $.Oda.App.Controler.Activity.activityTypes[index];
+                            var label = $.Oda.I8n.getByString(elt.label);
+                            strHtmlTypes += '<option value="'+ elt.id +'">'+ label + '</option>';
+                        }
+
                         var strHtml = $.Oda.Display.TemplateHtml.create({
                             template : "formCreateEvent"
-                            , scope : {}
+                            , scope : {
+                                "valuesHours" : strHtmlHours,
+                                "types" : strHtmlTypes
+                            }
                         });
 
                         $.Oda.Display.Popup.open({
@@ -131,15 +152,40 @@
                             "callback" : function(){
                                 $.Oda.Scope.Gardian.add({
                                     id : "createEvent",
-                                    listElt : ["title", "allDay"],
+                                    listElt : ["title", "allDay", "type", "start", "end", "tmp", "time", "cmt"],
                                     function : function(){
-                                        $.Oda.Log.trace($("#allDay").prop("checked"));
-                                        if( ($("#title").data("isOk")) ){
-                                            $("#submit").removeClass("disabled");
-                                            $("#submit").removeAttr("disabled");
+                                        if($("#allDay").prop("checked")){
+                                            $('#start').addClass("disabled");
+                                            $('#start').attr("disabled", true);
+                                            $('#end').addClass("disabled");
+                                            $('#end').attr("disabled", true);
+                                        }else {
+                                            $('#start').removeClass("disabled");
+                                            $('#start').removeAttr("disabled", true);
+                                            $('#end').removeClass("disabled");
+                                            $('#end').removeAttr("disabled", true);
+                                        }
+
+                                        if($("#allDay").prop("checked")){
+                                            if( ($("#title").data("isOk")) && ($("#type").data("isOk")) && ($("#time").data("isOk")) && ($("#cmt").data("isOk")) ){
+                                                $("#submit").removeClass("disabled");
+                                                $("#submit").removeAttr("disabled");
+                                            }else{
+                                                $("#submit").addClass("disabled");
+                                                $("#submit").attr("disabled", true);
+                                            }
                                         }else{
-                                            $("#submit").addClass("disabled");
-                                            $("#submit").attr("disabled", true);
+                                            if( ($("#title").data("isOk")) && ($("#start").data("isOk")) && ($("#end").data("isOk")) && ($("#start").val() !== $("#end").val()) && ($("#type").data("isOk")) && ($("#time").data("isOk")) && ($("#cmt").data("isOk")) ){
+                                                $("#submit").removeClass("disabled");
+                                                $("#submit").removeAttr("disabled");
+                                            }else{
+                                                $("#submit").addClass("disabled");
+                                                $("#submit").attr("disabled", true);
+                                            }
+                                        }
+
+                                        if ( (!$("#allDay").prop("checked")) && ($("#start").data("isOk")) && ($("#end").data("isOk")) && ($("#start").val() === $("#end").val())){
+                                            $.Oda.Display.Notification.warning($.Oda.I8n.get('activity','conflictHours'));
                                         }
                                     }
                                 });
@@ -156,11 +202,25 @@
                  */
                 submitNewActivity: function () {
                     try {
+                        var start = $.Oda.App.Controler.Activity.dayClickData.date.format();
+                        var end = null;
+                        var allDay = $('#allDay');
+                        if(!allDay.prop("checked")){
+                            start +=  " " +  $("#start").val() +  ":00";
+                            end = $.Oda.App.Controler.Activity.dayClickData.date.format() + " " +  $("#end").val() +  ":00";
+                        }
+
                         var tabInput = {
                             "title" : $('#title').val(),
-                            "start" : $.Oda.App.Controler.Activity.dayClickData.date.format(),
+                            "allDay" : (allDay.prop("checked"))?1:0,
+                            "start" : start,
+                            "end" : end,
+                            "type" : $('#type').val(),
+                            "tmp" : ($('#tmp').prop("checked"))?1:0,
+                            "time" : $('#time').val(),
+                            "cmt" : $('#cmt').val(),
                             "autorId" : $.Oda.Session.id
-                        }
+                        };
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/activityNew.php", {functionRetour : function(response){
                             $.Oda.Display.Popup.close({name:"createEvent"});
                             $('#calendar').fullCalendar( 'refetchEvents' );

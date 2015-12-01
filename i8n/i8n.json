@@ -20,7 +20,18 @@
       "activityTitle-placeholder" : "Un titre pour l'activité",
       "activityAllDay" : "Toute la journée",
       "activityModeDay" : "Mode journée",
-      "activityStart" : "Début"
+      "activityStart" : "Début",
+      "activityEnd" : "Fin",
+      "activityType" : "Type d'activité",
+      "activityModeTmp" : "Stabilité",
+      "activityTmp" : "Stable",
+      "type-free" : "Gratuit",
+      "type-billable" : "Facturable",
+      "conflictHours" : "Les heures sélectionées sont identiques.",
+      "activityTime" : "Affectation",
+      "activityTime-tips" : "En heure (0,5 = 30min)",
+      "activityTime-placeholder" : "0,00",
+      "activityCmt" : "Commentaire"
     },
     "en" : {
       "title" : "Activity"

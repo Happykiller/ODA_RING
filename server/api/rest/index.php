@@ -50,4 +50,18 @@ $app->get('/event/userId/:id', function ($id) use ($INTERFACE, $odaOffset, $odaL
     $INTERFACE->addDataObject($retour->data->data);
 });
 
+$app->get('/event/type/', function () use ($INTERFACE, $odaOffset, $odaLimit) {
+    $params = new OdaPrepareReqSql();
+    $params->sql = "SELECT a.`id`, a.`code`, a.`className`, a.`label`, a.`active`
+        FROM `tab_events_type` a
+        WHERE 1=1
+    ;";
+    $params->typeSQL = OdaLibBd::SQL_GET_ALL;
+    $retour = $INTERFACE->BD_ENGINE->reqODASQL($params);
+
+    $params = new stdClass();
+    $params->retourSql = $retour;
+    $INTERFACE->addDataObject($retour->data->data);
+});
+
 $app->run();

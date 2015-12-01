@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS `@prefix@tab_events_type` (
   `code` varchar(255) NOT NULL,
   `className` varchar(255) NOT NULL,
   `label` varchar(255) NOT NULL,
+  `active` TINYINT(1) NOT NULL DEFAULT '1' ,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 

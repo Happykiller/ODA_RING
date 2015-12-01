@@ -10,7 +10,7 @@ use \stdClass, \Oda\SimpleObject\OdaPrepareInterface, \Oda\SimpleObject\OdaPrepa
 //--------------------------------------------------------------------------
 //Build the interface
 $params = new OdaPrepareInterface();
-$params->arrayInput = array("title","start","autorId");
+$params->arrayInput = array("title","start","end","tmp","allDay","autorId","type", "time", "cmt");
 $params->modePublic = false;
 $INTERFACE = new RingInterface($params);
 
@@ -22,19 +22,29 @@ $params = new OdaPrepareReqSql();
 $params->sql = "INSERT INTO  `tab_events` (
         `title` ,
         `start`,
+        `end`,
         `allDay`,
         `typeId`,
+        `tmp`,
+        `time`,
+        `cmt`,
         `dateRecord`,
         `autorId`
     )
     VALUES (
-        :title , :start, 1, 1, NOW(), :autorId
+        :title, :start, :end, :allDay, :type, :tmp, :time, :cmt, NOW(), :autorId
     )
 ;";
 $params->bindsValue = [
     "title" => $INTERFACE->inputs["title"],
     "start" => $INTERFACE->inputs["start"],
-    "autorId" => $INTERFACE->inputs["autorId"]
+    "autorId" => $INTERFACE->inputs["autorId"],
+    "end" => $INTERFACE->inputs["end"],
+    "tmp" => $INTERFACE->inputs["tmp"],
+    "allDay" => $INTERFACE->inputs["allDay"],
+    "type" => $INTERFACE->inputs["type"],
+    "time" => $INTERFACE->inputs["time"],
+    "cmt" => $INTERFACE->inputs["cmt"]
 ];
 $params->typeSQL = OdaLibBd::SQL_INSERT_ONE;
 $retour = $INTERFACE->BD_ENGINE->reqODASQL($params);
