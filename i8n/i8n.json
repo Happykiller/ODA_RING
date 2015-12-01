@@ -17,7 +17,10 @@
       "createEvent" : "Créer une activité",
       "activityTitle" : "Titre",
       "activityTitle-tips" : "Pas trop long ,)",
-      "activityTitle-placeholder" : "Un titre pour l'activité"
+      "activityTitle-placeholder" : "Un titre pour l'activité",
+      "activityAllDay" : "Toute la journée",
+      "activityModeDay" : "Mode journée",
+      "activityStart" : "Début"
     },
     "en" : {
       "title" : "Activity"

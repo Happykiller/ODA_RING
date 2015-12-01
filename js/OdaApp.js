@@ -131,8 +131,9 @@
                             "callback" : function(){
                                 $.Oda.Scope.Gardian.add({
                                     id : "createEvent",
-                                    listElt : ["title"],
+                                    listElt : ["title", "allDay"],
                                     function : function(){
+                                        $.Oda.Log.trace($("#allDay").prop("checked"));
                                         if( ($("#title").data("isOk")) ){
                                             $("#submit").removeClass("disabled");
                                             $("#submit").removeAttr("disabled");

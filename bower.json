@@ -13,6 +13,8 @@
   ],
   "dependencies": {
     "Oda" : "*",
-    "fullcalendar" : "*"
+    "fullcalendar" : "*",
+    "font-awesome" : "*",
+    "awesome-bootstrap-checkbox" : "*"
   }
 }

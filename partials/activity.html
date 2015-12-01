@@ -9,10 +9,33 @@
 
 <script id="formCreateEvent" type="text/template">
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
             <div class="form-group">
                 <label for="title" oda-label="activity.activityTitle">activity.activityTitle</label>
                 <input required type="text" class="form-control" oda-input-text="title" oda-input-text-tips="activity.activityTitle-tips" oda-input-text-placeholder="activity.activityTitle-placeholder" oda-input-text-check="Oda.Regexs:noInjection">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label oda-label="activity.activityModeDay">activity.activityModeDay</label>
+                <div class="checkbox">
+                    <input type="checkbox" oda-input-checkbox="allDay">
+                    <label oda-label="activity.activityAllDay">
+                        activity.activityAllDay
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="start" oda-label="activity.activityStart">activity.activityStart</label>
+                <select class="form-control" oda-input-select="start" required>
+                    <option value="" oda-label="oda-main.select-default"></option>
+                    <option value="00:00">00:00</option>
+                    <option value="00:30">00:30</option>
+                </select>
             </div>
         </div>
     </div>
