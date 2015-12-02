@@ -357,6 +357,17 @@
                         return null;
                     }
                 },
+                /**
+                 * @returns {$.Oda.App.Controler.Activity}
+                 */
+                displayLegend : function () {
+                    try {
+                        return this;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.Activity.displayLegend : " + er.message);
+                        return null;
+                    }
+                },
             }
         }
 

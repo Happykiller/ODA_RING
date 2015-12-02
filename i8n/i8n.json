@@ -45,7 +45,8 @@
       "activityBillable" : "Facturable",
       "activityModeSynch" : "Synchronisation",
       "activitySynchGoogle" : "Google Calendar",
-      "activitySynchSF" : "Sales Force"
+      "activitySynchSF" : "Sales Force",
+      "legend" : "Légende"
     },
     "en" : {
       "title" : "Activity"
