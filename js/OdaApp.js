@@ -79,6 +79,8 @@
                  */
                 start: function () {
                     try {
+                        $.Oda.App.Controler.Activity.sessionGoogleStart();
+
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/type/", {functionRetour : function(response){
                             $.Oda.App.Controler.Activity.activityTypes = response.data;
                             $.Oda.App.Controler.Activity.buildLegend();
@@ -396,6 +398,159 @@
                         return this;
                     } catch (er) {
                         $.Oda.Log.error("$.Oda.App.Controler.Activity.displayLegend : " + er.message);
+                        return null;
+                    }
+                },
+                /**
+                 * @returns {$.Oda.App.Controler.Activity}
+                 */
+                sessionGoogleStart: function () {
+                    try {
+                        $.Oda.Google.scopes = 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
+                        $.Oda.Google.apiKey = "E5mFPaRktLAbgiS_x1Bto6wT";
+                        $.Oda.Google.clientId = "903695174254-gui9k14l6b8i81jvpmu5s8eu68tti2d8.apps.googleusercontent.com";
+                        $.Oda.Google.ready = false;
+                        $.Oda.Google.startSessionAuth(
+                            function(){
+                                $.Oda.App.Controler.Activity.returnGoogleSession();
+                            }
+                            , function(){
+                                $('#google').html('<button type="button" onclick="$.Oda.Google.callServiceGoogleAuth($.Oda.App.Controler.Activity.returnGoogleSession);" class="btn btn-danger center-block">'+$.Oda.I8n.get("oda-main","bt-google")+'</button>');
+                            }
+                        );
+                        return this;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.Activity.sessionGoogleStart : " + er.message);
+                        return null;
+                    }
+                },
+                /**
+                 * @returns {$.Oda.App.Controler.Activity}
+                 */
+                returnGoogleSession: function () {
+                    try {
+                        gapi.client.setApiKey("");
+                        $.Oda.Google.loadGapis([{
+                            "api": "calendar",
+                            "version": "v3"
+                        }], function(){
+                            $.Oda.Google.ready = true;
+                            $.Oda.Google.gapi.client.oauth2.userinfo.get().execute(function(resp) {
+                                $('#google').html('Logger pour Google avec '+resp.email);
+                            });
+                        });
+                        return this;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.Activity.returnGoogleSession : " + er.message);
+                        return null;
+                    }
+                },
+                /**
+                 * @param {object} p_params
+                 * @param p_params.id
+                 * @returns {String}
+                 */
+                newEventGoogleCalendar: function (p_params) {
+                    try {
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/"+ p_params.id, {functionRetour : function(response){
+                            $.Oda.App.Controler.Activity.createAppointment(response.data);
+                        }});
+                        return this;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.Activity.newEventGoogleCalendar : " + er.message);
+                        return null;
+                    }
+                },
+                /**
+                 * @param {object} p_params
+                 * @param p_params.id
+                 * @returns {String}
+                 */
+                getDateGoole : function(p_date) {
+                    try{
+                        //13-03-15 13:00
+                        //2015-03-01T10:00:00.000+01:00
+                        var array0 = p_date.split(" ");
+                        var arrayDate = array0[0].split("-");
+                        var strDateGoole = "20"+arrayDate[2]+"-"+arrayDate[1]+"-"+arrayDate[0]+"T"+array0[1]+":00.000+01:00";
+                        return strDateGoole;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.Activity.getDateGoole :" + er.message);
+                        return null;
+                    }
+                },
+                /**
+                 * @param {object} p_params
+                 * @returns {String}
+                 */
+                createAppointment : function(p_params){
+                    try{
+                        var summary = this.generateTitleGoogleCalendar(p_params);
+
+                        var start = {
+                            "timeZone" : "Europe/Paris"
+                        };
+                        var end = {
+                            "timeZone" : "Europe/Paris"
+                        };
+                        if(p_params.allDay === "1"){
+                            start.date = p_params.start.substr(0,10);
+                            var tmp_end = moment(p_params.start).add(1,'days');
+                            end.date = tmp_end.format('YYYY-MM-DD');
+                        }else{
+                            start.dateTime = this.getDateGoole(p_params.start);
+                            end.dateTime = this.getDateGoole(p_params.end);
+                        }
+
+                        var resource = {
+                            "summary": summary,
+                            "location": "loc",
+                            "description": "cmt",
+                            "start": start,
+                            "end": end,
+                            "source": {
+                                "url": "https://consultant.cloud.bonitasoft.com/bonita/",
+                                "title": "Clound Consultant Form Activity"
+                            }
+                        };
+
+                        $.Oda.Log.trace(resource);
+
+                        var request = $.Oda.Google.gapi.client.calendar.events.insert({
+                            'calendarId': 'primary',
+                            'resource': resource
+                        });
+
+                        request.execute(function(resp) {
+                            if(resp.status == "confirmed"){
+                                $.Oda.Log.trace("ok !");
+                                $.Oda.Log.trace(resp);
+                            }else{
+                                $.Oda.Log.trace("ko !");
+                                $.Oda.Log.trace(resp);
+                            }
+                        });
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.Activity..createAppointment :" + er.message);
+                    }
+                },
+                /**
+                 * @param {object} p_params
+                 * @returns {String}
+                 */
+                generateTitleGoogleCalendar: function (p_params) {
+                    try {
+                        var type = "";
+                        for(var index in $.Oda.App.Controler.Activity.activityTypes){
+                            if(p_params.typeId === $.Oda.App.Controler.Activity.activityTypes[index].id){
+                                type = $.Oda.App.Controler.Activity.activityTypes[index].code;
+                                break;
+                            }
+                        }
+                        var str = "[" + type + "] - [" + p_params.title + "] - [" + p_params.time + "H] - [" + ((p_params.billable === "1")?"a0jD":"free") + "] - [" + $.Oda.Session.code_user + "]";
+                        return str;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.Activity.generateTitleGoogleCalendar : " + er.message);
                         return null;
                     }
                 },
