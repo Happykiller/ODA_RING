@@ -10,7 +10,7 @@ use \stdClass, \Oda\SimpleObject\OdaPrepareInterface, \Oda\SimpleObject\OdaPrepa
 //--------------------------------------------------------------------------
 //Build the interface
 $params = new OdaPrepareInterface();
-$params->arrayInput = array("title","start","end","tmp","allDay","autorId","type", "time", "cmt");
+$params->arrayInput = array("title","start","end","tmp","allDay","autorId","type", "time", "cmt","billable","synchGoogle","synchSF");
 $params->modePublic = false;
 $INTERFACE = new RingInterface($params);
 
@@ -28,11 +28,14 @@ $params->sql = "INSERT INTO  `tab_events` (
         `tmp`,
         `time`,
         `cmt`,
+        `billable`,
+        `synGoogle`,
+        `synSF`,
         `dateRecord`,
         `autorId`
     )
     VALUES (
-        :title, :start, :end, :allDay, :type, :tmp, :time, :cmt, NOW(), :autorId
+        :title, :start, :end, :allDay, :type, :tmp, :time, :cmt, :billable, :synchGoogle, :synchSF, NOW(), :autorId
     )
 ;";
 $params->bindsValue = [
@@ -44,7 +47,10 @@ $params->bindsValue = [
     "allDay" => $INTERFACE->inputs["allDay"],
     "type" => $INTERFACE->inputs["type"],
     "time" => $INTERFACE->inputs["time"],
-    "cmt" => $INTERFACE->inputs["cmt"]
+    "cmt" => $INTERFACE->inputs["cmt"],
+    "billable" => $INTERFACE->inputs["billable"],
+    "synchGoogle" => $INTERFACE->inputs["synchGoogle"],
+    "synchSF" => $INTERFACE->inputs["synchSF"]
 ];
 $params->typeSQL = OdaLibBd::SQL_INSERT_ONE;
 $retour = $INTERFACE->BD_ENGINE->reqODASQL($params);

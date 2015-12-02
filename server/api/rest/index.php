@@ -33,7 +33,7 @@ $app->notFound(function () use ($INTERFACE) {
 
 $app->get('/event/:id', function ($id) use ($INTERFACE, $odaOffset, $odaLimit) {
     $params = new OdaPrepareReqSql();
-    $params->sql = "SELECT a.`id`, a.`title`, a.`allDay`, a.`start`, a.`end`, a.`url`, a.`typeId`, a.`tmp`, a.`time`, a.`cmt`, a.`active`
+    $params->sql = "SELECT a.`id`, a.`title`, a.`allDay`, a.`start`, a.`end`, a.`url`, a.`typeId`, a.`tmp`, a.`time`, a.`cmt`, a.`active`, a.`billable`, a.`synGoogle`, a.`googleCalendarId`, a.`synSF`, a.`salesForceId`
         FROM `tab_events` a
         WHERE 1=1
         AND a.`id` = :id

@@ -135,7 +135,10 @@
                                             "valuesHoursEnd" : getStrHtmlHours(response.data.end),
                                             "types" : strHtmlTypes,
                                             "time" : response.data.time,
-                                            "cmt" : response.data.cmt
+                                            "cmt" : response.data.cmt,
+                                            "billable" : (response.data.billable === "1")?"checked":"",
+                                            "synchGoogle" : (response.data.synGoogle === "1")?"checked":"",
+                                            "synchSF" : (response.data.synSF === "1")?"checked":"",
                                         }
                                     });
 
@@ -299,6 +302,9 @@
                             "tmp" : ($('#tmp').prop("checked"))?1:0,
                             "time" : $('#time').val(),
                             "cmt" : $('#cmt').val(),
+                            "billable" : ($('#billable').prop("checked"))?1:0,
+                            "synchGoogle" : ($('#synchGoogle').prop("checked"))?1:0,
+                            "synchSF" : ($('#synchSF').prop("checked"))?1:0,
                             "autorId" : $.Oda.Session.id
                         };
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/activityNew.php", {functionRetour : function(response){
@@ -336,6 +342,9 @@
                             "tmp" : ($('#tmp').prop("checked"))?1:0,
                             "time" : $('#time').val(),
                             "cmt" : $('#cmt').val(),
+                            "billable" : ($('#billable').prop("checked"))?1:0,
+                            "synchGoogle" : ($('#synchGoogle').prop("checked"))?1:0,
+                            "synchSF" : ($('#synchSF').prop("checked"))?1:0,
                             "id" : p_params.id
                         };
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/activityUpdate.php", {functionRetour : function(response){

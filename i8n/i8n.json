@@ -40,7 +40,12 @@
       "activityTime-tips" : "En heure (0,5 = 30min)",
       "activityTime-placeholder" : "0,00",
       "activityCmt" : "Commentaire",
-      "editEvent" : "Editer une activité"
+      "editEvent" : "Editer une activité",
+      "activityModeBillable" : "Mode facture",
+      "activityBillable" : "Facturable",
+      "activityModeSynch" : "Synchronisation",
+      "activitySynchGoogle" : "Google Calendar",
+      "activitySynchSF" : "Sales Force"
     },
     "en" : {
       "title" : "Activity"

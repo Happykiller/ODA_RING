@@ -10,7 +10,7 @@ use \stdClass, \Oda\SimpleObject\OdaPrepareInterface, \Oda\SimpleObject\OdaPrepa
 //--------------------------------------------------------------------------
 //Build the interface
 $params = new OdaPrepareInterface();
-$params->arrayInput = array("title","start","end","tmp","allDay","type", "time", "cmt", "id");
+$params->arrayInput = array("title","start","end","tmp","allDay","type", "time", "cmt", "id","billable","synchGoogle","synchSF");
 $params->modePublic = false;
 $INTERFACE = new RingInterface($params);
 
@@ -28,7 +28,10 @@ SET
 `typeId`= :type,
 `tmp`= :tmp,
 `time`= :time,
-`cmt`= :cmt
+`cmt`= :cmt,
+`billable`= :billable,
+`synGoogle`= :synchGoogle,
+`synSF`= :synchSF
 WHERE 1=1
 AND `id` = :id
 ;";
@@ -41,7 +44,10 @@ $params->bindsValue = [
     "type" => $INTERFACE->inputs["type"],
     "time" => $INTERFACE->inputs["time"],
     "cmt" => $INTERFACE->inputs["cmt"],
-    "id" => $INTERFACE->inputs["id"]
+    "id" => $INTERFACE->inputs["id"],
+    "billable" => $INTERFACE->inputs["billable"],
+    "synchGoogle" => $INTERFACE->inputs["synchGoogle"],
+    "synchSF" => $INTERFACE->inputs["synchSF"]
 ];
 $params->typeSQL = OdaLibBd::SQL_SCRIPT;
 $retour = $INTERFACE->BD_ENGINE->reqODASQL($params);

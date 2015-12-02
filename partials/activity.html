@@ -76,6 +76,36 @@
                 <input required type="number" step="0.5" min="0.5" class="form-control" oda-input-text="time" oda-input-text-tips="activity.activityTime-tips" oda-input-text-placeholder="activity.activityTime-placeholder" oda-input-text-check="Oda.Regexs:noInjection">
             </div>
         </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label oda-label="activity.activityModeBillable">activity.activityModeBillable</label>
+                <div class="checkbox">
+                    <input type="checkbox" oda-input-checkbox="billable">
+                    <label oda-label="activity.activityBillable">
+                        activity.activityBillable
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label oda-label="activity.activityModeSynch">activity.activityModeSynch</label>
+                <div class="checkbox">
+                    <input type="checkbox" oda-input-checkbox="synchGoogle">
+                    <label oda-label="activity.activitySynchGoogle">
+                        activity.activitySynchGoogle
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" oda-input-checkbox="synchSF">
+                    <label oda-label="activity.activitySynchSF">
+                        activity.activitySynchSF
+                    </label>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="row">
         <div class="col-md-12">
@@ -154,6 +184,36 @@
             <div class="form-group">
                 <label for="time" oda-label="activity.activityTime">activity.activityTime</label>
                 <input value="{{time}}" required type="number" step="0.5" min="0.5" class="form-control" oda-input-text="time" oda-input-text-tips="activity.activityTime-tips" oda-input-text-placeholder="activity.activityTime-placeholder" oda-input-text-check="Oda.Regexs:noInjection">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label oda-label="activity.activityModeBillable">activity.activityModeBillable</label>
+                <div class="checkbox">
+                    <input type="checkbox" oda-input-checkbox="billable" {{billable}}>
+                    <label oda-label="activity.activityBillable">
+                        activity.activityBillable
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label oda-label="activity.activityModeSynch">activity.activityModeSynch</label>
+                <div class="checkbox">
+                    <input type="checkbox" oda-input-checkbox="synchGoogle" {{synchGoogle}}>
+                    <label oda-label="activity.activitySynchGoogle">
+                        activity.activitySynchGoogle
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" oda-input-checkbox="synchSF" {{synchSF}}>
+                    <label oda-label="activity.activitySynchSF">
+                        activity.activitySynchSF
+                    </label>
+                </div>
             </div>
         </div>
     </div>
