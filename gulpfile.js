@@ -6,7 +6,7 @@ gulp.task('browser-sync', function() {
     plugins.browserSync.init({
         proxy: "localhost:80/RING/"
     });
-    gulp.watch(["js/**/*","partials/**/*","i8n/**/*"], function(){
+    gulp.watch(["js/**/*","partials/**/*","i8n/**/*","css/**/*.css"], function(){
         plugins.browserSync.reload();
     });
 });
@@ -15,7 +15,17 @@ gulp.task('scss', function () {
     gulp.src('css/**/*.scss')
         .pipe(plugins.sass().on('error', plugins.sass.logError))
         .pipe(plugins.autoprefixer({
-            browsers:['last 2 versions']
+            browsers: [
+                "ie >= 9",
+                "ie_mob >= 10",
+                "ff >= 30",
+                "chrome >= 34",
+                "safari >= 7",
+                "opera >= 23",
+                "ios >= 7",
+                "android >= 4.4",
+                "bb >= 10"
+            ]
         }))
         .pipe(gulp.dest('css/'));
 });

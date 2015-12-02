@@ -81,6 +81,7 @@
                     try {
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/type/", {functionRetour : function(response){
                             $.Oda.App.Controler.Activity.activityTypes = response.data;
+                            $.Oda.App.Controler.Activity.buildLegend();
                         }});
 
                         $('#calendar').fullCalendar({
@@ -360,8 +361,38 @@
                 /**
                  * @returns {$.Oda.App.Controler.Activity}
                  */
+                buildLegend: function () {
+                    try {
+                        var strHtml = "";
+                        for(var index in $.Oda.App.Controler.Activity.activityTypes){
+                            var elt = $.Oda.App.Controler.Activity.activityTypes[index];
+                            strHtml += $.Oda.Display.TemplateHtml.create({
+                                template : "templateLegend"
+                                , scope : {
+                                    "label" : $.Oda.I8n.getByString(elt.label),
+                                    "illusStable" : elt.className,
+                                    "illusNoStable" : elt.className+"-stripe"
+                                }
+                            });
+                        }
+                        $('#legend').html(strHtml);
+                        return this;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.Activity.buildLegend : " + er.message);
+                        return null;
+                    }
+                },
+                /**
+                 * @returns {$.Oda.App.Controler.Activity}
+                 */
                 displayLegend : function () {
                     try {
+                        var div = $('#legend');
+                        if(div.hasClass('legendShow')){
+                            div.removeClass('legendShow');
+                        }else{
+                            div.addClass('legendShow');
+                        }
                         return this;
                     } catch (er) {
                         $.Oda.Log.error("$.Oda.App.Controler.Activity.displayLegend : " + er.message);
@@ -370,7 +401,6 @@
                 },
             }
         }
-
     };
 
     // Initialize

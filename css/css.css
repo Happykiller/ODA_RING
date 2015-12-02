@@ -69,3 +69,19 @@
 .code-grey-stripe {
   color: white !important;
   background: repeating-linear-gradient(45deg, #a3a3a3, #a1a1a1 10px, #8c8c8c 10px, #696969 20px) !important; }
+
+.legend {
+  max-height: 0;
+  transition: max-height 0.25s ease-out;
+  overflow: hidden; }
+
+.legendShow {
+  max-height: 500px;
+  transition: max-height 0.5s ease-in; }
+
+.illu {
+  height: 20px;
+  width: 100%; }
+
+div .greyOnHover:hover {
+  background-color: rgba(182, 182, 182, 0.59); }
