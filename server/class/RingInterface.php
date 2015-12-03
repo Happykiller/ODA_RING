@@ -21,6 +21,8 @@ class RingInterface extends OdaLibInterface {
     
     public function __construct($params) {
 
+        $_GET = $params->slim->request()->params();
+
         $this->slim = $params->slim;
 
         $this->odaOffset = $params->slim->request->params('odaOffset');

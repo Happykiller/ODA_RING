@@ -674,7 +674,7 @@
                         var datas = {
                             "id": p_params.id,
                         };
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest + "api/activityDeleteGoogle.php", {functionRetour: function (response) {
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest + "api/activityDelete.php", {functionRetour: function (response) {
                             $.Oda.Display.Popup.close({name:"editEvent"});
                             $('#calendar').fullCalendar( 'refetchEvents' );
                         }}, datas);
