@@ -501,11 +501,12 @@
                  */
                 getDateGoole : function(p_date) {
                     try{
-                        //13-03-15 13:00
-                        //2015-03-01T10:00:00.000+01:00
+                        $.Oda.Log.trace(p_date);
+                        //2015-12-03 05:00:00
+                        //2015-12-03T05:00:00.000
                         var array0 = p_date.split(" ");
                         var arrayDate = array0[0].split("-");
-                        var strDateGoole = "20"+arrayDate[2]+"-"+arrayDate[1]+"-"+arrayDate[0]+"T"+array0[1]+":00.000+01:00";
+                        var strDateGoole = +arrayDate[0]+"-"+arrayDate[1]+"-"+arrayDate[2]+"T"+array0[1]+".000";
                         return strDateGoole;
                     } catch (er) {
                         $.Oda.Log.error("$.Oda.App.Controler.Activity.getDateGoole :" + er.message);
@@ -541,6 +542,8 @@
                             "start": start,
                             "end": end
                         };
+
+                        $.Oda.Log.trace(resource);
 
                         var request = $.Oda.Google.gapi.client.calendar.events.update({
                             'calendarId': $.Oda.App.Controler.config.activityGoogleCalendar,
