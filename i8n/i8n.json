@@ -46,7 +46,15 @@
       "activityModeSynch" : "Synchronisation",
       "activitySynchGoogle" : "Google Calendar",
       "activitySynchSF" : "Sales Force",
-      "legend" : "Légende"
+      "legend" : "Légende",
+      "syn-google" : "Synchroniser avec Google Calendar",
+      "googleLogWith" : "Identifié pour Google avec ",
+      "okUpdateAppointmentGoogle" : "Evènement mise à jour avec success dans le calendrier Google",
+      "errorUpdateAppointmentGoogle": "Echec de la mise à jour de l'évènement dans le calendrier Google",
+      "okCreateAppointmentGoogle" : "Evènement créé avec success dans le calendrier Google",
+      "errorCreateAppointmentGoogle" : "Echec de la création de l'évènement dans le calendrier Google",
+      "okDeleteAppointmentGoogle" : "Evènement a bien été supprimé dans le calendrier Google",
+      "errorDeleteAppointmentGoogle" : "Echec de la suppression de l'évènement dans le calendrier Google"
     },
     "en" : {
       "title" : "Activity"

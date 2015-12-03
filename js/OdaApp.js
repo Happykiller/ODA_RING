@@ -154,11 +154,15 @@
                                         }
                                     });
 
+                                    var strFooter = "";
+                                    strFooter += '<button type="button" oda-label="oda-main.bt-delete" oda-submit="delete" onclick="$.Oda.App.Controler.Activity.deleteEvent({id:'+response.data.id+', googleId:\''+response.data.googleId+'\'});" class="btn btn-danger">oda-main.bt-delete</button >';
+                                    strFooter += '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controler.Activity.submitEditEvent({id:'+response.data.id+', date:\''+date+'\', googleId:\''+response.data.googleId+'\'});" class="btn btn-primary disabled" disabled>Submit</button >';
+
                                     $.Oda.Display.Popup.open({
                                         "name" : "editEvent",
                                         "label" : $.Oda.I8n.get('activity','editEvent'),
                                         "details" : strHtml,
-                                        "footer" : '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controler.Activity.submitEditEvent({id:'+response.data.id+', date:\''+date+'\', googleId:\''+response.data.googleId+'\'});" class="btn btn-primary disabled" disabled>Submit</button >',
+                                        "footer" : strFooter,
                                         "callback" : function(){
                                             $.Oda.Scope.Gardian.add({
                                                 id : "editEvent",
@@ -428,7 +432,7 @@
                                 $.Oda.App.Controler.Activity.returnGoogleSession();
                             }
                             , function(){
-                                $('#google').html('<button type="button" onclick="$.Oda.Google.callServiceGoogleAuth($.Oda.App.Controler.Activity.returnGoogleSession);" class="btn btn-danger center-block">'+$.Oda.I8n.get("oda-main","bt-google")+'</button>');
+                                $('#google').html('<button type="button" onclick="$.Oda.Google.callServiceGoogleAuth($.Oda.App.Controler.Activity.returnGoogleSession);" class="btn btn-danger center-block">'+$.Oda.I8n.get("activity","syn-google")+'</button>');
                             }
                         );
                         return this;
@@ -449,7 +453,7 @@
                         }], function(){
                             $.Oda.Google.ready = true;
                             $.Oda.Google.gapi.client.oauth2.userinfo.get().execute(function(resp) {
-                                $('#google').html('Logger pour Google avec '+resp.email);
+                                $('#google').html($.Oda.I8n.get("activity","googleLogWith") + resp.email);
                             });
                         });
                         return this;
@@ -501,7 +505,6 @@
                  */
                 getDateGoole : function(p_date) {
                     try{
-                        $.Oda.Log.trace(p_date);
                         //2015-12-03 05:00:00
                         //2015-12-03T05:00:00.000
                         var array0 = p_date.split(" ");
@@ -543,8 +546,6 @@
                             "end": end
                         };
 
-                        $.Oda.Log.trace(resource);
-
                         var request = $.Oda.Google.gapi.client.calendar.events.update({
                             'calendarId': $.Oda.App.Controler.config.activityGoogleCalendar,
                             'eventId' : p_params.googleId,
@@ -555,7 +556,7 @@
                             if(resp.status === "confirmed"){
                                 $.Oda.Display.Notification.info($.Oda.I8n.get('activity','okUpdateAppointmentGoogle'));
                             }else{
-                                $.Oda.Display.Notification.error($.Oda.I8n.get('activity','errorUpdateAppointmentGoogle'));
+                                $.Oda.Display.Notification.error($.Oda.I8n.get('activity','errorUpdateAppointmentGoogle') + " => " + resp.message);
                                 $.Oda.Log.error(resp);
                             }
                         });
@@ -618,7 +619,7 @@
                                     $.Oda.Display.Notification.info($.Oda.I8n.get('activity','okCreateAppointmentGoogle'));
                                 }},datas);
                             }else{
-                                $.Oda.Display.Notification.error($.Oda.I8n.get('activity','errorCreateAppointmentGoogle'));
+                                $.Oda.Display.Notification.error($.Oda.I8n.get('activity','errorCreateAppointmentGoogle') + " => " + resp.message);
                                 $.Oda.Log.error(resp);
                             }
                         });
@@ -628,7 +629,7 @@
                 },
                 /**
                  * @param {object} p_params
-                 * @returns {String}
+                 * @returns {String} [type][title][time][billable][code_user]<-tmp>
                  */
                 generateTitleGoogleCalendar: function (p_params) {
                     try {
@@ -643,6 +644,44 @@
                         return str;
                     } catch (er) {
                         $.Oda.Log.error("$.Oda.App.Controler.Activity.generateTitleGoogleCalendar : " + er.message);
+                        return null;
+                    }
+                },
+                /**
+                 * @param {Object} p_params
+                 * @param p_params.id
+                 * @param p_params.googleId
+                 * @returns {$.Oda.App.Controler.Activity}
+                 */
+                deleteEvent : function (p_params) {
+                    try {
+                        if((p_params.googleId !== "")&&($.Oda.Google.ready)) {
+                            var request = $.Oda.Google.gapi.client.calendar.events.delete({
+                                'calendarId': $.Oda.App.Controler.config.activityGoogleCalendar,
+                                'eventId': p_params.googleId
+                            });
+
+                            request.execute(function (resp) {
+                                if ((resp.message === undefined)||(resp.message === "")) {
+                                    $.Oda.Display.Notification.info($.Oda.I8n.get('activity', 'okDeleteAppointmentGoogle'));
+                                } else {
+                                    $.Oda.Display.Notification.error($.Oda.I8n.get('activity', 'errorDeleteAppointmentGoogle') + " => " + resp.message);
+                                    $.Oda.Log.error(resp);
+                                }
+                            });
+                        }
+
+                        var datas = {
+                            "id": p_params.id,
+                        };
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest + "api/activityDeleteGoogle.php", {functionRetour: function (response) {
+                            $.Oda.Display.Popup.close({name:"editEvent"});
+                            $('#calendar').fullCalendar( 'refetchEvents' );
+                        }}, datas);
+
+                        return this;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.Activity.deleteEvent : " + er.message);
                         return null;
                     }
                 },

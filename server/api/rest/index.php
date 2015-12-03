@@ -89,6 +89,7 @@ $app->get('/event/userId/:id', function ($id) use ($INTERFACE, $odaOffset, $odaL
         WHERE 1=1
         AND a.`typeId` = b.`id`
         AND a.`autorId` = :id
+        AND a.`active` = 1
         ORDER BY a.`id`
     ;";
     $params->bindsValue = [
