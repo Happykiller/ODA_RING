@@ -422,8 +422,6 @@
                 sessionGoogleStart: function () {
                     try {
                         $.Oda.Google.scopes = 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
-                        $.Oda.Google.apiKey = "E5mFPaRktLAbgiS_x1Bto6wT";
-                        $.Oda.Google.clientId = "903695174254-gui9k14l6b8i81jvpmu5s8eu68tti2d8.apps.googleusercontent.com";
                         $.Oda.Google.ready = false;
                         $.Oda.Google.startSessionAuth(
                             function(){
