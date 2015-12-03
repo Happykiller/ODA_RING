@@ -155,7 +155,7 @@
                                     });
 
                                     var strFooter = "";
-                                    strFooter += '<button type="button" oda-label="oda-main.bt-delete" oda-submit="delete" onclick="$.Oda.App.Controler.Activity.deleteEvent({id:'+response.data.id+', googleId:\''+response.data.googleId+'\'});" class="btn btn-danger">oda-main.bt-delete</button >';
+                                    strFooter += '<button type="button" oda-label="oda-main.bt-delete" oda-submit="delete" onclick="$.Oda.App.Controler.Activity.deleteEvent({id:'+response.data.id+', googleId:\''+response.data.googleId+'\'});" class="btn btn-danger pull-left">oda-main.bt-delete</button >';
                                     strFooter += '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controler.Activity.submitEditEvent({id:'+response.data.id+', date:\''+date+'\', googleId:\''+response.data.googleId+'\'});" class="btn btn-primary disabled" disabled>Submit</button >';
 
                                     $.Oda.Display.Popup.open({
@@ -323,7 +323,7 @@
                             "synchSF" : ($('#synchSF').prop("checked"))?1:0,
                             "autorId" : $.Oda.Session.id
                         };
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/activityNew.php", {functionRetour : function(response){
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/", {type:'POST',functionRetour : function(response){
                             $.Oda.Display.Popup.close({name:"createEvent"});
                             $('#calendar').fullCalendar( 'refetchEvents' );
                             $.Oda.App.Controler.Activity.newEventGoogleCalendar({id:response.data});

@@ -5,6 +5,7 @@ require '../header.php';
 require '../vendor/autoload.php';
 require '../include/config.php';
 
+use Oda\OdaLibInterface;
 use \stdClass, \Oda\SimpleObject\OdaPrepareInterface, \Oda\SimpleObject\OdaPrepareReqSql, \Oda\OdaLibBd;
 
 //--------------------------------------------------------------------------
@@ -12,7 +13,7 @@ use \stdClass, \Oda\SimpleObject\OdaPrepareInterface, \Oda\SimpleObject\OdaPrepa
 $params = new OdaPrepareInterface();
 $params->arrayInput = array("id","googleEtag","googleId","googleHtmlLink","googleICalUID");
 $params->modePublic = false;
-$INTERFACE = new RingInterface($params);
+$INTERFACE = new OdaLibInterface($params);
 
 //--------------------------------------------------------------------------
 $params = new OdaPrepareReqSql();
