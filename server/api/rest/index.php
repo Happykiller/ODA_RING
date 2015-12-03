@@ -31,9 +31,27 @@ $app->notFound(function () use ($INTERFACE) {
     $INTERFACE->dieInError('not found');
 });
 
+$app->get('/config/:userId', function ($userId) use ($INTERFACE, $odaOffset, $odaLimit) {
+    $params = new OdaPrepareReqSql();
+    $params->sql = "SELECT a.`id`, a.`userId`, a.`activityGoogleCalendar`
+        FROM `tab_config` a
+        WHERE 1=1
+        AND a.`userId` = :userId
+    ;";
+    $params->bindsValue = [
+        "userId" => $userId
+    ];
+    $params->typeSQL = OdaLibBd::SQL_GET_ONE;
+    $retour = $INTERFACE->BD_ENGINE->reqODASQL($params);
+
+    $params = new stdClass();
+    $params->retourSql = $retour;
+    $INTERFACE->addDataObject($retour->data);
+});
+
 $app->get('/event/:id', function ($id) use ($INTERFACE, $odaOffset, $odaLimit) {
     $params = new OdaPrepareReqSql();
-    $params->sql = "SELECT a.`id`, a.`title`, a.`allDay`, a.`start`, a.`end`, a.`url`, a.`typeId`, a.`tmp`, a.`time`, a.`cmt`, a.`active`, a.`billable`, a.`synGoogle`, a.`googleCalendarId`, a.`synSF`, a.`salesForceId`
+    $params->sql = "SELECT a.`id`, a.`title`, a.`allDay`, a.`start`, a.`end`, a.`url`, a.`typeId`, a.`tmp`, a.`time`, a.`cmt`, a.`active`, a.`billable`, a.`synGoogle`, a.`googleEtag`, a.`googleId`, a.`googleHtmlLink`, a.`googleICalUID`, a.`synSF`, a.`salesForceId`
         FROM `tab_events` a
         WHERE 1=1
         AND a.`id` = :id

@@ -51,9 +51,12 @@ CREATE TABLE IF NOT EXISTS `@prefix@tab_events` (
   `cmt` TEXT NOT NULL,
   `billable` tinyint(1) NOT NULL DEFAULT '0',
   `synGoogle` tinyint(1) NOT NULL DEFAULT '0',
-  `googleCalendarId` varchar(500),
+  `googleEtag` varchar(500) NOT NULL,
+  `googleId` varchar(500) NOT NULL,
+  `googleHtmlLink	` varchar(1000) NOT NULL,
+  `googleICalUID	` varchar(500) NOT NULL,
   `synSF` tinyint(1) NOT NULL DEFAULT '0',
-  `salesForceId` varchar(500),
+  `salesForceId` varchar(500) NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT '1',
   `dateRecord` datetime NOT NULL,
   `autorId` int(11) NOT NULL,
@@ -69,3 +72,25 @@ ALTER TABLE `@prefix@tab_events`
 ADD CONSTRAINT `fk_autorId` FOREIGN KEY (`autorId`) REFERENCES `@prefix@api_tab_utilisateurs` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 ALTER TABLE `@prefix@tab_events`
 ADD CONSTRAINT `fk_typeId` FOREIGN KEY (`typeId`) REFERENCES `@prefix@tab_events_type` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Structure de la table `tab_config`
+--
+
+CREATE TABLE IF NOT EXISTS `@prefix@tab_config` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `activityGoogleCalendar` varchar(500) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `userId` (`userId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+--
+-- Contraintes pour les tables exportées
+--
+
+--
+-- Contraintes pour la table `tab_config`
+--
+ALTER TABLE `@prefix@tab_config`
+ADD CONSTRAINT `fk_userId` FOREIGN KEY (`userId`) REFERENCES `@prefix@api_tab_utilisateurs` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;

@@ -72,6 +72,9 @@
         },
 
         "Controler" : {
+            "config" : {
+                "activityGoogleCalendar" : "primary"
+            },
             "Activity" : {
                 "dayClickData" : null,
                 "activityTypes" : null,
@@ -80,6 +83,12 @@
                 start: function () {
                     try {
                         $.Oda.App.Controler.Activity.sessionGoogleStart();
+
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/config/"+ $.Oda.Session.id, {functionRetour : function(response){
+                            if(response.data){
+                                $.Oda.App.Controler.config = response.data;
+                            }
+                        }});
 
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/type/", {functionRetour : function(response){
                             $.Oda.App.Controler.Activity.activityTypes = response.data;
@@ -149,7 +158,7 @@
                                         "name" : "editEvent",
                                         "label" : $.Oda.I8n.get('activity','editEvent'),
                                         "details" : strHtml,
-                                        "footer" : '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controler.Activity.submitEditEvent({id:'+response.data.id+', date:\''+date+'\'});" class="btn btn-primary disabled" disabled>Submit</button >',
+                                        "footer" : '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controler.Activity.submitEditEvent({id:'+response.data.id+', date:\''+date+'\', googleId:\''+response.data.googleId+'\'});" class="btn btn-primary disabled" disabled>Submit</button >',
                                         "callback" : function(){
                                             $.Oda.Scope.Gardian.add({
                                                 id : "editEvent",
@@ -313,6 +322,7 @@
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/activityNew.php", {functionRetour : function(response){
                             $.Oda.Display.Popup.close({name:"createEvent"});
                             $('#calendar').fullCalendar( 'refetchEvents' );
+                            $.Oda.App.Controler.Activity.newEventGoogleCalendar({id:response.data});
                         }},tabInput);
                         return this;
                     } catch (er) {
@@ -353,6 +363,11 @@
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/activityUpdate.php", {functionRetour : function(response){
                             $.Oda.Display.Popup.close({name:"editEvent"});
                             $('#calendar').fullCalendar( 'refetchEvents' );
+                            if(p_params.googleId !== ""){
+                                $.Oda.App.Controler.Activity.updateEventGoogleCalendar({id:p_params.id});
+                            }else{
+                                $.Oda.App.Controler.Activity.newEventGoogleCalendar({id:p_params.id});
+                            }
                         }},tabInput);
                         return this;
                     } catch (er) {
@@ -453,11 +468,31 @@
                 newEventGoogleCalendar: function (p_params) {
                     try {
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/"+ p_params.id, {functionRetour : function(response){
-                            $.Oda.App.Controler.Activity.createAppointment(response.data);
+                            if((response.data.synGoogle === "1")&&($.Oda.Google.ready)){
+                                $.Oda.App.Controler.Activity.createAppointment(response.data);
+                            }
                         }});
                         return this;
                     } catch (er) {
                         $.Oda.Log.error("$.Oda.App.Controler.Activity.newEventGoogleCalendar : " + er.message);
+                        return null;
+                    }
+                },
+                /**
+                 * @param {object} p_params
+                 * @param p_params.id
+                 * @returns {String}
+                 */
+                updateEventGoogleCalendar: function (p_params) {
+                    try {
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/"+ p_params.id, {functionRetour : function(response){
+                            if((response.data.googleId !== "")&&(response.data.synGoogle === "1")&&($.Oda.Google.ready)){
+                                $.Oda.App.Controler.Activity.updateAppointment(response.data);
+                            }
+                        }});
+                        return this;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.Activity.updateEventGoogleCalendar : " + er.message);
                         return null;
                     }
                 },
@@ -476,6 +511,57 @@
                         return strDateGoole;
                     } catch (er) {
                         $.Oda.Log.error("$.Oda.App.Controler.Activity.getDateGoole :" + er.message);
+                        return null;
+                    }
+                },
+                /**
+                 * @param {Object} p_params
+                 * @returns {$.Oda.App.Controler.Activity}
+                 */
+                updateAppointment : function (p_params) {
+                    try {
+                        var summary = this.generateTitleGoogleCalendar(p_params);
+
+                        var start = {
+                            "timeZone" : "Europe/Paris"
+                        };
+                        var end = {
+                            "timeZone" : "Europe/Paris"
+                        };
+                        if(p_params.allDay === "1"){
+                            start.date = p_params.start.substr(0,10);
+                            var tmp_end = moment(p_params.start).add(1,'days');
+                            end.date = tmp_end.format('YYYY-MM-DD');
+                        }else{
+                            start.dateTime = this.getDateGoole(p_params.start);
+                            end.dateTime = this.getDateGoole(p_params.end);
+                        }
+
+                        var resource = {
+                            "summary": summary,
+                            "description": p_params.cmt + "\n \n Last update : " + $.Oda.Date.getStrDateTime() + "\n \n Template title : [type][title][time][billable][code_user]<-tmp>",
+                            "start": start,
+                            "end": end
+                        };
+
+                        var request = $.Oda.Google.gapi.client.calendar.events.update({
+                            'calendarId': $.Oda.App.Controler.config.activityGoogleCalendar,
+                            'eventId' : p_params.googleId,
+                            'resource': resource
+                        });
+
+                        request.execute(function(resp) {
+                            if(resp.status === "confirmed"){
+                                $.Oda.Display.Notification.info($.Oda.I8n.get('activity','okUpdateAppointmentGoogle'));
+                            }else{
+                                $.Oda.Display.Notification.error($.Oda.I8n.get('activity','errorUpdateAppointmentGoogle'));
+                                $.Oda.Log.error(resp);
+                            }
+                        });
+
+                        return this;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.Activity.updateAppointment : " + er.message);
                         return null;
                     }
                 },
@@ -504,30 +590,35 @@
 
                         var resource = {
                             "summary": summary,
-                            "location": "loc",
-                            "description": "cmt",
+                            "description": p_params.cmt + "\n \n Template title : [type][title][time][billable][code_user]<-tmp>",
                             "start": start,
                             "end": end,
                             "source": {
-                                "url": "https://consultant.cloud.bonitasoft.com/bonita/",
-                                "title": "Clound Consultant Form Activity"
+                                "url": "http://pro-happykiller.rhcloud.com/RING/",
+                                "title": "Oda Ring"
                             }
                         };
 
-                        $.Oda.Log.trace(resource);
-
                         var request = $.Oda.Google.gapi.client.calendar.events.insert({
-                            'calendarId': 'primary',
+                            'calendarId': $.Oda.App.Controler.config.activityGoogleCalendar,
                             'resource': resource
                         });
 
                         request.execute(function(resp) {
-                            if(resp.status == "confirmed"){
-                                $.Oda.Log.trace("ok !");
-                                $.Oda.Log.trace(resp);
+                            if(resp.status === "confirmed"){
+                                var datas = {
+                                    "id" : p_params.id,
+                                    "googleEtag" : $.Oda.Tooling.replaceAll({str:resp.etag,find:'"',by:''}),
+                                    "googleId" : resp.id,
+                                    "googleHtmlLink" : resp.htmlLink,
+                                    "googleICalUID" : resp.iCalUID
+                                };
+                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/activityUpdateGoogleInfo.php", {functionRetour : function(response){
+                                    $.Oda.Display.Notification.info($.Oda.I8n.get('activity','okCreateAppointmentGoogle'));
+                                }},datas);
                             }else{
-                                $.Oda.Log.trace("ko !");
-                                $.Oda.Log.trace(resp);
+                                $.Oda.Display.Notification.error($.Oda.I8n.get('activity','errorCreateAppointmentGoogle'));
+                                $.Oda.Log.error(resp);
                             }
                         });
                     } catch (er) {
@@ -547,7 +638,7 @@
                                 break;
                             }
                         }
-                        var str = "[" + type + "] - [" + p_params.title + "] - [" + p_params.time + "H] - [" + ((p_params.billable === "1")?"a0jD":"free") + "] - [" + $.Oda.Session.code_user + "]";
+                        var str = "[" + type.toUpperCase() + "][" + p_params.title + "][" + p_params.time + "H][" + ((p_params.billable === "1")?"a0jD":"free") + "][" + $.Oda.Session.code_user.toUpperCase() + "]" + ((p_params.tmp === "1")?"-TMP":"");
                         return str;
                     } catch (er) {
                         $.Oda.Log.error("$.Oda.App.Controler.Activity.generateTitleGoogleCalendar : " + er.message);
