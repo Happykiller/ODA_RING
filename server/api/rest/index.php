@@ -11,8 +11,9 @@ use \stdClass, \Oda\SimpleObject\OdaPrepareInterface, \Oda\OdaRestInterface, \Od
 //--------------------------------------------------------------------------
 $slim = new \Slim\Slim();
 
-$slim->notFound(function () {
+$slim->notFound(function () use ($slim)  {
     $params = new OdaPrepareInterface();
+    $params->slim = $slim;
     $INTERFACE = new OdaRestInterface($params);
     $INTERFACE->dieInError('not found');
 });

@@ -642,7 +642,7 @@
                                     "googleHtmlLink" : resp.htmlLink,
                                     "googleICalUID" : resp.iCalUID
                                 };
-                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/"+p_params.id+"/googleCalendar/", {functionRetour : function(response){
+                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/"+p_params.id+"/googleCalendar/", { type : 'PUT', functionRetour : function(response){
                                     $.Oda.Display.Notification.info($.Oda.I8n.get('activity','okCreateAppointmentGoogle'));
                                 }},datas);
                             }else{
