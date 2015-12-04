@@ -1,0 +1,32 @@
+# Routes
+
+## config
+
+* `/config/search/user/:id`
+    * type : GET
+ 
+## event
+
+* `/event/`
+    * type : GET
+* `/event/`
+    * type : POST
+    * mandatory params : "title","start","end","tmp","allDay","autorId","type", "time", "cmt","billable","synchGoogle","synchSF"
+    * public : false
+* `/event/:id`
+    * type : GET
+* `/event/:id`
+    * type : PUT
+    * mandatory params : "title","start","end","tmp","allDay","type", "time", "cmt", "billable","synchGoogle","synchSF"
+    * public : false
+* `/event/:id`
+    * type : DELETE
+    * public : false
+* `/event/:id/googleCalendar/`
+    * type : PUT
+    * mandatory params : "googleEtag","googleId","googleHtmlLink","googleICalUID"
+    * public : false
+* `/event/type/`
+    * type : GET
+* `/event/search/user/:id`
+    * type : GET

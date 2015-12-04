@@ -3,6 +3,7 @@ namespace Ring;
 
 use Exception;
 use Oda\OdaLibBd;
+use Oda\OdaRestInterface;
 use Oda\SimpleObject\OdaPrepareReqSql;
 use \stdClass;
 
@@ -14,11 +15,11 @@ use \stdClass;
  * @author  Fabrice Rosito <rosito.fabrice@gmail.com>
  * @version 0.150221
  */
-class ConfigInterface extends RingInterface {
+class ConfigInterface extends OdaRestInterface {
     /**
      * @param $userId
      */
-    function get($userId) {
+    function getByUser($userId) {
         try {
             $params = new OdaPrepareReqSql();
             $params->sql = "SELECT a.`id`, a.`userId`, a.`activityGoogleCalendar`

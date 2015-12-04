@@ -3,6 +3,7 @@ namespace Ring;
 
 use Exception;
 use Oda\OdaLibBd;
+use Oda\OdaRestInterface;
 use Oda\SimpleObject\OdaPrepareReqSql;
 use \stdClass;
 
@@ -14,7 +15,7 @@ use \stdClass;
  * @author  Fabrice Rosito <rosito.fabrice@gmail.com>
  * @version 0.150221
  */
-class EventInterface extends RingInterface {
+class EventInterface extends OdaRestInterface {
     /**
      * @param $id
      */
@@ -96,7 +97,7 @@ class EventInterface extends RingInterface {
     /**
      * @param $id
      */
-    function getForUser($id) {
+    function getByUser($id) {
         try {
             $params = new OdaPrepareReqSql();
             $params->sql = "SELECT a.`id`, a.`title`, a.`allDay`, a.`start`, a.`end`, a.`url`, b.`className`, a.`tmp`, a.`active`
@@ -171,6 +172,118 @@ class EventInterface extends RingInterface {
             $params = new stdClass();
             $params->retourSql = $retour;
             $this->addDataObject($retour->data->data);
+        } catch (Exception $ex) {
+            $this->object_retour->strErreur = $ex.'';
+            $this->object_retour->statut = self::STATE_ERROR;
+            die();
+        }
+    }
+
+    /**
+     * @param $id
+     */
+    function delete($id) {
+        try {
+            $params = new OdaPrepareReqSql();
+            $params->sql = "UPDATE `tab_events`
+                SET
+                `active`= 0,
+                `googleId`= '',
+                `googleHtmlLink`= '',
+                `googleICalUID`= ''
+                WHERE 1=1
+                AND `id` = :id
+                ;";
+            $params->bindsValue = [
+                "id" => $id
+            ];
+            $params->typeSQL = OdaLibBd::SQL_SCRIPT;
+            $retour = $this->BD_ENGINE->reqODASQL($params);
+
+            $params = new stdClass();
+            $params->value = $retour->data;
+            $this->addDataStr($params);
+        } catch (Exception $ex) {
+            $this->object_retour->strErreur = $ex.'';
+            $this->object_retour->statut = self::STATE_ERROR;
+            die();
+        }
+    }
+
+    /**
+     * @param $id
+     */
+    function update($id) {
+        try {
+            $params = new OdaPrepareReqSql();
+            $params->sql = "UPDATE `tab_events`
+                SET
+                    `title`= :title,
+                    `allDay`= :allDay,
+                    `start`= :start,
+                    `end`= :end,
+                    `typeId`= :type,
+                    `tmp`= :tmp,
+                    `time`= :time,
+                    `cmt`= :cmt,
+                    `billable`= :billable,
+                    `synGoogle`= :synchGoogle,
+                    `synSF`= :synchSF
+                WHERE 1=1
+                  AND `id` = :id
+            ;";
+            $params->bindsValue = [
+                "title" => $this->inputs["title"],
+                "start" => $this->inputs["start"],
+                "end" => $this->inputs["end"],
+                "tmp" => $this->inputs["tmp"],
+                "allDay" => $this->inputs["allDay"],
+                "type" => $this->inputs["type"],
+                "time" => $this->inputs["time"],
+                "cmt" => $this->inputs["cmt"],
+                "id" => $id,
+                "billable" => $this->inputs["billable"],
+                "synchGoogle" => $this->inputs["synchGoogle"],
+                "synchSF" => $this->inputs["synchSF"]
+            ];
+            $params->typeSQL = OdaLibBd::SQL_SCRIPT;
+            $retour = $this->BD_ENGINE->reqODASQL($params);
+
+            $params = new stdClass();
+            $params->value = $retour->data;
+            $this->addDataStr($params);
+        } catch (Exception $ex) {
+            $this->object_retour->strErreur = $ex.'';
+            $this->object_retour->statut = self::STATE_ERROR;
+            die();
+        }
+    }
+
+    public function updateGoogle($id){
+        try {
+            $params = new OdaPrepareReqSql();
+            $params->sql = "UPDATE `tab_events`
+                SET
+                    `googleEtag`= :googleEtag,
+                    `googleId`= :googleId,
+                    `googleHtmlLink`= :googleHtmlLink,
+                    `googleICalUID`= :googleICalUID
+                WHERE 1=1
+                  AND `id` = :id
+                ;";
+            $params->bindsValue = [
+                "id" => $id,
+                "googleEtag" => $this->inputs["googleEtag"],
+                "googleId" => $this->inputs["googleId"],
+                "googleHtmlLink" => $this->inputs["googleHtmlLink"],
+                "googleICalUID" => $this->inputs["googleICalUID"]
+            ];
+            $params->typeSQL = OdaLibBd::SQL_SCRIPT;
+            $retour = $this->BD_ENGINE->reqODASQL($params);
+
+            $params = new stdClass();
+            $params->value = $retour->data;
+            $this->addDataStr($params);
         } catch (Exception $ex) {
             $this->object_retour->strErreur = $ex.'';
             $this->object_retour->statut = self::STATE_ERROR;

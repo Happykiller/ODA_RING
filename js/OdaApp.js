@@ -84,7 +84,7 @@
                     try {
                         $.Oda.App.Controler.Activity.sessionGoogleStart();
 
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/config/"+ $.Oda.Session.id, {functionRetour : function(response){
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/config/search/user/"+ $.Oda.Session.id, {functionRetour : function(response){
                             if(response.data){
                                 $.Oda.App.Controler.config = response.data;
                             }
@@ -103,7 +103,7 @@
                                 $.Oda.App.Controler.Activity.createEvent();
                             },
                             events: function(start, end, timezone, callback) {
-                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/userId/"+ $.Oda.Session.id, {functionRetour : function(response){
+                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/search/user/"+ $.Oda.Session.id, {functionRetour : function(response){
                                     for(var index in response.data){
                                         var elt = response.data[index];
                                         if(elt.tmp === "1"){
@@ -361,10 +361,9 @@
                             "cmt" : $('#cmt').val(),
                             "billable" : ($('#billable').prop("checked"))?1:0,
                             "synchGoogle" : ($('#synchGoogle').prop("checked"))?1:0,
-                            "synchSF" : ($('#synchSF').prop("checked"))?1:0,
-                            "id" : p_params.id
+                            "synchSF" : ($('#synchSF').prop("checked"))?1:0
                         };
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/activityUpdate.php", {functionRetour : function(response){
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/"+p_params.id, { type : 'PUT', functionRetour : function(response){
                             $.Oda.Display.Popup.close({name:"editEvent"});
                             $('#calendar').fullCalendar( 'refetchEvents' );
                             if(p_params.googleId !== ""){
@@ -609,13 +608,12 @@
                         request.execute(function(resp) {
                             if(resp.status === "confirmed"){
                                 var datas = {
-                                    "id" : p_params.id,
                                     "googleEtag" : $.Oda.Tooling.replaceAll({str:resp.etag,find:'"',by:''}),
                                     "googleId" : resp.id,
                                     "googleHtmlLink" : resp.htmlLink,
                                     "googleICalUID" : resp.iCalUID
                                 };
-                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/activityUpdateGoogleInfo.php", {functionRetour : function(response){
+                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/"+p_params.id+"/googleCalendar/", {functionRetour : function(response){
                                     $.Oda.Display.Notification.info($.Oda.I8n.get('activity','okCreateAppointmentGoogle'));
                                 }},datas);
                             }else{
@@ -671,13 +669,10 @@
                             });
                         }
 
-                        var datas = {
-                            "id": p_params.id,
-                        };
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest + "api/activityDelete.php", {functionRetour: function (response) {
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest + "api/rest/event/"+p_params.id, {type : 'DELETE', functionRetour: function (response) {
                             $.Oda.Display.Popup.close({name:"editEvent"});
                             $('#calendar').fullCalendar( 'refetchEvents' );
-                        }}, datas);
+                        }});
 
                         return this;
                     } catch (er) {

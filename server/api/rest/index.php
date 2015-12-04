@@ -6,25 +6,28 @@ require '../../header.php';
 require "../../vendor/autoload.php";
 require '../../include/config.php';
 
-use \stdClass, \Oda\SimpleObject\OdaPrepareInterface, \Oda\SimpleObject\OdaPrepareReqSql, \Oda\OdaLibBd;
+use \stdClass, \Oda\SimpleObject\OdaPrepareInterface, \Oda\OdaRestInterface, \Oda\OdaLibBd;
 
 //--------------------------------------------------------------------------
 $slim = new \Slim\Slim();
 
 $slim->notFound(function () {
-    //Build the interface
     $params = new OdaPrepareInterface();
-    $INTERFACE = new RingInterface($params);
+    $INTERFACE = new OdaRestInterface($params);
     $INTERFACE->dieInError('not found');
 });
 
-//todo go in filtre /search/userId/:userId
-$slim->get('/config/:userId', function ($userId) use ($slim) {
-    //Build the interface
+$slim->get('/', function () {
+    $markdown = file_get_contents('./doc.markdown', true);
+    $parser = new \cebe\markdown\GithubMarkdown();
+    echo $parser->parse($markdown);
+});
+
+$slim->get('/config/search/user/:id', function ($id) use ($slim) {
     $params = new OdaPrepareInterface();
     $params->slim = $slim;
     $INTERFACE = new ConfigInterface($params);
-    $INTERFACE->get($userId);
+    $INTERFACE->getByUser($id);
 });
 
 $slim->get('/event/', function () use ($slim) {
@@ -52,23 +55,28 @@ $slim->get('/event/:id', function ($id) use ($slim) {
 
 $slim->put('/event/:id', function ($id) use ($slim) {
     $params = new OdaPrepareInterface();
-    $params->arrayInput = array("essai");
+    $params->arrayInput = array("title","start","end","tmp","allDay","type", "time", "cmt", "billable","synchGoogle","synchSF");
+    $params->modePublic = false;
     $params->slim = $slim;
     $INTERFACE = new EventInterface($params);
+    $INTERFACE->update($id);
 });
 
-$slim->delete('/event/:id', function () use ($slim) {
+$slim->delete('/event/:id', function ($id) use ($slim) {
     $params = new OdaPrepareInterface();
-    $params->arrayInput = array("essai");
+    $params->modePublic = false;
     $params->slim = $slim;
     $INTERFACE = new EventInterface($params);
+    $INTERFACE->delete($id);
 });
 
-$slim->put('/event/:id/googleCalendar/', function () use ($slim) {
+$slim->put('/event/:id/googleCalendar/', function ($id) use ($slim) {
     $params = new OdaPrepareInterface();
-    $params->arrayInput = array("essai");
+    $params->modePublic = false;
+    $params->arrayInput = array("googleEtag","googleId","googleHtmlLink","googleICalUID");
     $params->slim = $slim;
     $INTERFACE = new EventInterface($params);
+    $INTERFACE->updateGoogle($id);
 });
 
 $slim->get('/event/type/', function () use ($slim) {
@@ -78,12 +86,11 @@ $slim->get('/event/type/', function () use ($slim) {
     $INTERFACE->getTypes();
 });
 
-//todo go in filtre /search/userId/:userId
-$slim->get('/event/userId/:id', function ($id) use ($slim) {
+$slim->get('/event/search/user/:id', function ($id) use ($slim) {
     $params = new OdaPrepareInterface();
     $params->slim = $slim;
     $INTERFACE = new EventInterface($params);
-    $INTERFACE->getForUser($id);
+    $INTERFACE->getByUser($id);
 });
 
 $slim->run();
