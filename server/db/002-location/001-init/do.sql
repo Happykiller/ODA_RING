@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS `@prefix@tab_events_location` (
 --
 
 INSERT INTO `@prefix@tab_events_location` (`id`, `code`, `label`) VALUES
+  (0, 'default', 'oda-main.select-default'),
   (1, 'office', 'activity.location-office'),
   (2, 'client', 'activity.location-client');
 

@@ -307,7 +307,7 @@ class EventInterface extends OdaRestInterface {
             $params->sql = "SELECT a.`id`, a.`code`, a.`label`, a.`active`
                 FROM `tab_events_location` a
                 WHERE 1=1
-                ORDER BY a.`code`
+                ORDER BY a.`id`
                 LIMIT :odaOffset, :odaLimit
             ;";
             $params->bindsValue = [

@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS `tab_events_location` (
 --
 
 INSERT INTO `tab_events_location` (`id`, `code`, `label`) VALUES
+  (0, 'default', 'oda-main.select-default'),
   (1, 'office', 'activity.location-office'),
   (2, 'client', 'activity.location-client');
 
@@ -69,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `@prefix@tab_events` (
   `time` DECIMAL(4,2) NOT NULL,
   `cmt` TEXT NOT NULL,
   `billable` tinyint(1) NOT NULL DEFAULT 0,
-  `locationId` int(11) NULL,
+  `locationId` int(11) NOT NULL DEFAULT 0,
   `synGoogle` tinyint(1) NOT NULL DEFAULT 0,
   `googleEtag` varchar(500) NOT NULL,
   `googleId` varchar(500) NOT NULL,
