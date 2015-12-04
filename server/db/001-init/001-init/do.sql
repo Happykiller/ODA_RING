@@ -35,6 +35,25 @@ VALUES
 ;
 
 --
+-- Structure de la table `tab_events_location`
+--
+
+CREATE TABLE IF NOT EXISTS `tab_events_location` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(500) NOT NULL,
+  `label` varchar(500) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+
+--
+-- Contenu de la table `tab_events_location`
+--
+
+INSERT INTO `tab_events_location` (`id`, `code`, `label`) VALUES
+  (1, 'office', 'activity.location-office'),
+  (2, 'client', 'activity.location-client');
+
+--
 -- Structure de la table `tab_events`
 --
 
@@ -49,20 +68,22 @@ CREATE TABLE IF NOT EXISTS `@prefix@tab_events` (
   `tmp` tinyint(1) NOT NULL,
   `time` DECIMAL(4,2) NOT NULL,
   `cmt` TEXT NOT NULL,
-  `billable` tinyint(1) NOT NULL DEFAULT '0',
-  `synGoogle` tinyint(1) NOT NULL DEFAULT '0',
+  `billable` tinyint(1) NOT NULL DEFAULT 0,
+  `locationId` int(11) NULL,
+  `synGoogle` tinyint(1) NOT NULL DEFAULT 0,
   `googleEtag` varchar(500) NOT NULL,
   `googleId` varchar(500) NOT NULL,
   `googleHtmlLink` varchar(1000) NOT NULL,
   `googleICalUID` varchar(500) NOT NULL,
-  `synSF` tinyint(1) NOT NULL DEFAULT '0',
+  `synSF` tinyint(1) NOT NULL DEFAULT 0,
   `salesForceId` varchar(500) NOT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT '1',
+  `active` tinyint(1) NOT NULL DEFAULT 1,
   `dateRecord` datetime NOT NULL,
   `autorId` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `autorId` (`autorId`),
-  KEY `typeId` (`typeId`)
+  KEY `typeId` (`typeId`),
+  KEY `locationId` (`locationId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
@@ -72,6 +93,8 @@ ALTER TABLE `@prefix@tab_events`
 ADD CONSTRAINT `fk_autorId` FOREIGN KEY (`autorId`) REFERENCES `@prefix@api_tab_utilisateurs` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 ALTER TABLE `@prefix@tab_events`
 ADD CONSTRAINT `fk_typeId` FOREIGN KEY (`typeId`) REFERENCES `@prefix@tab_events_type` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `@prefix@tab_events`
+ADD CONSTRAINT `fk_locationId` FOREIGN KEY (`locationId`) REFERENCES `@prefix@tab_events_location` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Structure de la table `tab_config`

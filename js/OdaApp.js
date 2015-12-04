@@ -78,6 +78,7 @@
             "Activity" : {
                 "dayClickData" : null,
                 "activityTypes" : null,
+                "activityLocation" : null,
                 /**
                  */
                 start: function () {
@@ -88,6 +89,10 @@
                             if(response.data){
                                 $.Oda.App.Controler.config = response.data;
                             }
+                        }});
+
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/location/", {functionRetour : function(response){
+                            $.Oda.App.Controler.Activity.activityLocation = response.data;
                         }});
 
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/type/", {functionRetour : function(response){
@@ -137,6 +142,15 @@
                                         strHtmlTypes += '<option value="'+ elt.id +'" '+ ((response.data.typeId === elt.id)?'selected':'') +'>'+ label + '</option>';
                                     }
 
+                                    var locations = "";
+                                    for(var index in $.Oda.App.Controler.Activity.activityLocation){
+                                        var elt = $.Oda.App.Controler.Activity.activityLocation[index];
+                                        if(elt.active === "1"){
+                                            var label = $.Oda.I8n.getByString(elt.label);
+                                            locations += '<option value="'+ elt.id +'" '+ ((response.data.locationId === elt.id)?'selected':'') +'>'+ label + '</option>';
+                                        }
+                                    }
+
                                     var strHtml = $.Oda.Display.TemplateHtml.create({
                                         template : "formEditEvent"
                                         , scope : {
@@ -146,6 +160,7 @@
                                             "valuesHoursStart" : getStrHtmlHours(response.data.start),
                                             "valuesHoursEnd" : getStrHtmlHours(response.data.end),
                                             "types" : strHtmlTypes,
+                                            "locations" : locations,
                                             "time" : response.data.time,
                                             "cmt" : response.data.cmt,
                                             "billable" : (response.data.billable === "1")?"checked":"",
@@ -160,6 +175,7 @@
 
                                     $.Oda.Display.Popup.open({
                                         "name" : "editEvent",
+                                        "size" : "lg",
                                         "label" : $.Oda.I8n.get('activity','editEvent'),
                                         "details" : strHtml,
                                         "footer" : strFooter,
@@ -235,16 +251,27 @@
                             }
                         }
 
+                        var locations = "";
+                        for(var index in $.Oda.App.Controler.Activity.activityLocation){
+                            var elt = $.Oda.App.Controler.Activity.activityLocation[index];
+                            if(elt.active === "1"){
+                                var label = $.Oda.I8n.getByString(elt.label);
+                                locations += '<option value="'+ elt.id +'">'+ label + '</option>';
+                            }
+                        }
+
                         var strHtml = $.Oda.Display.TemplateHtml.create({
                             template : "formCreateEvent"
                             , scope : {
                                 "valuesHours" : strHtmlHours,
-                                "types" : strHtmlTypes
+                                "types" : strHtmlTypes,
+                                "locations" : locations
                             }
                         });
 
                         $.Oda.Display.Popup.open({
                             "name" : "createEvent",
+                            "size" : "lg",
                             "label" : $.Oda.I8n.get('activity','createEvent') + ', ' + $.Oda.App.Controler.Activity.dayClickData.date.format(),
                             "details" : strHtml,
                             "footer" : '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controler.Activity.submitNewActivity();" class="btn btn-primary disabled" disabled>Submit</button >',
@@ -318,6 +345,7 @@
                             "tmp" : ($('#tmp').prop("checked"))?1:0,
                             "time" : $('#time').val(),
                             "cmt" : $('#cmt').val(),
+                            "locationId" : $('#location').val(),
                             "billable" : ($('#billable').prop("checked"))?1:0,
                             "synchGoogle" : ($('#synchGoogle').prop("checked"))?1:0,
                             "synchSF" : ($('#synchSF').prop("checked"))?1:0,
@@ -359,6 +387,7 @@
                             "tmp" : ($('#tmp').prop("checked"))?1:0,
                             "time" : $('#time').val(),
                             "cmt" : $('#cmt').val(),
+                            "locationId" : $('#location').val(),
                             "billable" : ($('#billable').prop("checked"))?1:0,
                             "synchGoogle" : ($('#synchGoogle').prop("checked"))?1:0,
                             "synchSF" : ($('#synchSF').prop("checked"))?1:0

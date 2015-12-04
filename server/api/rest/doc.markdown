@@ -28,5 +28,7 @@
     * public : false
 * `/event/type/`
     * type : GET
+* `/event/location/`
+    * type : GET
 * `/event/search/user/:id`
     * type : GET

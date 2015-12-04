@@ -22,7 +22,7 @@ class EventInterface extends OdaRestInterface {
     function get($id) {
         try {
             $params = new OdaPrepareReqSql();
-            $params->sql = "SELECT a.`id`, a.`title`, a.`allDay`, a.`start`, a.`end`, a.`url`, a.`typeId`, a.`tmp`, a.`time`, a.`cmt`, a.`active`, a.`billable`, a.`synGoogle`, a.`googleEtag`, a.`googleId`, a.`googleHtmlLink`, a.`googleICalUID`, a.`synSF`, a.`salesForceId`
+            $params->sql = "SELECT a.`id`, a.`title`, a.`allDay`, a.`start`, a.`end`, a.`url`, a.`typeId`, a.`tmp`, a.`time`, a.`cmt`, a.`locationId`, a.`active`, a.`billable`, a.`synGoogle`, a.`googleEtag`, a.`googleId`, a.`googleHtmlLink`, a.`googleICalUID`, a.`synSF`, a.`salesForceId`
                 FROM `tab_events` a
                 WHERE 1=1
                 AND a.`id` = :id
@@ -57,6 +57,7 @@ class EventInterface extends OdaRestInterface {
                     `tmp`,
                     `time`,
                     `cmt`,
+                    `locationId`,
                     `billable`,
                     `synGoogle`,
                     `synSF`,
@@ -64,7 +65,7 @@ class EventInterface extends OdaRestInterface {
                     `autorId`
                 )
                 VALUES (
-                    :title, :start, :end, :allDay, :type, :tmp, :time, :cmt, :billable, :synchGoogle, :synchSF, NOW(), :autorId
+                    :title, :start, :end, :allDay, :type, :tmp, :time, :cmt, :locationId, :billable, :synchGoogle, :synchSF, NOW(), :autorId
                 )
             ;";
             $params->bindsValue = [
@@ -77,6 +78,7 @@ class EventInterface extends OdaRestInterface {
                 "type" => $this->inputs["type"],
                 "time" => $this->inputs["time"],
                 "cmt" => $this->inputs["cmt"],
+                "locationId" => $this->inputs["locationId"],
                 "billable" => $this->inputs["billable"],
                 "synchGoogle" => $this->inputs["synchGoogle"],
                 "synchSF" => $this->inputs["synchSF"]
@@ -129,7 +131,7 @@ class EventInterface extends OdaRestInterface {
     function getAll() {
         try {
             $params = new OdaPrepareReqSql();
-            $params->sql = "SELECT a.`id`, a.`title`, a.`allDay`, a.`start`, a.`end`, a.`url`, a.`typeId`, a.`tmp`, a.`time`, a.`cmt`, a.`active`, a.`billable`, a.`synGoogle`, a.`googleEtag`, a.`googleId`, a.`googleHtmlLink`, a.`googleICalUID`, a.`synSF`, a.`salesForceId`
+            $params->sql = "SELECT a.`id`, a.`title`, a.`allDay`, a.`start`, a.`end`, a.`url`, a.`typeId`, a.`tmp`, a.`time`, a.`cmt`, a.`locationId`, a.`active`, a.`billable`, a.`synGoogle`, a.`googleEtag`, a.`googleId`, a.`googleHtmlLink`, a.`googleICalUID`, a.`synSF`, a.`salesForceId`
                 FROM `tab_events` a
                 WHERE 1=1
                 LIMIT :odaOffset, :odaLimit
@@ -224,6 +226,7 @@ class EventInterface extends OdaRestInterface {
                     `end`= :end,
                     `typeId`= :type,
                     `tmp`= :tmp,
+                    `locationId` = :locationId,
                     `time`= :time,
                     `cmt`= :cmt,
                     `billable`= :billable,
@@ -241,6 +244,7 @@ class EventInterface extends OdaRestInterface {
                 "type" => $this->inputs["type"],
                 "time" => $this->inputs["time"],
                 "cmt" => $this->inputs["cmt"],
+                "locationId" => $this->inputs["locationId"],
                 "id" => $id,
                 "billable" => $this->inputs["billable"],
                 "synchGoogle" => $this->inputs["synchGoogle"],
@@ -259,6 +263,9 @@ class EventInterface extends OdaRestInterface {
         }
     }
 
+    /**
+     * @param $id
+     */
     public function updateGoogle($id){
         try {
             $params = new OdaPrepareReqSql();
@@ -284,6 +291,35 @@ class EventInterface extends OdaRestInterface {
             $params = new stdClass();
             $params->value = $retour->data;
             $this->addDataStr($params);
+        } catch (Exception $ex) {
+            $this->object_retour->strErreur = $ex.'';
+            $this->object_retour->statut = self::STATE_ERROR;
+            die();
+        }
+    }
+
+    /**
+     *
+     */
+    public function getLocations(){
+        try {
+            $params = new OdaPrepareReqSql();
+            $params->sql = "SELECT a.`id`, a.`code`, a.`label`, a.`active`
+                FROM `tab_events_location` a
+                WHERE 1=1
+                ORDER BY a.`code`
+                LIMIT :odaOffset, :odaLimit
+            ;";
+            $params->bindsValue = [
+                "odaOffset" => $this->odaOffset,
+                "odaLimit" => $this->odaLimit
+            ];
+            $params->typeSQL = OdaLibBd::SQL_GET_ALL;
+            $retour = $this->BD_ENGINE->reqODASQL($params);
+
+            $params = new stdClass();
+            $params->retourSql = $retour;
+            $this->addDataObject($retour->data->data);
         } catch (Exception $ex) {
             $this->object_retour->strErreur = $ex.'';
             $this->object_retour->statut = self::STATE_ERROR;

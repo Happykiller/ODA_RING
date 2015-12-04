@@ -39,7 +39,7 @@ $slim->get('/event/', function () use ($slim) {
 
 $slim->post('/event/', function () use ($slim) {
     $params = new OdaPrepareInterface();
-    $params->arrayInput = array("title","start","end","tmp","allDay","autorId","type", "time", "cmt","billable","synchGoogle","synchSF");
+    $params->arrayInput = array("title","start","end","tmp","allDay","autorId","type", "time", "cmt", "locationId", "billable","synchGoogle","synchSF");
     $params->modePublic = false;
     $params->slim = $slim;
     $INTERFACE = new EventInterface($params);
@@ -55,7 +55,7 @@ $slim->get('/event/:id', function ($id) use ($slim) {
 
 $slim->put('/event/:id', function ($id) use ($slim) {
     $params = new OdaPrepareInterface();
-    $params->arrayInput = array("title","start","end","tmp","allDay","type", "time", "cmt", "billable","synchGoogle","synchSF");
+    $params->arrayInput = array("title","start","end","tmp","allDay","type", "time", "cmt", "locationId", "billable","synchGoogle","synchSF");
     $params->modePublic = false;
     $params->slim = $slim;
     $INTERFACE = new EventInterface($params);
@@ -84,6 +84,13 @@ $slim->get('/event/type/', function () use ($slim) {
     $params->slim = $slim;
     $INTERFACE = new EventInterface($params);
     $INTERFACE->getTypes();
+});
+
+$slim->get('/event/location/', function () use ($slim) {
+    $params = new OdaPrepareInterface();
+    $params->slim = $slim;
+    $INTERFACE = new EventInterface($params);
+    $INTERFACE->getLocations();
 });
 
 $slim->get('/event/search/user/:id', function ($id) use ($slim) {
