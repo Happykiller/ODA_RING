@@ -58,6 +58,24 @@
     <div class="row">
         <div class="col-lg-3 col-sm-6">
             <div class="form-group">
+                <label for="account" oda-label="activity.account">activity.account</label>
+                <select class="form-control" oda-input-select="account">
+                    {{accounts}}
+                </select>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="form-group" id="divItem" style="display: none;">
+                <label for="item" oda-label="activity.item">activity.item</label>
+                <select class="form-control" oda-input-select="item">
+                    {{items}}
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3 col-sm-6">
+            <div class="form-group">
                 <label for="type" oda-label="activity.activityType">activity.activityType</label>
                 <select class="form-control" oda-input-select="type" required>
                     <option value="" oda-label="oda-main.select-default"></option>

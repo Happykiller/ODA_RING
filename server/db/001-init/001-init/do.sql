@@ -1,8 +1,26 @@
 INSERT INTO `@prefix@api_tab_menu` (`Description`, `Description_courte`, `id_categorie`, `Lien`) VALUES ('activity.title', 'activity.title', '3', 'activity');
+INSERT INTO `@prefix@api_tab_menu` (`Description`, `Description_courte`, `id_categorie`, `Lien`) VALUES ('activity-list.title', 'activity-list.title', '4', 'activity-list');
+INSERT INTO `@prefix@api_tab_menu` (`Description`, `Description_courte`, `id_categorie`, `Lien`) VALUES ('activity-rapport-client.title', 'activity-rapport-client.title', '4', 'activity-rapport-client');
 
 UPDATE `@prefix@api_tab_menu_rangs_droit` a
   INNER JOIN `@prefix@api_tab_menu` b
     ON b.`Lien` = 'activity'
+  INNER JOIN `@prefix@api_tab_rangs` c
+    ON c.`id` = a.`id_rang`
+       AND c.`indice` in (1,10,20,30)
+SET `id_menu` = concat(`id_menu`,b.`id`,';');
+
+UPDATE `@prefix@api_tab_menu_rangs_droit` a
+  INNER JOIN `@prefix@api_tab_menu` b
+    ON b.`Lien` = 'activity-list'
+  INNER JOIN `@prefix@api_tab_rangs` c
+    ON c.`id` = a.`id_rang`
+       AND c.`indice` in (1,10,20,30)
+SET `id_menu` = concat(`id_menu`,b.`id`,';');
+
+UPDATE `@prefix@api_tab_menu_rangs_droit` a
+  INNER JOIN `@prefix@api_tab_menu` b
+    ON b.`Lien` = 'activity-rapport-client'
   INNER JOIN `@prefix@api_tab_rangs` c
     ON c.`id` = a.`id_rang`
        AND c.`indice` in (1,10,20,30)
@@ -71,6 +89,7 @@ CREATE TABLE IF NOT EXISTS `@prefix@tab_events` (
   `cmt` TEXT NOT NULL,
   `billable` tinyint(1) NOT NULL DEFAULT 0,
   `locationId` int(11) NOT NULL DEFAULT 0,
+  `itemId` int(11) NOT NULL DEFAULT 1,
   `synGoogle` tinyint(1) NOT NULL DEFAULT 0,
   `googleEtag` varchar(500) NOT NULL,
   `googleId` varchar(500) NOT NULL,
@@ -84,7 +103,8 @@ CREATE TABLE IF NOT EXISTS `@prefix@tab_events` (
   PRIMARY KEY (`id`),
   KEY `autorId` (`autorId`),
   KEY `typeId` (`typeId`),
-  KEY `locationId` (`locationId`)
+  KEY `locationId` (`locationId`),
+  KEY `itemId` (`itemId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
@@ -96,6 +116,7 @@ ALTER TABLE `@prefix@tab_events`
 ADD CONSTRAINT `fk_typeId` FOREIGN KEY (`typeId`) REFERENCES `@prefix@tab_events_type` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 ALTER TABLE `@prefix@tab_events`
 ADD CONSTRAINT `fk_locationId` FOREIGN KEY (`locationId`) REFERENCES `@prefix@tab_events_location` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `@prefix@tab_events` ADD  CONSTRAINT `fk_events_items` FOREIGN KEY (`itemId`) REFERENCES `@prefix@tab_accounts_items`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Structure de la table `tab_config`

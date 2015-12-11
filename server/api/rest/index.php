@@ -101,4 +101,26 @@ $slim->get('/event/search/user/:id', function ($id) use ($slim) {
     $INTERFACE->getByUser($id);
 });
 
+$slim->get('/rapport/search/activity/', function () use ($slim) {
+    $params = new OdaPrepareInterface();
+    $params->arrayInputOpt = array("title","startDate","endDate","billable");
+    $params->slim = $slim;
+    $INTERFACE = new RapportInterface($params);
+    $INTERFACE->get();
+});
+
+$slim->get('/account/', function () use ($slim) {
+    $params = new OdaPrepareInterface();
+    $params->slim = $slim;
+    $INTERFACE = new AccountInterface($params);
+    $INTERFACE->get();
+});
+
+$slim->get('/account/:id/search/item', function ($id) use ($slim) {
+    $params = new OdaPrepareInterface();
+    $params->slim = $slim;
+    $INTERFACE = new AccountInterface($params);
+    $INTERFACE->getItemByAccount($id);
+});
+
 $slim->run();

@@ -22,10 +22,13 @@ class EventInterface extends OdaRestInterface {
     function get($id) {
         try {
             $params = new OdaPrepareReqSql();
-            $params->sql = "SELECT a.`id`, a.`title`, a.`allDay`, a.`start`, a.`end`, a.`url`, a.`typeId`, a.`tmp`, a.`time`, a.`cmt`, a.`locationId`, a.`active`, a.`billable`, a.`synGoogle`, a.`googleEtag`, a.`googleId`, a.`googleHtmlLink`, a.`googleICalUID`, a.`synSF`, a.`salesForceId`
-                FROM `tab_events` a
+            $params->sql = "SELECT a.`id`, a.`title`, a.`allDay`, a.`start`, a.`end`, a.`url`, a.`typeId`, a.`tmp`, a.`time`, a.`cmt`, a.`locationId`,
+                a.`active`, a.`billable`, a.`synGoogle`, a.`googleEtag`, a.`googleId`, a.`googleHtmlLink`, a.`googleICalUID`, a.`synSF`, a.`salesForceId`,
+                a.`itemId`, b.`accountId`
+                FROM `tab_events` a, `tab_accounts_items` b
                 WHERE 1=1
                 AND a.`id` = :id
+                AND a.`itemId` = b.`id`
             ;";
             $params->bindsValue = [
                 "id" => $id

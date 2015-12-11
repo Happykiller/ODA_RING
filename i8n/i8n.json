@@ -36,7 +36,7 @@
       "type-assist" : "Assiste",
       "type-abs" : "Absent",
       "conflictHours" : "Les heures sélectionées sont identiques.",
-      "activityTime" : "Affectation",
+      "activityTime" : "Charge",
       "activityTime-tips" : "En heure (0,5 = 30min)",
       "activityTime-placeholder" : "0,00",
       "activityCmt" : "Commentaire",
@@ -57,10 +57,42 @@
       "okCreateAppointmentGoogle" : "Evènement créé avec success dans le calendrier Google",
       "errorCreateAppointmentGoogle" : "Echec de la création de l'évènement dans le calendrier Google",
       "okDeleteAppointmentGoogle" : "Evènement a bien été supprimé dans le calendrier Google",
-      "errorDeleteAppointmentGoogle" : "Echec de la suppression de l'évènement dans le calendrier Google"
+      "errorDeleteAppointmentGoogle" : "Echec de la suppression de l'évènement dans le calendrier Google",
+      "account": "Le compte",
+      "item" : "L'item"
     },
     "en" : {
       "title" : "Activity"
+    }
+  },
+  {
+    "groupName" : "activity-list",
+    "fr" : {
+      "title" : "Liste des activités"
+    },
+    "en" : {
+      "title" : "Home"
+    }
+  },
+  {
+    "groupName" : "activity-rapport-client",
+    "fr" : {
+      "title" : "Liste des activités"
+    },
+    "en" : {
+      "title" : "Home"
+    }
+  },
+  {
+    "groupName" : "account",
+    "fr" : {
+      "item-status-default" : "Pas de statut",
+      "status-default" : "Pas de statut",
+      "default" : "Pas de compte",
+      "item-default" : "Pas d'item"
+    },
+    "en" : {
+      "title" : "No Item"
     }
   }
 ]

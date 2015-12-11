@@ -62,6 +62,21 @@
                     "dependencies" : ["fullcalendar"]
                 });
 
+                $.Oda.Router.addRoute("activity-list", {
+                    "path" : "partials/activity-list.html",
+                    "title" : "activity-list.title",
+                    "urls" : ["activity-list"],
+                    "middleWares" : ["support","auth"],
+                    "dependencies" : ["datatables"]
+                });
+
+                $.Oda.Router.addRoute("activity-rapport-client", {
+                    "path" : "partials/activity-rapport-client.html",
+                    "title" : "activity-rapport-client.title",
+                    "urls" : ["activity-rapport-client"],
+                    "middleWares" : ["support","auth"]
+                });
+
                 $.Oda.Router.startRooter();
 
                 return this;
@@ -79,6 +94,7 @@
                 "dayClickData" : null,
                 "activityTypes" : null,
                 "activityLocation" : null,
+                "accounts": null,
                 /**
                  */
                 start: function () {
@@ -98,6 +114,10 @@
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/type/", {functionRetour : function(response){
                             $.Oda.App.Controler.Activity.activityTypes = response.data;
                             $.Oda.App.Controler.Activity.buildLegend();
+                        }});
+
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/", {functionRetour : function(response){
+                            $.Oda.App.Controler.Activity.accounts = response.data;
                         }});
 
                         $('#calendar').fullCalendar({
@@ -148,6 +168,16 @@
                                         if(elt.active === "1"){
                                             var label = $.Oda.I8n.getByString(elt.label);
                                             locations += '<option value="'+ elt.id +'" '+ ((response.data.locationId === elt.id)?'selected':'') +'>'+ label + '</option>';
+                                        }
+                                    }
+
+                                    var accounts = "";
+                                    for(var index in $.Oda.App.Controler.Activity.accounts){
+                                        //noinspection JSUnfilteredForInLoop
+                                        var elt = $.Oda.App.Controler.Activity.accounts[index];
+                                        if(elt.active === "1"){
+                                            var label = $.Oda.I8n.getByString(elt.label);
+                                            accounts += '<option value="'+ elt.id +'" '+ ((response.data.accountId === elt.id)?'selected':'') +'>'+ label + '</option>';
                                         }
                                     }
 
@@ -260,12 +290,21 @@
                             }
                         }
 
+                        var accounts = "";
+                        for(var index in $.Oda.App.Controler.Activity.accounts){
+                            var elt = $.Oda.App.Controler.Activity.accounts[index];
+                            var label = $.Oda.I8n.getByString(elt.label);
+                            accounts += '<option value="'+ elt.id +'">'+ label + '</option>';
+                        }
+
                         var strHtml = $.Oda.Display.TemplateHtml.create({
                             template : "formCreateEvent"
                             , scope : {
                                 "valuesHours" : strHtmlHours,
                                 "types" : strHtmlTypes,
-                                "locations" : locations
+                                "locations" : locations,
+                                "accounts": accounts,
+                                "items" : ""
                             }
                         });
 
@@ -276,6 +315,24 @@
                             "details" : strHtml,
                             "footer" : '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controler.Activity.submitNewActivity();" class="btn btn-primary disabled" disabled>Submit</button >',
                             "callback" : function(){
+                                $.Oda.Scope.Gardian.add({
+                                    id: "accountItem",
+                                    listElt: ["account"],
+                                    function: function (e) {
+                                        if($('#account').val() !== '1'){
+                                            if(!$('#divItem').is(":visible")){
+                                                $('#divItem').show();
+                                                $.Oda.App.Controler.Activity.getHtmlSelectItems({id:$('#account').val()});
+                                            }else{
+                                                $.Oda.App.Controler.Activity.getHtmlSelectItems({id:$('#account').val()});
+                                            }
+                                        }else{
+                                            $('#divItem').hide();
+                                            $.Oda.App.Controler.Activity.getHtmlSelectItems({id:1});
+                                        }
+                                    }
+                                });
+
                                 $.Oda.Scope.Gardian.add({
                                     id : "createEvent",
                                     listElt : ["title", "allDay", "type", "start", "end", "tmp", "time", "cmt"],
@@ -706,6 +763,34 @@
                         return this;
                     } catch (er) {
                         $.Oda.Log.error("$.Oda.App.Controler.Activity.deleteEvent : " + er.message);
+                        return null;
+                    }
+                },
+                /**
+                 * @param {object} p_params
+                 * @param p_params.id
+                 * @returns {$.Oda.Controler.Activity}
+                 */
+                getHtmlSelectItems : function(p_params) {
+                    try {
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/"+p_params.id+"/search/item", {functionRetour : function(response){
+                            $('#item')
+                                .find('option')
+                                .remove()
+                                .end()
+                            ;
+
+                            for(var index in response.data){
+                                var elt = response.data[index];
+                                var label = $.Oda.I8n.getByString(elt.label);
+                                $('#item')
+                                    .append('<option value="'+ elt.id +'">'+ label + '</option>')
+                                ;
+                            }
+                        }});
+                        return this;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.Controler.Activity.getHtmlSelectItems : " + er.message);
                         return null;
                     }
                 },
