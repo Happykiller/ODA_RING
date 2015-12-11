@@ -293,8 +293,10 @@
                         var accounts = "";
                         for(var index in $.Oda.App.Controler.Activity.accounts){
                             var elt = $.Oda.App.Controler.Activity.accounts[index];
-                            var label = $.Oda.I8n.getByString(elt.label);
-                            accounts += '<option value="'+ elt.id +'">'+ label + '</option>';
+                            if(elt.statusId !== "3"){
+                                var label = $.Oda.I8n.getByString(elt.label);
+                                accounts += '<option value="'+ elt.id +'">'+ label + '</option>';
+                            }
                         }
 
                         var strHtml = $.Oda.Display.TemplateHtml.create({
@@ -782,10 +784,12 @@
 
                             for(var index in response.data){
                                 var elt = response.data[index];
-                                var label = $.Oda.I8n.getByString(elt.label);
-                                $('#item')
-                                    .append('<option value="'+ elt.id +'">'+ label + '</option>')
-                                ;
+                                if(elt.statusId !== "3"){
+                                    var label = $.Oda.I8n.getByString(elt.label);
+                                    $('#item')
+                                        .append('<option value="'+ elt.id +'">'+ label + '</option>')
+                                    ;
+                                }
                             }
                         }});
                         return this;

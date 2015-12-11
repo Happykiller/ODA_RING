@@ -87,7 +87,11 @@
     "groupName" : "account",
     "fr" : {
       "item-status-default" : "Pas de statut",
+      "item-status-running" : "En cours",
+      "item-status-finnish" : "Fini",
       "status-default" : "Pas de statut",
+      "status-open" : "Ouvert",
+      "status-close" : "Fermé",
       "default" : "Pas de compte",
       "item-default" : "Pas d'item"
     },

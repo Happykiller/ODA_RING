@@ -17,8 +17,9 @@ CREATE TABLE IF NOT EXISTS `@prefix@tab_accounts_items_status` (
 -- Contenu de la table `tab_accounts_items_status`
 --
 
-INSERT INTO `@prefix@tab_accounts_items_status` (`id`, `label`, `active`) VALUES
-  (1, 'account.item-status-default', 1);
+INSERT INTO `@prefix@tab_accounts_items_status` (`id`, `label`, `active`) VALUES (1, 'account.item-status-default', 1);
+INSERT INTO `@prefix@tab_accounts_items_status` (`id`, `label`, `active`) VALUES (2, 'account.item-status-running', 1);
+INSERT INTO `@prefix@tab_accounts_items_status` (`id`, `label`, `active`) VALUES (3, 'account.item-status-finish', 1);
 
 -- --------------------------------------------------------
 
@@ -38,8 +39,9 @@ CREATE TABLE IF NOT EXISTS `@prefix@tab_accounts_status` (
 -- Contenu de la table `tab_accounts_status`
 --
 
-INSERT INTO `@prefix@tab_accounts_status` (`id`, `label`, `active`) VALUES
-  (1, 'account.status-default', 1);
+INSERT INTO `@prefix@tab_accounts_status` (`id`, `label`, `active`) VALUES (1, 'account.status-default', 1);
+INSERT INTO `@prefix@tab_accounts_status` (`id`, `label`, `active`) VALUES (2, 'account.status-open', 1);
+INSERT INTO `@prefix@tab_accounts_status` (`id`, `label`, `active`) VALUES (3, 'account.status-close', 1);
 
 -- --------------------------------------------------------
 
