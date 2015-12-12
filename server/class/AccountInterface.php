@@ -40,6 +40,33 @@ class AccountInterface extends OdaRestInterface {
         }
     }
     /**
+     *
+     */
+    public function getOnlyWithItem()
+    {
+        try {
+            $params = new OdaPrepareReqSql();
+            $params->sql = "SELECT DISTINCT a.`id`, a.`code`, a.`label`, a.`salesForce`,
+                a.`statusId`, b.`label` as  'statusLabel', b.`active` as 'statusActive'
+                FROM `tab_accounts` a, `tab_accounts_status` b, `tab_accounts_items` c
+                WHERE 1=1
+                AND a.`statusId` = b.`id`
+                AND a.`id` = c.`accountId`
+                and c.`statusId` != 3
+            ;";
+            $params->typeSQL = OdaLibBd::SQL_GET_ALL;
+            $retour = $this->BD_ENGINE->reqODASQL($params);
+
+            $params = new stdClass();
+            $params->retourSql = $retour;
+            $this->addDataObject($retour->data->data);
+        } catch (Exception $ex) {
+            $this->object_retour->strErreur = $ex.'';
+            $this->object_retour->statut = self::STATE_ERROR;
+            die();
+        }
+    }
+    /**
      */
     function getItemByAccount($accountId) {
         try {

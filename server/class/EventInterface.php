@@ -65,10 +65,12 @@ class EventInterface extends OdaRestInterface {
                     `synGoogle`,
                     `synSF`,
                     `dateRecord`,
-                    `autorId`
+                    `autorId`,
+                    `itemId`
                 )
                 VALUES (
-                    :title, :start, :end, :allDay, :type, :tmp, :time, :cmt, :locationId, :billable, :synchGoogle, :synchSF, NOW(), :autorId
+                    :title, :start, :end, :allDay, :type, :tmp, :time, :cmt, :locationId, :billable,
+                     :synchGoogle, :synchSF, NOW(), :autorId, :itemId
                 )
             ;";
             $params->bindsValue = [
@@ -84,7 +86,8 @@ class EventInterface extends OdaRestInterface {
                 "locationId" => $this->inputs["locationId"],
                 "billable" => $this->inputs["billable"],
                 "synchGoogle" => $this->inputs["synchGoogle"],
-                "synchSF" => $this->inputs["synchSF"]
+                "synchSF" => $this->inputs["synchSF"],
+                "itemId" => $this->inputs["itemId"]
             ];
             $params->typeSQL = OdaLibBd::SQL_INSERT_ONE;
             $retour = $this->BD_ENGINE->reqODASQL($params);

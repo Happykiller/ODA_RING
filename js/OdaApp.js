@@ -118,7 +118,7 @@
 
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/", {functionRetour : function(response){
                             $.Oda.App.Controler.Activity.accounts = response.data;
-                        }});
+                        }}, {"withItem":"true"});
 
                         $('#calendar').fullCalendar({
                             lang: 'fr',
@@ -321,17 +321,7 @@
                                     id: "accountItem",
                                     listElt: ["account"],
                                     function: function (e) {
-                                        if($('#account').val() !== '1'){
-                                            if(!$('#divItem').is(":visible")){
-                                                $('#divItem').show();
-                                                $.Oda.App.Controler.Activity.getHtmlSelectItems({id:$('#account').val()});
-                                            }else{
-                                                $.Oda.App.Controler.Activity.getHtmlSelectItems({id:$('#account').val()});
-                                            }
-                                        }else{
-                                            $('#divItem').hide();
-                                            $.Oda.App.Controler.Activity.getHtmlSelectItems({id:1});
-                                        }
+                                        $.Oda.App.Controler.Activity.getHtmlSelectItems({id:$('#account').val()});
                                     }
                                 });
 
@@ -408,7 +398,8 @@
                             "billable" : ($('#billable').prop("checked"))?1:0,
                             "synchGoogle" : ($('#synchGoogle').prop("checked"))?1:0,
                             "synchSF" : ($('#synchSF').prop("checked"))?1:0,
-                            "autorId" : $.Oda.Session.id
+                            "autorId" : $.Oda.Session.id,
+                            "itemId" : ($('#item').val() !== null)?$('#item').val():1
                         };
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/", {type:'POST',functionRetour : function(response){
                             $.Oda.Display.Popup.close({name:"createEvent"});
@@ -449,7 +440,8 @@
                             "locationId" : $('#location').val(),
                             "billable" : ($('#billable').prop("checked"))?1:0,
                             "synchGoogle" : ($('#synchGoogle').prop("checked"))?1:0,
-                            "synchSF" : ($('#synchSF').prop("checked"))?1:0
+                            "synchSF" : ($('#synchSF').prop("checked"))?1:0,
+                            "itemId" : ($('#item').val() !== null)?$('#item').val():1
                         };
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/"+p_params.id, { type : 'PUT', functionRetour : function(response){
                             $.Oda.Display.Popup.close({name:"editEvent"});
@@ -776,21 +768,35 @@
                 getHtmlSelectItems : function(p_params) {
                     try {
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/"+p_params.id+"/search/item", {functionRetour : function(response){
-                            $('#item')
-                                .find('option')
-                                .remove()
-                                .end()
-                            ;
-
-                            for(var index in response.data){
-                                var elt = response.data[index];
-                                if(elt.statusId !== "3"){
-                                    var label = $.Oda.I8n.getByString(elt.label);
-                                    $('#item')
-                                        .append('<option value="'+ elt.id +'">'+ label + '</option>')
-                                    ;
+                            if(response.data.length > 0){
+                                $('#item')
+                                    .find('option')
+                                    .remove()
+                                    .end()
+                                ;
+                                var gardian = false;
+                                for(var index in response.data){
+                                    var elt = response.data[index];
+                                    if((elt.statusId !== "3")&&(elt.id !== "1")){
+                                        gardian = true;
+                                        var label = $.Oda.I8n.getByString(elt.label);
+                                        $('#item')
+                                            .append('<option value="'+ elt.id +'">'+ label + '</option>')
+                                        ;
+                                    }
                                 }
+
+                                if(gardian){$('#divItem').show();}else{$('#divItem').hide();}
+                            }else{
+                                $('#item')
+                                    .find('option')
+                                    .remove()
+                                    .end()
+                                ;
+                                $('#divItem').hide();
                             }
+
+
                         }});
                         return this;
                     } catch (er) {

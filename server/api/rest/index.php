@@ -40,7 +40,8 @@ $slim->get('/event/', function () use ($slim) {
 
 $slim->post('/event/', function () use ($slim) {
     $params = new OdaPrepareInterface();
-    $params->arrayInput = array("title","start","end","tmp","allDay","autorId","type", "time", "cmt", "locationId", "billable","synchGoogle","synchSF");
+    $params->arrayInput = array("title","start","end","tmp","allDay","autorId","type", "time",
+        "cmt", "locationId", "billable","synchGoogle","synchSF", "itemId");
     $params->modePublic = false;
     $params->slim = $slim;
     $INTERFACE = new EventInterface($params);
@@ -111,9 +112,14 @@ $slim->get('/rapport/search/activity/', function () use ($slim) {
 
 $slim->get('/account/', function () use ($slim) {
     $params = new OdaPrepareInterface();
+    $params->arrayInputOpt = array("withItem"=>"false");
     $params->slim = $slim;
     $INTERFACE = new AccountInterface($params);
-    $INTERFACE->get();
+    if($INTERFACE->inputs["withItem"] === "true"){
+        $INTERFACE->getOnlyWithItem();
+    }else{
+        $INTERFACE->get();
+    }
 });
 
 $slim->get('/account/:id/search/item', function ($id) use ($slim) {
