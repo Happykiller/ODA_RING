@@ -57,7 +57,7 @@ $slim->get('/event/:id', function ($id) use ($slim) {
 
 $slim->put('/event/:id', function ($id) use ($slim) {
     $params = new OdaPrepareInterface();
-    $params->arrayInput = array("title","start","end","tmp","allDay","type", "time", "cmt", "locationId", "billable","synchGoogle","synchSF");
+    $params->arrayInput = array("title","start","end","tmp","allDay","type", "time", "cmt", "locationId", "billable","synchGoogle","synchSF","itemId");
     $params->modePublic = false;
     $params->slim = $slim;
     $INTERFACE = new EventInterface($params);

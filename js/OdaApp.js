@@ -131,6 +131,7 @@
                                 var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/search/user/"+ $.Oda.Session.id, {functionRetour : function(response){
                                     for(var index in response.data){
                                         var elt = response.data[index];
+                                        elt.title = elt.time + ': ' + elt.title;
                                         if(elt.tmp === "1"){
                                             elt.className += "-stripe";
                                         }
@@ -173,11 +174,10 @@
 
                                     var accounts = "";
                                     for(var index in $.Oda.App.Controler.Activity.accounts){
-                                        //noinspection JSUnfilteredForInLoop
                                         var elt = $.Oda.App.Controler.Activity.accounts[index];
-                                        if(elt.active === "1"){
+                                        if(elt.statusId !== "3"){
                                             var label = $.Oda.I8n.getByString(elt.label);
-                                            accounts += '<option value="'+ elt.id +'" '+ ((response.data.accountId === elt.id)?'selected':'') +'>'+ label + '</option>';
+                                            accounts += '<option value="'+ elt.id +'"'+ ((response.data.accountId === elt.id)?'selected':'') +'>'+ label + '</option>';
                                         }
                                     }
 
@@ -196,6 +196,8 @@
                                             "billable" : (response.data.billable === "1")?"checked":"",
                                             "synchGoogle" : (response.data.synGoogle === "1")?"checked":"",
                                             "synchSF" : (response.data.synSF === "1")?"checked":"",
+                                            "accounts": accounts,
+                                            "items" : ""
                                         }
                                     });
 
@@ -209,7 +211,18 @@
                                         "label" : $.Oda.I8n.get('activity','editEvent'),
                                         "details" : strHtml,
                                         "footer" : strFooter,
-                                        "callback" : function(){
+                                        "callback" : function(e){
+
+                                            $.Oda.App.Controler.Activity.getHtmlSelectItems({id:$('#account').val(), itemId : response.data.itemId });
+
+                                            $.Oda.Scope.Gardian.add({
+                                                id: "accountItem",
+                                                listElt: ["account"],
+                                                function: function (e) {
+                                                    $.Oda.App.Controler.Activity.getHtmlSelectItems({id:$('#account').val()});
+                                                }
+                                            });
+
                                             $.Oda.Scope.Gardian.add({
                                                 id : "editEvent",
                                                 listElt : ["title", "allDay", "type", "start", "end", "tmp", "time", "cmt"],
@@ -763,6 +776,7 @@
                 /**
                  * @param {object} p_params
                  * @param p_params.id
+                 * @param p_params.itemId (optional)
                  * @returns {$.Oda.Controler.Activity}
                  */
                 getHtmlSelectItems : function(p_params) {
@@ -781,7 +795,7 @@
                                         gardian = true;
                                         var label = $.Oda.I8n.getByString(elt.label);
                                         $('#item')
-                                            .append('<option value="'+ elt.id +'">'+ label + '</option>')
+                                            .append('<option value="'+ elt.id +'" '+ ((p_params.itemId === elt.id)?'selected':'') +'>'+ label + '</option>')
                                         ;
                                     }
                                 }

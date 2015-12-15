@@ -108,7 +108,7 @@ class EventInterface extends OdaRestInterface {
     function getByUser($id) {
         try {
             $params = new OdaPrepareReqSql();
-            $params->sql = "SELECT a.`id`, a.`title`, a.`allDay`, a.`start`, a.`end`, a.`url`, b.`className`, a.`tmp`, a.`active`
+            $params->sql = "SELECT a.`id`, a.`title`, a.`allDay`, a.`start`, a.`end`, a.`url`, b.`className`, a.`tmp`, a.`active`, a.`time`
                 FROM `tab_events` a, `tab_events_type` b
                 WHERE 1=1
                 AND a.`typeId` = b.`id`
@@ -237,7 +237,8 @@ class EventInterface extends OdaRestInterface {
                     `cmt`= :cmt,
                     `billable`= :billable,
                     `synGoogle`= :synchGoogle,
-                    `synSF`= :synchSF
+                    `synSF`= :synchSF,
+                    `itemId`= :itemId
                 WHERE 1=1
                   AND `id` = :id
             ;";
@@ -254,7 +255,8 @@ class EventInterface extends OdaRestInterface {
                 "id" => $id,
                 "billable" => $this->inputs["billable"],
                 "synchGoogle" => $this->inputs["synchGoogle"],
-                "synchSF" => $this->inputs["synchSF"]
+                "synchSF" => $this->inputs["synchSF"],
+                "itemId" => $this->inputs["itemId"]
             ];
             $params->typeSQL = OdaLibBd::SQL_SCRIPT;
             $retour = $this->BD_ENGINE->reqODASQL($params);
