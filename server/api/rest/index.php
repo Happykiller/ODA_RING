@@ -122,6 +122,13 @@ $slim->get('/account/', function () use ($slim) {
     }
 });
 
+$slim->get('/account/item/', function () use ($slim) {
+    $params = new OdaPrepareInterface();
+    $params->slim = $slim;
+    $INTERFACE = new AccountInterface($params);
+    $INTERFACE->getItem();
+});
+
 $slim->get('/account/:id/search/item', function ($id) use ($slim) {
     $params = new OdaPrepareInterface();
     $params->slim = $slim;

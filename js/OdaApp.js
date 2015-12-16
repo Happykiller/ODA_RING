@@ -95,6 +95,8 @@
                 "activityTypes" : null,
                 "activityLocation" : null,
                 "accounts": null,
+                "items":null,
+                "templateCalendar" : '[type][account][item][title][time][billable][code_user]<-tmp>',
                 /**
                  */
                 start: function () {
@@ -118,7 +120,11 @@
 
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/", {functionRetour : function(response){
                             $.Oda.App.Controler.Activity.accounts = response.data;
-                        }}, {"withItem":"true"});
+                        }});
+
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/item/", {functionRetour : function(response){
+                            $.Oda.App.Controler.Activity.items = response.data;
+                        }});
 
                         $('#calendar').fullCalendar({
                             lang: 'fr',
@@ -633,7 +639,7 @@
 
                         var resource = {
                             "summary": summary,
-                            "description": p_params.cmt + "\n \n Last update : " + $.Oda.Date.getStrDateTime() + "\n \n Template title : [type][title][time][billable][code_user]<-tmp>",
+                            "description": p_params.cmt + "\n \n Last update : " + $.Oda.Date.getStrDateTime() + "\n \n Template title : " + $.Oda.App.Controler.Activity.templateCalendar,
                             "start": start,
                             "end": end
                         };
@@ -684,7 +690,7 @@
 
                         var resource = {
                             "summary": summary,
-                            "description": p_params.cmt + "\n \n Template title : [type][title][time][billable][code_user]<-tmp>",
+                            "description": p_params.cmt + "\n \n Template title : " + $.Oda.App.Controler.Activity.templateCalendar,
                             "start": start,
                             "end": end,
                             "source": {
@@ -720,7 +726,7 @@
                 },
                 /**
                  * @param {object} p_params
-                 * @returns {String} [type][title][time][billable][code_user]<-tmp>
+                 * @returns {String} [type][account][item][title][time][billable][code_user]<-tmp>
                  */
                 generateTitleGoogleCalendar: function (p_params) {
                     try {
@@ -731,7 +737,26 @@
                                 break;
                             }
                         }
-                        var str = "[" + type.toUpperCase() + "][" + p_params.title + "][" + p_params.time + "H][" + ((p_params.billable === "1")?"a0jD":"free") + "][" + $.Oda.Session.code_user.toUpperCase() + "]" + ((p_params.tmp === "1")?"-TMP":"");
+
+                        var account = "none";
+                        for(var index in $.Oda.App.Controler.Activity.accounts){
+                            var elt = $.Oda.App.Controler.Activity.accounts[index];
+                            if(elt.id === p_params.accountId){
+                                account = $.Oda.App.Controler.Activity.accounts[index].code;
+                                break;
+                            }
+                        }
+
+                        var item = "none";
+                        for(var index in $.Oda.App.Controler.Activity.items){
+                            var elt = $.Oda.App.Controler.Activity.items[index];
+                            if(elt.id === p_params.itemId){
+                                item = $.Oda.App.Controler.Activity.items[index].code;
+                                break;
+                            }
+                        }
+
+                        var str = "[" + type.toUpperCase() + "][" + account + "][" + item + "][" + p_params.title + "][" + p_params.time + "H][" + ((p_params.billable === "1")?"a0jD":"free") + "][" + $.Oda.Session.code_user.toUpperCase() + "]" + ((p_params.tmp === "1")?"-TMP":"");
                         return str;
                     } catch (er) {
                         $.Oda.Log.error("$.Oda.App.Controler.Activity.generateTitleGoogleCalendar : " + er.message);
