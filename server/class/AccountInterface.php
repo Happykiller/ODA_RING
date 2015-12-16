@@ -18,7 +18,90 @@ use \stdClass;
 class AccountInterface extends OdaRestInterface {
     /**
      */
+    function create() {
+        try {
+            $params = new OdaPrepareReqSql();
+            $params->sql = "INSERT INTO  `tab_accounts` (
+                    `code` ,
+                    `label`,
+                    `salesForce`,
+                    `userId`,
+                    `statusId`
+                )
+                VALUES (
+                    :code, :label, :salesForce, :userId, 2
+                )
+            ;";
+            $params->bindsValue = [
+                "code" => $this->inputs["code"],
+                "label" => $this->inputs["label"],
+                "salesForce" => $this->inputs["salesForce"],
+                "userId" => $this->inputs["userId"]
+            ];
+            $params->typeSQL = OdaLibBd::SQL_INSERT_ONE;
+            $retour = $this->BD_ENGINE->reqODASQL($params);
+
+            if($retour->data != null){
+                $accountId = $retour->data;
+
+                $params = new stdClass();
+                $params->value = $retour->data;
+                $this->addDataStr($params);
+
+                $params = new OdaPrepareReqSql();
+                $params->sql = "INSERT INTO  `tab_accounts_items` (
+                        `code` ,
+                        `label`,
+                        `salesForce`,
+                        `userId`,
+                        `statusId`,
+                        `accountId`
+                    )
+                    VALUES (
+                        'default', 'account.item-default', '', :userId, 2, :accountId
+                    )
+                ;";
+                $params->bindsValue = [
+                    "userId" => $this->inputs["userId"],
+                    "accountId" => $accountId
+                ];
+                $params->typeSQL = OdaLibBd::SQL_INSERT_ONE;
+                $retour = $this->BD_ENGINE->reqODASQL($params);
+            }else{
+                $this->dieInError("code already use");
+            }
+        } catch (Exception $ex) {
+            $this->object_retour->strErreur = $ex.'';
+            $this->object_retour->statut = self::STATE_ERROR;
+            die();
+        }
+    }
+    /**
+     */
     function get() {
+        try {
+            $params = new OdaPrepareReqSql();
+            $params->sql = "SELECT a.`id`, a.`code`, a.`label`, a.`salesForce`,
+                a.`statusId`, b.`label` as  'statusLabel', b.`active` as 'statusActive'
+                FROM `tab_accounts` a, `tab_accounts_status` b
+                WHERE 1=1
+                AND a.`statusId` = b.`id`
+            ;";
+            $params->typeSQL = OdaLibBd::SQL_GET_ALL;
+            $retour = $this->BD_ENGINE->reqODASQL($params);
+
+            $params = new stdClass();
+            $params->retourSql = $retour;
+            $this->addDataObject($retour->data->data);
+        } catch (Exception $ex) {
+            $this->object_retour->strErreur = $ex.'';
+            $this->object_retour->statut = self::STATE_ERROR;
+            die();
+        }
+    }
+    /**
+     */
+    function getFull() {
         try {
             $params = new OdaPrepareReqSql();
             $params->sql = "SELECT a.`id`, a.`code`, a.`label`, a.`salesForce`,

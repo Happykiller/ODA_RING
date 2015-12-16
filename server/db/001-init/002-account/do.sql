@@ -56,7 +56,10 @@ CREATE TABLE IF NOT EXISTS `@prefix@tab_accounts` (
   `label` varchar(255) NOT NULL,
   `salesForce` varchar(500) NOT NULL,
   `statusId` int(11) NOT NULL,
+  `userId` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE(`code`),
+  KEY `userId` (`userId`),
   KEY `statusId` (`statusId`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
@@ -82,7 +85,9 @@ CREATE TABLE IF NOT EXISTS `@prefix@tab_accounts_items` (
   `accountId` int(11) NOT NULL,
   `statusId` int(11) NOT NULL,
   `charge` int(11) NOT NULL,
+  `userId` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
+  KEY `userId` (`userId`),
   KEY `accountId` (`accountId`),
   KEY `statusId` (`statusId`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
@@ -102,14 +107,14 @@ INSERT INTO `@prefix@tab_accounts_items` (`id`, `code`, `label`, `salesForce`, `
 --
 -- Contraintes pour la table `tab_accounts`
 --
-ALTER TABLE `@prefix@tab_accounts`
-ADD CONSTRAINT `fk_accounts_statusId` FOREIGN KEY (`statusId`) REFERENCES `@prefix@tab_accounts_status` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `@prefix@tab_accounts` ADD CONSTRAINT `fk_accounts_statusId` FOREIGN KEY (`statusId`) REFERENCES `@prefix@tab_accounts_status` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `@prefix@tab_accounts` ADD CONSTRAINT `fk_accounts_usersId` FOREIGN KEY (`userId`) REFERENCES `@prefix@api_tab_utilisateurs`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Contraintes pour la table `tab_accounts_items`
 --
-ALTER TABLE `@prefix@tab_accounts_items`
-ADD CONSTRAINT `fk_accounts_items_status` FOREIGN KEY (`statusId`) REFERENCES `@prefix@tab_accounts_items_status` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-ADD CONSTRAINT `fk_items_accountId` FOREIGN KEY (`accountId`) REFERENCES `@prefix@tab_accounts` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `@prefix@tab_accounts_items` ADD CONSTRAINT `fk_accounts_items_status` FOREIGN KEY (`statusId`) REFERENCES `@prefix@tab_accounts_items_status` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `@prefix@tab_accounts_items` ADD CONSTRAINT `fk_items_accountId` FOREIGN KEY (`accountId`) REFERENCES `@prefix@tab_accounts` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `@prefix@tab_accounts_items` ADD CONSTRAINT `fk_accounts_items_usersId` FOREIGN KEY (`userId`) REFERENCES `@prefix@api_tab_utilisateurs`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 SET FOREIGN_KEY_CHECKS=1;

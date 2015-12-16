@@ -112,14 +112,25 @@ $slim->get('/rapport/search/activity/', function () use ($slim) {
 
 $slim->get('/account/', function () use ($slim) {
     $params = new OdaPrepareInterface();
-    $params->arrayInputOpt = array("withItem"=>"false");
+    $params->arrayInputOpt = array("withItem"=>"false", "mode"=>"light");
     $params->slim = $slim;
     $INTERFACE = new AccountInterface($params);
     if($INTERFACE->inputs["withItem"] === "true"){
         $INTERFACE->getOnlyWithItem();
+    }elseif($INTERFACE->inputs["mode"] === "full") {
+        $INTERFACE->getFull();
     }else{
         $INTERFACE->get();
     }
+});
+
+$slim->post('/account/', function () use ($slim) {
+    $params = new OdaPrepareInterface();
+    $params->arrayInput = array("code","label","salesForce","userId");
+    $params->modePublic = false;
+    $params->slim = $slim;
+    $INTERFACE = new AccountInterface($params);
+    $INTERFACE->create();
 });
 
 $slim->get('/account/item/', function () use ($slim) {
