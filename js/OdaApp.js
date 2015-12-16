@@ -66,8 +66,7 @@
                     "path" : "partials/activity-list.html",
                     "title" : "activity-list.title",
                     "urls" : ["activity-list"],
-                    "middleWares" : ["support","auth"],
-                    "dependencies" : ["datatables"]
+                    "middleWares" : ["support","auth"]
                 });
 
                 $.Oda.Router.addRoute("activity-rapport-client", {
@@ -75,6 +74,14 @@
                     "title" : "activity-rapport-client.title",
                     "urls" : ["activity-rapport-client"],
                     "middleWares" : ["support","auth"]
+                });
+
+                $.Oda.Router.addRoute("manage-accounts", {
+                    "path" : "partials/manage-accounts.html",
+                    "title" : "manage-accounts.title",
+                    "urls" : ["manage-accounts"],
+                    "middleWares" : ["support","auth"],
+                    "dependencies" : ["dataTables"]
                 });
 
                 $.Oda.Router.startRooter();
@@ -95,7 +102,7 @@
                 "activityTypes" : null,
                 "activityLocation" : null,
                 "accounts": null,
-                "items":null,
+                "items": null,
                 "templateCalendar" : '[type][account][item][title][time][billable][code_user]<-tmp>',
                 /**
                  */
@@ -840,6 +847,165 @@
                         return this;
                     } catch (er) {
                         $.Oda.Log.error("$.Oda.Controler.Activity.getHtmlSelectItems : " + er.message);
+                        return null;
+                    }
+                },
+            },
+            "ManageAccounts" : {
+                /**
+                 * @returns {$.Oda.App.Controler.ManageAccounts}
+                 */
+                start : function () {
+                    try {
+                        $.Oda.App.Controler.ManageAccounts.displayAccounts();
+                        return this;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.ManageAccounts.start : " + er.message);
+                        return null;
+                    }
+                },
+                /**
+                 * @returns {$.Oda.App.Controler.ManageAccounts}
+                 */
+                displayAccounts : function (p_params) {
+                    try {
+                        var retour = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/", { functionRetour : function(response) {
+                            var objDataTable = $.Oda.Tooling.objDataTableFromJsonArray(response.data);
+                            var strhtml = '<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered hover" id="tableAccounts">';
+                            strhtml += '<tfoot><tr><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></tfoot></table>';
+                            $('#tabAccounts').html(strhtml);
+
+                            var oTable = $('#tableAccounts').DataTable({
+                                "sPaginationType": "full_numbers",
+                                "aaData": objDataTable.data,
+                                "aaSorting": [[3, 'desc'], [0, 'asc']],
+                                "aoColumns": [
+                                    {"sTitle": "Id", "sClass": "dataTableColCenter"},
+                                    {"sTitle": "Code", "sClass": "Left"},
+                                    {"sTitle": "Label", "sClass": "Left"},
+                                    {"sTitle": "Statut", "sClass": "Left"},
+                                    {"sTitle": "Actions", "sClass": "dataTableColCenter"}
+                                ],
+                                "aoColumnDefs": [
+                                    {
+                                        "mRender": function (data, type, row) {
+                                            return row[objDataTable.entete["id"]];
+                                        },
+                                        "aTargets": [0]
+                                    },
+                                    {//code_user
+                                        "mRender": function (data, type, row) {
+                                            return row[objDataTable.entete["code"]];
+                                        },
+                                        "aTargets": [1]
+                                    },
+                                    {
+                                        "mRender": function (data, type, row) {
+                                            return $.Oda.I8n.getByString(row[objDataTable.entete["label"]]);
+                                        },
+                                        "aTargets": [2]
+                                    },
+                                    {
+                                        "mRender": function (data, type, row) {
+                                            return row[objDataTable.entete["statusId"]];
+                                        },
+                                        "aTargets": [3]
+                                    },
+                                    {
+                                        "mRender": function (data, type, row) {
+                                            var strHtml = "";
+                                            strHtml += '<a onclick="editer(\'' + row[objDataTable.entete["id"]] + '\')" id="bt_edit_' + row[objDataTable.entete["id"]] + '" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> ' + $.Oda.I8n.get('oda-main', 'bt-edit') + '</a>';
+                                            return strHtml;
+                                        },
+                                        "aTargets": [4]
+                                    }
+                                ]
+                            });
+
+                            var table = $('#tableAccounts').DataTable();
+
+                            $('#tableAccounts tbody').on('click', 'tr', function () {
+                                if ($(this).hasClass('selected')) {
+                                    $(this).removeClass('selected');
+                                }
+                                else {
+                                    table.$('tr.selected').removeClass('selected');
+                                    $(this).addClass('selected');
+                                }
+                            });
+
+                            $("#tableAccounts tfoot th").each(function (i) {
+                                var valOdaAttri = $(this).attr("oda-attr");
+                                if (valOdaAttri == "select") {
+                                    var select = $('<select data-mini="true"><option></option></select>')
+                                        .appendTo($(this).empty())
+                                        .on('change', function () {
+                                            var val = $(this).val();
+
+                                            table.column(i)
+                                                .search(val ? '^' + $(this).val() + '$' : val, true, false)
+                                                .draw();
+                                        });
+
+                                    table.column(i - 1).data().unique().sort().each(function (d, j) {
+                                        select.append('<option value="' + d + '">' + d + '</option>');
+                                    });
+                                } else {
+                                    $('<input type="text" placeholder="Search" size="4"/>')
+                                        .appendTo($(this).empty())
+                                        .on('keyup change', function () {
+                                            table
+                                                .column(i)
+                                                .search(this.value)
+                                                .draw();
+                                        });
+                                }
+                            });
+                        }});
+                        return this;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.ManageAccounts.displayAccounts : " + er.message);
+                        return null;
+                    }
+                },
+                /**
+                 * @returns {$.Oda.App.Controler.ManageAccounts}
+                 */
+                newAccount : function () {
+                    try {
+                        var strHtml = $.Oda.Display.TemplateHtml.create({
+                            template : "templateNewAccount"
+                            , scope : {
+                            }
+                        });
+
+                        var strFooter = "";
+                        strFooter += '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controler.Activity.submitNewAccount();" class="btn btn-primary disabled" disabled>Submit</button >';
+
+                        $.Oda.Display.Popup.open({
+                            "name" : "newAccount",
+                            "label" : $.Oda.I8n.get('manage-accounts','newAccount'),
+                            "details" : strHtml,
+                            "footer" : strFooter,
+                            "callback" : function(e){
+                                $.Oda.Scope.Gardian.add({
+                                    id: "newAccount",
+                                    listElt: ["code","label","salesForce"],
+                                    function: function (e) {
+                                        if( ($("#code").data("isOk")) && ($("#label").data("isOk")) && ($("#salesForce").data("isOk")) ){
+                                            $("#submit").removeClass("disabled");
+                                            $("#submit").removeAttr("disabled");
+                                        }else{
+                                            $("#submit").addClass("disabled");
+                                            $("#submit").attr("disabled", true);
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                        return this;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.ManageAccounts.newAccount : " + er.message);
                         return null;
                     }
                 },

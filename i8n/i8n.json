@@ -77,7 +77,7 @@
   {
     "groupName" : "activity-rapport-client",
     "fr" : {
-      "title" : "Liste des activités"
+      "title" : "Rapport pour les clients"
     },
     "en" : {
       "title" : "Home"
@@ -97,6 +97,25 @@
     },
     "en" : {
       "title" : "No Item"
+    }
+  },
+  {
+    "groupName" : "manage-accounts",
+    "fr" : {
+      "title" : "Les comptes client",
+      "newAccount" : "Nouveau compte",
+      "accountCode" : "Code",
+      "accountCode-tips" : "Le code du compte",
+      "accountCode-placeholder" : "CODE",
+      "accountLabel" : "Intitulé",
+      "accountLabel-tips" : "Le nom du compte",
+      "accountLabel-placeholder" : "Le nom",
+      "accountSalesForce" : "SalesForce",
+      "accountSalesForce-tips" : "Le code salesForce",
+      "accountSalesForce-placeholder" : "code salesForce"
+    },
+    "en" : {
+      "title" : "Home"
     }
   }
 ]
