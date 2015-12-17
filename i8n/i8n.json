@@ -112,7 +112,20 @@
       "accountLabel-placeholder" : "Le nom",
       "accountSalesForce" : "SalesForce",
       "accountSalesForce-tips" : "Le code salesForce",
-      "accountSalesForce-placeholder" : "code salesForce"
+      "accountSalesForce-placeholder" : "code salesForce",
+      "newItem" : "Nouveau item pour le compte code : ",
+      "itemCode" : "Code",
+      "itemCode-tips" : "Le code d' l'item",
+      "itemCode-placeholder" : "CODE",
+      "itemLabel" : "Intitulé",
+      "itemLabel-tips" : "Le nom du compte",
+      "itemLabel-placeholder" : "Le nom",
+      "itemSalesForce" : "SalesForce",
+      "itemSalesForce-tips" : "Le code salesForce",
+      "itemSalesForce-placeholder" : "code salesForce",
+      "itemCharge" : "Charge",
+      "itemCharge-tips" : "En heure",
+      "itemCharge-placeholder" : "Ici les charges"
     },
     "en" : {
       "title" : "Home"

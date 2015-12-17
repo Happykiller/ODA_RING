@@ -102,12 +102,12 @@ $slim->get('/event/search/user/:id', function ($id) use ($slim) {
     $INTERFACE->getByUser($id);
 });
 
-$slim->get('/rapport/search/activity/', function () use ($slim) {
+$slim->get('/rapport/account/:accountId/client/', function ($accountId) use ($slim) {
     $params = new OdaPrepareInterface();
     $params->arrayInputOpt = array("title","startDate","endDate","billable");
     $params->slim = $slim;
     $INTERFACE = new RapportInterface($params);
-    $INTERFACE->get();
+    $INTERFACE->getAccount($accountId);
 });
 
 $slim->get('/account/', function () use ($slim) {
@@ -138,6 +138,14 @@ $slim->get('/account/item/', function () use ($slim) {
     $params->slim = $slim;
     $INTERFACE = new AccountInterface($params);
     $INTERFACE->getItem();
+});
+
+$slim->post('/account/item/', function () use ($slim) {
+    $params = new OdaPrepareInterface();
+    $params->arrayInput = array("code","label","salesForce","userId", "accountId", "charge");
+    $params->slim = $slim;
+    $INTERFACE = new AccountInterface($params);
+    $INTERFACE->createItem();
 });
 
 $slim->get('/account/:id/search/item', function ($id) use ($slim) {

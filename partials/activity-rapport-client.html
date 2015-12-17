@@ -2,11 +2,41 @@
     <h2 oda-label="activity-rapport-client.title"></h2>
 
     <div class="row">
-        <div class="col-md-12">
-            <span oda-label="home.hello"></span>
+        <div class="col-md-12" id="search">
+            <div class="form-group">
+                <label for="account" oda-label="activity.account">activity.account</label>
+                <select class="form-control" oda-input-select="account">
+                    <option value="" oda-label="oda-main.select-default"></option>
+                </select>
+            </div>
         </div>
-        <div class="col-md-12">
-
+    </div>
+    <div class="row">
+        <div class="col-md-12" id="divRapport">
         </div>
     </div>
 </div>
+
+<script id="eltRapport" type="text/template">
+    <div>
+        <ul>
+            <li>
+                Date : {{date}}
+                <ul>
+                    <li>
+                        Item : {{item}} - {{time}}H ({{user}}) : {{title}}
+                        <ul>
+                            <li>
+                                Commentaires : {{cmt}}
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</script>
+
+<script>
+    $.Oda.App.Controler.RapportClient.start();
+</script>

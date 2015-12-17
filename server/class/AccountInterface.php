@@ -78,6 +78,44 @@ class AccountInterface extends OdaRestInterface {
     }
     /**
      */
+    function createItem() {
+        try {
+            $params = new OdaPrepareReqSql();
+            $params->sql = "INSERT INTO  `tab_accounts_items` (
+                    `code` ,
+                    `label`,
+                    `salesForce`,
+                    `userId`,
+                    `statusId`,
+                    `accountId`,
+                    `charge`
+                )
+                VALUES (
+                    :code, :label, :salesForce, :userId, 2, :accountId, :charge
+                )
+            ;";
+            $params->bindsValue = [
+                "code" => $this->inputs["code"],
+                "label" => $this->inputs["label"],
+                "salesForce" => $this->inputs["salesForce"],
+                "userId" => $this->inputs["userId"],
+                "accountId" => $this->inputs["accountId"],
+                "charge" => $this->inputs["charge"]
+            ];
+            $params->typeSQL = OdaLibBd::SQL_INSERT_ONE;
+            $retour = $this->BD_ENGINE->reqODASQL($params);
+
+            $params = new stdClass();
+            $params->value = $retour->data;
+            $this->addDataStr($params);
+        } catch (Exception $ex) {
+            $this->object_retour->strErreur = $ex.'';
+            $this->object_retour->statut = self::STATE_ERROR;
+            die();
+        }
+    }
+    /**
+     */
     function get() {
         try {
             $params = new OdaPrepareReqSql();
@@ -194,7 +232,9 @@ class AccountInterface extends OdaRestInterface {
             die();
         }
     }
+
     /**
+     * @param $accountId
      */
     function getItemByAccount($accountId) {
         try {
