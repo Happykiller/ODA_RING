@@ -58,7 +58,8 @@
                     "path" : "partials/home.html",
                     "title" : "oda-main.home-title",
                     "urls" : ["","home"],
-                    "middleWares":["support","auth"]
+                    "middleWares":["support","auth"],
+                    "dependencies" : ["hightcharts"]
                 });
 
                 $.Oda.Router.addRoute("activity", {
@@ -104,6 +105,65 @@
         "Controler" : {
             "config" : {
                 "activityGoogleCalendar" : "primary"
+            },
+            "Home" : {
+                /**
+                 */
+                start: function () {
+                    try {
+                        var tabInput = {
+                            "userId" : $.Oda.Session.id
+                        };
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/rapport/event/type/", { functionRetour : function(response){
+                            var datas = [];
+
+                            for(var indice in response.data.data){
+                                var elt = response.data.data[indice];
+                                var data = {
+                                    "name": $.Oda.I8n.getByString(elt.label),
+                                    "y": parseInt(elt.nb)
+                                };
+                                datas.push(data);
+                            }
+
+                            $('#pieEventByType').highcharts({
+                                chart: {
+                                    plotBackgroundColor: null,
+                                    plotBorderWidth: null,
+                                    plotShadow: false,
+                                    type: 'pie'
+                                },
+                                title: {
+                                    text: $.Oda.I8n.get("home","pieEventByType")
+                                },
+                                tooltip: {
+                                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                                },
+                                plotOptions: {
+                                    pie: {
+                                        allowPointSelect: true,
+                                        cursor: 'pointer',
+                                        dataLabels: {
+                                            enabled: true,
+                                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                            style: {
+                                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                                            }
+                                        }
+                                    }
+                                },
+                                series: [{
+                                    name: "Type",
+                                    colorByPoint: true,
+                                    data: datas
+                                }]
+                            });
+                        }},tabInput);
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.Home.start : " + er.message);
+                        return null;
+                    }
+                },
             },
             "Activity" : {
                 "dayClickData" : null,
@@ -1214,7 +1274,7 @@
                                     var strHtml = $.Oda.Display.TemplateHtml.create({
                                         template : "eltRapport"
                                         , scope : {
-                                            "date" : moment(elt.start).format('MM/DD/YYYY'),
+                                            "date" : moment(elt.start).format('DD/MM/YYYY'),
                                             "title" : elt.title,
                                             "time" : elt.time,
                                             "cmt" : elt.cmt,

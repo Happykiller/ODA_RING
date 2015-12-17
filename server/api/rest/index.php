@@ -24,12 +24,16 @@ $slim->get('/', function () {
     echo $parser->parse($markdown);
 });
 
+//----------- CONFIG -------------------------------
+
 $slim->get('/config/search/user/:id', function ($id) use ($slim) {
     $params = new OdaPrepareInterface();
     $params->slim = $slim;
     $INTERFACE = new ConfigInterface($params);
     $INTERFACE->getByUser($id);
 });
+
+//----------- ENENT -------------------------------
 
 $slim->get('/event/', function () use ($slim) {
     $params = new OdaPrepareInterface();
@@ -102,6 +106,8 @@ $slim->get('/event/search/user/:id', function ($id) use ($slim) {
     $INTERFACE->getByUser($id);
 });
 
+//----------- RAPPORTS -------------------------------
+
 $slim->get('/rapport/account/:accountId/client/', function ($accountId) use ($slim) {
     $params = new OdaPrepareInterface();
     $params->arrayInputOpt = array("title","startDate","endDate","billable");
@@ -109,6 +115,16 @@ $slim->get('/rapport/account/:accountId/client/', function ($accountId) use ($sl
     $INTERFACE = new RapportInterface($params);
     $INTERFACE->getAccount($accountId);
 });
+
+$slim->get('/rapport/event/type/', function () use ($slim) {
+    $params = new OdaPrepareInterface();
+    $params->arrayInputOpt = array("userId"=>null);
+    $params->slim = $slim;
+    $INTERFACE = new RapportInterface($params);
+    $INTERFACE->getPieActivityType();
+});
+
+//----------- ACCOUNT -------------------------------
 
 $slim->get('/account/', function () use ($slim) {
     $params = new OdaPrepareInterface();

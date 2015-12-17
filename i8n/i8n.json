@@ -3,7 +3,8 @@
     "groupName" : "home",
     "fr" : {
       "title" : "Accueil",
-      "hello" : "Bonjour avec le FrameWork Oda"
+      "hello" : "Bonjour sur le service de gestion d'activité avec le FrameWork Oda",
+      "pieEventByType" : "Répartition des types d'activité"
     },
     "en" : {
       "title" : "Home",

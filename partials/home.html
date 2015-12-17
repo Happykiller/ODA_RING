@@ -5,8 +5,12 @@
         <div class="col-md-12">
             <span oda-label="home.hello"></span>
         </div>
-        <div class="col-md-12">
-
+        <div class="col-md-12" style="text-align: center" id="pieEventByType">
+            <oda-loading></oda-loading>
         </div>
     </div>
 </div>
+
+<script>
+    $.Oda.App.Controler.Home.start();
+</script>
