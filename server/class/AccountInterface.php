@@ -113,6 +113,24 @@ class AccountInterface extends OdaRestInterface {
             $params->typeSQL = OdaLibBd::SQL_GET_ALL;
             $retour = $this->BD_ENGINE->reqODASQL($params);
 
+            foreach($retour->data->data as $value) {
+                $params = new OdaPrepareReqSql();
+                $params->sql = "SELECT a.`id`, a.`code`, a.`label`, a.`salesForce`,
+                    a.`statusId`, b.`label` as  'statusLabel', b.`active` as 'statusActive',
+                    a.`accountId`
+                    FROM `tab_accounts_items` a, `tab_accounts_items_status` b
+                    WHERE 1=1
+                    AND a.`statusId` = b.`id`
+                    AND a.`accountId` = :accountId
+                ;";
+                $params->typeSQL = OdaLibBd::SQL_GET_ALL;
+                $params->bindsValue = [
+                    "accountId" => $value->id
+                ];
+                $retourItems = $this->BD_ENGINE->reqODASQL($params);
+                $value->items = $retourItems->data->data;
+            }
+
             $params = new stdClass();
             $params->retourSql = $retour;
             $this->addDataObject($retour->data->data);

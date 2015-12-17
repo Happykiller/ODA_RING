@@ -884,16 +884,21 @@
                                     {"sTitle": "Code", "sClass": "Left"},
                                     {"sTitle": "Label", "sClass": "Left"},
                                     {"sTitle": "Statut", "sClass": "Left"},
-                                    {"sTitle": "Actions", "sClass": "dataTableColCenter"}
+                                    {"sTitle": "Items", "sClass": "Left"}
                                 ],
                                 "aoColumnDefs": [
                                     {
                                         "mRender": function (data, type, row) {
+                                            if ( type === 'display' ) {
+                                                var strHtml = "";
+                                                strHtml += '<a onclick="editer(\'' + row[objDataTable.entete["id"]] + '\')" id="bt_edit_' + row[objDataTable.entete["id"]] + '" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> ' + row[objDataTable.entete["id"]] + '</a>';
+                                                return strHtml;
+                                            }
                                             return row[objDataTable.entete["id"]];
                                         },
                                         "aTargets": [0]
                                     },
-                                    {//code_user
+                                    {
                                         "mRender": function (data, type, row) {
                                             return row[objDataTable.entete["code"]];
                                         },
@@ -914,7 +919,6 @@
                                     {
                                         "mRender": function (data, type, row) {
                                             var strHtml = "";
-                                            strHtml += '<a onclick="editer(\'' + row[objDataTable.entete["id"]] + '\')" id="bt_edit_' + row[objDataTable.entete["id"]] + '" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> ' + $.Oda.I8n.get('oda-main', 'bt-edit') + '</a>';
                                             return strHtml;
                                         },
                                         "aTargets": [4]
