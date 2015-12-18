@@ -1339,6 +1339,7 @@
                                             "id" : elt.itemId,
                                             "code" : elt.itemCode,
                                             "label" : elt.itemLabel,
+                                            "accountLabel" : elt.accountLabel,
                                             "provided" : parseInt(elt.itemCharge),
                                             "cunsumed" : 0,
                                             "delta" : 0,
@@ -1362,7 +1363,7 @@
                                 var strHtmlItems = '';
                                 for(var indice in listDataItemRapport){
                                     var item = listDataItemRapport[indice];
-                                    strHtmlItems += '<tr><td>'+ $.Oda.I8n.getByString(item.label)+'</td><td>'+item.provided+'H</td><td>'+item.cunsumed+'H</td><td>'+item.delta+'H</td></tr>'
+                                    strHtmlItems += '<tr><td>'+ ((account.val()==="0")?"Account: "+$.Oda.I8n.getByString(item.accountLabel)+", ":"") + $.Oda.I8n.getByString(item.label)+'</td><td>'+item.provided+'H</td><td>'+item.cunsumed+'H</td><td>'+item.delta+'H</td></tr>'
                                 }
                                 var strHtml = $.Oda.Display.TemplateHtml.create({
                                     template : "itemRapport"
