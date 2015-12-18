@@ -2,11 +2,22 @@
     <h2 oda-label="activity-rapport-client.title"></h2>
 
     <div class="row">
-        <div class="col-md-12" id="search">
+        <div class="col-md-8">
             <div class="form-group">
                 <label for="account" oda-label="activity.account">activity.account</label>
                 <select class="form-control" oda-input-select="account">
                     <option value="" oda-label="oda-main.select-default"></option>
+                    <option value="0" oda-label="oda-main.all"></option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label oda-label="activity.activityModeBillable">activity.activityModeBillable</label>
+                <select class="form-control" oda-input-select="billable">
+                    <option value="" oda-label="oda-main.all"></option>
+                    <option value="0">Non</option>
+                    <option value="1" selected>Oui</option>
                 </select>
             </div>
         </div>
@@ -18,23 +29,36 @@
 </div>
 
 <script id="eltRapport" type="text/template">
-    <div>
+    <li>
+        {{account}}Item: {{item}} - {{time}}H{{billable}} ({{user}}) : {{title}}
         <ul>
             <li>
-                Date : {{date}}
-                <ul>
-                    <li>
-                        Item : {{item}} - {{time}}H ({{user}}) : {{title}}
-                        <ul>
-                            <li>
-                                Commentaires : {{cmt}}
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+                Commentaires : {{cmt}}
             </li>
         </ul>
-    </div>
+    </li>
+</script>
+
+<script id="itemRapport" type="text/template">
+    <table class="table table-striped table-bordered table-hover table-condensed">
+        <thead>
+        <tr>
+            <th>Item</th>
+            <th>Provided</th>
+            <th>Consumed</th>
+            <th>Delta</th>
+        </tr>
+        </thead>
+        <tbody>
+            {{items}}
+            <tr style="font-weight: bold">
+                <td>Total</td>
+                <td>{{totalItemRapport.provided}}H</td>
+                <td>{{totalItemRapport.cunsumed}}H</td>
+                <td>{{totalItemRapport.delta}}H</td>
+            </tr>
+        </tbody>
+    </table>
 </script>
 
 <script>

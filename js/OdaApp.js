@@ -121,7 +121,7 @@
                                 var elt = response.data.data[indice];
                                 var data = {
                                     "name": $.Oda.I8n.getByString(elt.label),
-                                    "y": parseInt(elt.nb)
+                                    "y": parseInt(elt.sumTime)
                                 };
                                 datas.push(data);
                             }
@@ -154,6 +154,55 @@
                                 },
                                 series: [{
                                     name: "Type",
+                                    colorByPoint: true,
+                                    data: datas
+                                }]
+                            });
+                        }},tabInput);
+
+                        var tabInput = {
+                            "userId" : $.Oda.Session.id
+                        };
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/rapport/event/location/", { functionRetour : function(response){
+                            var datas = [];
+
+                            for(var indice in response.data.data){
+                                var elt = response.data.data[indice];
+                                var data = {
+                                    "name": $.Oda.I8n.getByString(elt.label),
+                                    "y": parseInt(elt.sumTime)
+                                };
+                                datas.push(data);
+                            }
+
+                            $('#pieEventByLocation').highcharts({
+                                chart: {
+                                    plotBackgroundColor: null,
+                                    plotBorderWidth: null,
+                                    plotShadow: false,
+                                    type: 'pie'
+                                },
+                                title: {
+                                    text: $.Oda.I8n.get("home","pieEventByLocation")
+                                },
+                                tooltip: {
+                                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                                },
+                                plotOptions: {
+                                    pie: {
+                                        allowPointSelect: true,
+                                        cursor: 'pointer',
+                                        dataLabels: {
+                                            enabled: true,
+                                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                            style: {
+                                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                                            }
+                                        }
+                                    }
+                                },
+                                series: [{
+                                    name: "Location",
                                     colorByPoint: true,
                                     data: datas
                                 }]
@@ -1244,9 +1293,9 @@
 
                             $.Oda.Scope.Gardian.add({
                                 id : "selectSearch",
-                                listElt : ["account"],
+                                listElt : ["account","billable"],
                                 function : function(e){
-                                    $.Oda.App.Controler.RapportClient.search({id:$('#'+e.elt).val()});
+                                    $.Oda.App.Controler.RapportClient.search();
                                 }
                             });
                         }});
@@ -1257,34 +1306,94 @@
                     }
                 },
                 /**
-                 * @param {Object} p_params
-                 * @param p_params.id
                  * @returns {$.Oda.App.Controler.RapportClient}
                  */
-                search : function (p_params) {
+                search : function () {
                     try {
-                        if(p_params.id === ""){
+                        var account = $('#account');
+                        var billable = $('#billable');
+                        if(account.val() === ""){
                             $('#divRapport').html('Empty');
                         }else{
                             $.Oda.Display.loading({elt:$('#divRapport')});
-                            var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/rapport/account/"+p_params.id+"/client/", {functionRetour : function(response){
+                            var tabInput = {
+                                "accountId" : account.val(),
+                                "billable" : billable.val()
+                            };
+                            var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/rapport/event/client/", {functionRetour : function(response){
                                 $('#divRapport').html('');
-                                for(var indice in response.data.data){
+                                var listDataDisplayEvent = {};
+                                var listDataItemRapport = {};
+                                var totalItemRapport = {
+                                    "provided": 0,
+                                    "cunsumed": 0,
+                                    "delta": 0,
+                                };
+
+                                for(var indice in response.data.data) {
                                     var elt = response.data.data[indice];
-                                    var strHtml = $.Oda.Display.TemplateHtml.create({
-                                        template : "eltRapport"
-                                        , scope : {
-                                            "date" : moment(elt.start).format('DD/MM/YYYY'),
-                                            "title" : elt.title,
-                                            "time" : elt.time,
-                                            "cmt" : elt.cmt,
-                                            "item" : $.Oda.I8n.getByString(elt.itemLabel),
-                                            "user" : elt.userFirstName + " " + elt.userLastName
-                                        }
-                                    });
-                                    $('#divRapport').append(strHtml)
+
+                                    //itemRepport
+                                    if (!listDataItemRapport[elt.itemId]) {
+                                        listDataItemRapport[elt.itemId]= {
+                                            "id" : elt.itemId,
+                                            "code" : elt.itemCode,
+                                            "label" : elt.itemLabel,
+                                            "provided" : parseInt(elt.itemCharge),
+                                            "cunsumed" : 0,
+                                            "delta" : 0,
+                                            "list" : []
+                                        };
+                                        totalItemRapport.provided += parseInt(elt.itemCharge);
+                                    }
+                                    listDataItemRapport[elt.itemId].cunsumed += parseFloat(elt.time);
+                                    listDataItemRapport[elt.itemId].delta = listDataItemRapport[elt.itemId].provided - listDataItemRapport[elt.itemId].cunsumed;
+                                    listDataItemRapport[elt.itemId].list.push(elt);
+                                    totalItemRapport.cunsumed += parseFloat(elt.time);
+                                    totalItemRapport.delta = totalItemRapport.provided - totalItemRapport.cunsumed;
+
+                                    //displayEvent
+                                    if (!listDataDisplayEvent[moment(elt.start).format('DD/MM/YYYY')]) {
+                                        listDataDisplayEvent[moment(elt.start).format('DD/MM/YYYY')] = [];
+                                    }
+                                    listDataDisplayEvent[moment(elt.start).format('DD/MM/YYYY')].push(elt);
                                 }
-                            }});
+
+                                var strHtmlItems = '';
+                                for(var indice in listDataItemRapport){
+                                    var item = listDataItemRapport[indice];
+                                    strHtmlItems += '<tr><td>'+ $.Oda.I8n.getByString(item.label)+'</td><td>'+item.provided+'H</td><td>'+item.cunsumed+'H</td><td>'+item.delta+'H</td></tr>'
+                                }
+                                var strHtml = $.Oda.Display.TemplateHtml.create({
+                                    template : "itemRapport"
+                                    , scope : {
+                                        "items": strHtmlItems,
+                                        "totalItemRapport": totalItemRapport
+                                    }
+                                });
+                                $('#divRapport').append(strHtml);
+
+                                $.each( listDataDisplayEvent, function( key, value ) {
+                                    var strHtml = '<div><ul><li>Date : '+moment(value[0].start).format('DD/MM/YYYY')+'<ul>';
+                                    for(var indice in value){
+                                        var elt = value[indice];
+                                        strHtml += $.Oda.Display.TemplateHtml.create({
+                                            template : "eltRapport"
+                                            , scope : {
+                                                "title" : elt.title,
+                                                "time" : elt.time,
+                                                "cmt" : elt.cmt,
+                                                "item" : $.Oda.I8n.getByString(elt.itemLabel),
+                                                "user" : elt.userFirstName + " " + elt.userLastName,
+                                                "account" : (account.val()==="0")?"Account: "+$.Oda.I8n.getByString(elt.accountLabel)+", ":"",
+                                                "billable" : ((billable.val()!=="1")&&(elt.billable==="1"))?"("+ $.Oda.I8n.get("activity","activityBillable")+")":"",
+                                            }
+                                        });
+                                    }
+                                    strHtml += '</ul></li></ul></div>'
+                                    $('#divRapport').append(strHtml);
+                                });
+                            }},tabInput);
                         }
                         return this;
                     } catch (er) {

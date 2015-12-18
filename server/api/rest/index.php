@@ -108,12 +108,12 @@ $slim->get('/event/search/user/:id', function ($id) use ($slim) {
 
 //----------- RAPPORTS -------------------------------
 
-$slim->get('/rapport/account/:accountId/client/', function ($accountId) use ($slim) {
+$slim->get('/rapport/event/client/', function () use ($slim) {
     $params = new OdaPrepareInterface();
-    $params->arrayInputOpt = array("title","startDate","endDate","billable");
+    $params->arrayInputOpt = array("accountId"=>null,"billable"=>null);
     $params->slim = $slim;
     $INTERFACE = new RapportInterface($params);
-    $INTERFACE->getAccount($accountId);
+    $INTERFACE->getEvents();
 });
 
 $slim->get('/rapport/event/type/', function () use ($slim) {
@@ -122,6 +122,14 @@ $slim->get('/rapport/event/type/', function () use ($slim) {
     $params->slim = $slim;
     $INTERFACE = new RapportInterface($params);
     $INTERFACE->getPieActivityType();
+});
+
+$slim->get('/rapport/event/location/', function () use ($slim) {
+    $params = new OdaPrepareInterface();
+    $params->arrayInputOpt = array("userId"=>null);
+    $params->slim = $slim;
+    $INTERFACE = new RapportInterface($params);
+    $INTERFACE->getPieLocation();
 });
 
 //----------- ACCOUNT -------------------------------

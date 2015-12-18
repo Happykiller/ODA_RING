@@ -32,3 +32,37 @@
     * type : GET
 * `/event/search/user/:id`
     * type : GET
+    
+## account
+
+* `/account/`
+    * type : GET
+    * optional params : "withItem","mode"
+* `/account/`
+    * type : POST
+    * mandatory params : "code","label","salesForce","userId"
+    * public : false
+* `/account/item/`
+    * type : GET
+    * optional params : "withItem","mode"
+* `/account/item/`
+    * type : POST
+    * mandatory params : "code","label","salesForce","userId","accountId","charge"
+    * public : false
+* `/account/:id/search/item`
+     * type : GET
+
+## rapport
+
+* `/rapport/event/client/`
+    * type : GET
+    * optional params : "accountId","billable"
+* `/rapport/event/type/`
+    * type : GET
+    * optional params : "userId"
+* `/rapport/event/location/`
+    * type : GET
+    * optional params : "userId" 
+
+    
+
