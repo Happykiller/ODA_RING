@@ -134,7 +134,8 @@ ALTER TABLE `@prefix@tab_events` ADD  CONSTRAINT `fk_events_items` FOREIGN KEY (
 CREATE TABLE IF NOT EXISTS `@prefix@tab_config` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) NOT NULL,
-  `activityGoogleCalendar` varchar(500) NOT NULL,
+  `activityGoogleCalendar` varchar(500) NOT NULL DEFAULT 'primary',
+  `active` tinyint(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;

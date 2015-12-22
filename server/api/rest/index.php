@@ -25,6 +25,12 @@ $slim->get('/', function () {
 });
 
 //----------- CONFIG -------------------------------
+$slim->get('/config/', function () use ($slim) {
+    $params = new OdaPrepareInterface();
+    $params->slim = $slim;
+    $INTERFACE = new ConfigInterface($params);
+    $INTERFACE->get();
+});
 
 $slim->get('/config/search/user/:id', function ($id) use ($slim) {
     $params = new OdaPrepareInterface();
@@ -34,7 +40,6 @@ $slim->get('/config/search/user/:id', function ($id) use ($slim) {
 });
 
 //----------- ENENT -------------------------------
-
 $slim->get('/event/', function () use ($slim) {
     $params = new OdaPrepareInterface();
     $params->slim = $slim;
@@ -107,7 +112,6 @@ $slim->get('/event/search/user/:id', function ($id) use ($slim) {
 });
 
 //----------- RAPPORTS -------------------------------
-
 $slim->get('/rapport/event/client/', function () use ($slim) {
     $params = new OdaPrepareInterface();
     $params->arrayInputOpt = array("accountId"=>null,"billable"=>null);
@@ -130,6 +134,13 @@ $slim->get('/rapport/event/location/', function () use ($slim) {
     $params->slim = $slim;
     $INTERFACE = new RapportInterface($params);
     $INTERFACE->getPieLocation();
+});
+
+$slim->get('/rapport/event/consolidated/', function () use ($slim) {
+    $params = new OdaPrepareInterface();
+    $params->slim = $slim;
+    $INTERFACE = new RapportInterface($params);
+    $INTERFACE->getConsolidated();
 });
 
 //----------- ACCOUNT -------------------------------

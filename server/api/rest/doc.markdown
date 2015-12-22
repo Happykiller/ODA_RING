@@ -2,6 +2,8 @@
 
 ## config
 
+* `/config/`
+    * type : GET
 * `/config/search/user/:id`
     * type : GET
  
@@ -63,6 +65,8 @@
 * `/rapport/event/location/`
     * type : GET
     * optional params : "userId" 
+* `/rapport/event/consolidated/`
+    * type : GET
 
     
 

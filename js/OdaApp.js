@@ -54,6 +54,14 @@
                     ]
                 });
 
+                $.Oda.Router.addDependencies("gantt", {
+                    ordered : false,
+                    "list" : [
+                        { "elt" : $.Oda.Context.rootPath + $.Oda.Context.vendorName + "/fullcalendar-scheduler/dist/scheduler.min.css", "type" : "css"},
+                        { "elt" : $.Oda.Context.rootPath + $.Oda.Context.vendorName + "/fullcalendar-scheduler/dist/scheduler.min.js", "type" : "script"}
+                    ]
+                });
+
                 $.Oda.Router.addRoute("home", {
                     "path" : "partials/home.html",
                     "title" : "oda-main.home-title",
@@ -74,7 +82,8 @@
                     "path" : "partials/activity-list.html",
                     "title" : "activity-list.title",
                     "urls" : ["activity-list"],
-                    "middleWares" : ["support","auth"]
+                    "middleWares" : ["support","auth"],
+                    "dependencies" : ["fullcalendar","gantt"]
                 });
 
                 $.Oda.Router.addRoute("activity-rapport-client", {
@@ -1399,6 +1408,86 @@
                         return this;
                     } catch (er) {
                         $.Oda.Log.error("$.Oda.App.Controler.RapportClient.search : " + er.message);
+                        return null;
+                    }
+                },
+            },
+            "ActivityList": {
+                /**
+                 * @param {Object} p_params
+                 * @param p_params.id
+                 * @returns {$.Oda.App.Controler.ActivityList}
+                 */
+                start : function (p_params) {
+                    try {
+                        $.Oda.App.Controler.ActivityList.displayGantt();
+                        return this;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.ActivityList.start : " + er.message);
+                        return null;
+                    }
+                },
+                /**
+                 * @param {Object} p_params
+                 * @param p_params.id
+                 * @returns {$.Oda.App.Controler.ActivityList}
+                 */
+                displayGantt : function (p_params) {
+                    try {
+                        var now = moment().format('YYYY-MM-DD');
+                        $('#divGrant').fullCalendar({
+                            now: now,
+                            editable: false,
+                            aspectRatio: 1.0,
+                            contentHeight: 300,
+                            defaultView: 'timelineMonth',
+                            resourceLabelText: 'Consultants',
+                            resources: function(callback) {
+                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/config/", {functionRetour : function(response){
+                                    var datas = [];
+                                    for(var index in response.data){
+                                        var elt = response.data[index];
+                                        var consultant = {
+                                            id: elt.userId,
+                                            title: elt.code_user
+                                        };
+                                        datas.push(consultant);
+                                    }
+                                    callback(datas);
+                                }});
+                            },
+                            events: function(start, end, timezone, callback) {
+                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/rapport/event/consolidated/", {functionRetour : function(response){
+                                    var datas = [];
+                                    for(var index in response.data){
+                                        var elt = response.data[index];
+                                        var start = moment(elt.start);
+                                        var end = moment(start).add(1,'days');
+                                        var color = 'green';
+                                        if(elt.time < 4){
+                                            color = 'blue';
+                                        }else if(elt.time < 8){
+                                            color = 'green';
+                                        }else if(elt.time > 8){
+                                            color = 'red';
+                                        }
+                                        var event = {
+                                            resourceId: elt.autorId,
+                                            start: start,
+                                            end: end,
+                                            allDay: true,
+                                            title: elt.time + 'H',
+                                            color: color
+                                        };
+                                        datas.push(event);
+                                    }
+                                    callback(datas);
+                                }});
+                            },
+                        });
+                        return this;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.ActivityList.displayGantt : " + er.message);
                         return null;
                     }
                 },

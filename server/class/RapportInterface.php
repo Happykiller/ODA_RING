@@ -151,4 +151,27 @@ class RapportInterface extends OdaRestInterface {
             die();
         }
     }
+    /**
+     */
+    function getConsolidated() {
+        try {
+            $params = new OdaPrepareReqSql();
+            $params->sql = "SELECT SUM(a.`time`) as 'time', a.`autorId`, DATE_FORMAT(a.`start`, '%Y-%m-%d') as 'start'
+                FROM `tab_events` a
+                WHERE 1=1
+                GROUP BY a.`autorId`, DATE_FORMAT(a.`start`, '%Y%m%d')
+                ORDER BY a.`start`
+            ;";
+            $params->typeSQL = OdaLibBd::SQL_GET_ALL;
+            $retour = $this->BD_ENGINE->reqODASQL($params);
+
+            $params = new stdClass();
+            $params->retourSql = $retour;
+            $this->addDataObject($retour->data->data);
+        } catch (Exception $ex) {
+            $this->object_retour->strErreur = $ex.'';
+            $this->object_retour->statut = self::STATE_ERROR;
+            die();
+        }
+    }
 }
