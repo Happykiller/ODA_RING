@@ -2,7 +2,7 @@
 namespace Oda;
 
 require '../vendor/autoload.php';
-require '../include/config.php';
+require '../config/config.php';
 
 use \stdClass;
 

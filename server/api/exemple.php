@@ -3,7 +3,7 @@ namespace Ring;
 
 require '../header.php';
 require '../vendor/autoload.php';
-require '../include/config.php';
+require '../config/config.php';
 
 use Oda\OdaLibInterface;
 use \stdClass, \Oda\SimpleObject\OdaPrepareInterface, \Oda\SimpleObject\OdaPrepareReqSql, \Oda\OdaLibBd;

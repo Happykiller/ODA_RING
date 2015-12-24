@@ -16,6 +16,6 @@
     "fullcalendar" : "*",
     "fullcalendar-scheduler" : "*",
     "font-awesome" : "*",
-    "awesome-bootstrap-checkbox" : "*",
+    "awesome-bootstrap-checkbox" : "*"
   }
 }
