@@ -120,7 +120,7 @@ class AccountInterface extends OdaRestInterface {
         try {
             $params = new OdaPrepareReqSql();
             $params->sql = "SELECT a.`id`, a.`code`, a.`label`, a.`salesForce`,
-                a.`statusId`, b.`label` as  'statusLabel', b.`active` as 'statusActive'
+                a.`statusId`, b.`label` as 'statusLabel', b.`active` as 'statusActive'
                 FROM `tab_accounts` a, `tab_accounts_status` b
                 WHERE 1=1
                 AND a.`statusId` = b.`id`
@@ -259,6 +259,39 @@ class AccountInterface extends OdaRestInterface {
             $params = new stdClass();
             $params->retourSql = $retour;
             $this->addDataObject($retour->data->data);
+        } catch (Exception $ex) {
+            $this->object_retour->strErreur = $ex.'';
+            $this->object_retour->statut = self::STATE_ERROR;
+            die();
+        }
+    }
+
+    /**
+     * @param $accountId
+     */
+    function updateAccount($accountId) {
+        try {
+            $params = new OdaPrepareReqSql();
+            $params->sql = "UPDATE `tab_accounts`
+                SET
+                `code`= :code,
+                `label`= :label,
+                `salesForce`= :salesForce
+                WHERE 1=1
+                AND `id` = :id
+                ;";
+            $params->bindsValue = [
+                "id" => $accountId,
+                "code" => $this->inputs["code"],
+                "label" => $this->inputs["label"],
+                "salesForce" => $this->inputs["salesForce"],
+            ];
+            $params->typeSQL = OdaLibBd::SQL_SCRIPT;
+            $retour = $this->BD_ENGINE->reqODASQL($params);
+
+            $params = new stdClass();
+            $params->value = $retour->data;
+            $this->addDataStr($params);
         } catch (Exception $ex) {
             $this->object_retour->strErreur = $ex.'';
             $this->object_retour->statut = self::STATE_ERROR;

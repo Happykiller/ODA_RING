@@ -320,6 +320,11 @@
                                         }
                                     }
 
+                                    var linkGoogle = "";
+                                    if(response.data.googleHtmlLink !== ""){
+                                        linkGoogle = '<a href="' + response.data.googleHtmlLink+'" target="_blank">'+ $.Oda.I8n.get('activity','here') +'</a>';
+                                    }
+
                                     var strHtml = $.Oda.Display.TemplateHtml.create({
                                         template : "formEditEvent"
                                         , scope : {
@@ -336,7 +341,8 @@
                                             "synchGoogle" : (response.data.synGoogle === "1")?"checked":"",
                                             "synchSF" : (response.data.synSF === "1")?"checked":"",
                                             "accounts": accounts,
-                                            "items" : ""
+                                            "items" : "",
+                                            "linkGoogle":linkGoogle
                                         }
                                     });
 
@@ -991,6 +997,20 @@
                     }
                 },
                 /**
+                 * @param {Object} p_params
+                 * @returns {$.Oda.App.Controler.ManageAccounts}
+                 */
+                convert: function (p_params) {
+                    try {
+                        var str = JSON.stringify(p_params);
+                        str = $.Oda.Tooling.replaceAll({"str":str, "find":'"', "by":"'"});
+                        return str;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.ManageAccounts.convert : " + er.message);
+                        return null;
+                    }
+                },
+                /**
                  * @returns {$.Oda.App.Controler.ManageAccounts}
                  */
                 displayAccounts : function (p_params) {
@@ -1010,6 +1030,7 @@
                                     {"sTitle": "Id", "sClass": "dataTableColCenter"},
                                     {"sTitle": "Code", "sClass": "Left"},
                                     {"sTitle": "Label", "sClass": "Left"},
+                                    {"sTitle": "SalesForce", "sClass": "Left"},
                                     {"sTitle": "Statut", "sClass": "Left"},
                                     {"sTitle": "Items", "sClass": "Left"}
                                 ],
@@ -1018,7 +1039,14 @@
                                         "mRender": function (data, type, row) {
                                             if ( type === 'display' ) {
                                                 var strHtml = "";
-                                                strHtml += '<a onclick="$.Oda.App.Controler.ManageAccounts.accountEdit({id:\'' + row[objDataTable.entete["id"]] + '\'})" class="btn btn-primary btn-xs">' + row[objDataTable.entete["id"]] + '</a>';
+                                                var datas = {
+                                                    id: row[objDataTable.entete["id"]],
+                                                    code: row[objDataTable.entete["code"]],
+                                                    label: row[objDataTable.entete["label"]],
+                                                    salesForce: row[objDataTable.entete["salesForce"]],
+                                                    statusId: row[objDataTable.entete["statusId"]]
+                                                }
+                                                strHtml += '<a onclick="$.Oda.App.Controler.ManageAccounts.accountEdit('+$.Oda.App.Controler.ManageAccounts.convert(datas)+')" class="btn btn-primary btn-xs">' + row[objDataTable.entete["id"]] + '</a>';
                                                 return strHtml;
                                             }
                                             return row[objDataTable.entete["id"]];
@@ -1039,9 +1067,15 @@
                                     },
                                     {
                                         "mRender": function (data, type, row) {
-                                            return $.Oda.I8n.getByString(row[objDataTable.entete["statusLabel"]]);
+                                            return '<a href="https://eu4.salesforce.com/'+row[objDataTable.entete["salesForce"]]+'" target="_blank">'+ row[objDataTable.entete["salesForce"]] +'</a>';
                                         },
                                         "aTargets": [3]
+                                    },
+                                    {
+                                        "mRender": function (data, type, row) {
+                                            return $.Oda.I8n.getByString(row[objDataTable.entete["statusLabel"]]);
+                                        },
+                                        "aTargets": [4]
                                     },
                                     {
                                         "mRender": function (data, type, row) {
@@ -1056,7 +1090,7 @@
                                             strHtml += '<a onclick="$.Oda.App.Controler.ManageAccounts.itemNew({accountId:'+row[objDataTable.entete["id"]]+', accountCode:\''+row[objDataTable.entete["code"]]+'\'})" class="btn btn-success btn-xs">Ajouter</a> ';
                                             return strHtml;
                                         },
-                                        "aTargets": [4]
+                                        "aTargets": [5]
                                     }
                                 ]
                             });
@@ -1162,7 +1196,7 @@
                         var tabInput = {
                             "code" : $('#code').val(),
                             "label" : $('#label').val(),
-                            "salesForce" : ($('#salesForces').val()===undefined)?"":$('#salesForces').val(),
+                            "salesForce" : ($('#salesForce').val()===undefined)?"":$('#salesForce').val(),
                             "userId" : $.Oda.Session.id
                         };
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/", {type:'POST',functionRetour : function(response){
@@ -1177,15 +1211,68 @@
                 },
                 /**
                  * @param {Object} p_params
-                 * @param p_params.id
                  * @returns {$.Oda.App.Controler.ManageAccounts}
                  */
                 accountEdit : function (p_params) {
                     try {
-                        //TODO accountsEdit
+                        var strHtml = $.Oda.Display.TemplateHtml.create({
+                            template : "templateEditAccount"
+                            , scope : {
+                                "code": p_params.code,
+                                "label": p_params.label,
+                                "salesForce": p_params.salesForce
+                            }
+                        });
+
+                        var strFooter = "";
+                        strFooter += '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controler.ManageAccounts.submitEditAccount({id:'+p_params.id+'});" class="btn btn-primary disabled" disabled>Submit</button >';
+
+                        $.Oda.Display.Popup.open({
+                            "name" : "editAccount",
+                            "label" : $.Oda.I8n.get('manage-accounts','editAccount'),
+                            "details" : strHtml,
+                            "footer" : strFooter,
+                            "callback" : function(e){
+                                $.Oda.Scope.Gardian.add({
+                                    id: "editAccount",
+                                    listElt: ["code","label","salesForce"],
+                                    function: function (e) {
+                                        if( ($("#code").data("isOk")) && ($("#label").data("isOk")) && ($("#salesForce").data("isOk")) ){
+                                            $("#submit").removeClass("disabled");
+                                            $("#submit").removeAttr("disabled");
+                                        }else{
+                                            $("#submit").addClass("disabled");
+                                            $("#submit").attr("disabled", true);
+                                        }
+                                    }
+                                });
+                            }
+                        });
                         return this;
                     } catch (er) {
                         $.Oda.Log.error("$.Oda.App.Controler.ManageAccounts.accountEdit : " + er.message);
+                        return null;
+                    }
+                },
+                /**
+                 * @param {Object} p_params
+                 * @param p_params.id
+                 * @returns {$.Oda.App.Controler.ManageAccounts}
+                 */
+                submitEditAccount : function (p_params) {
+                    try {
+                        var tabInput = {
+                            "code" : $('#code').val(),
+                            "label" : $('#label').val(),
+                            "salesForce" : $('#salesForce').val()
+                        };
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/"+p_params.id, {type:'PUT',functionRetour : function(response){
+                            $.Oda.Display.Popup.close({name:"editAccount"});
+                            $.Oda.App.Controler.ManageAccounts.displayAccounts();
+                        }},tabInput);
+                        return this;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.ManageAccounts.submitNewAccount : " + er.message);
                         return null;
                     }
                 },

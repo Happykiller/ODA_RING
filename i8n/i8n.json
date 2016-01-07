@@ -61,7 +61,8 @@
       "okDeleteAppointmentGoogle" : "Evènement a bien été supprimé dans le calendrier Google",
       "errorDeleteAppointmentGoogle" : "Echec de la suppression de l'évènement dans le calendrier Google",
       "account": "Le compte",
-      "item" : "L'item"
+      "item" : "L'item",
+      "here": "Ici"
     },
     "en" : {
       "title" : "Activity"

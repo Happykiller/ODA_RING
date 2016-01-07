@@ -183,6 +183,14 @@ $slim->post('/account/item/', function () use ($slim) {
     $INTERFACE->createItem();
 });
 
+$slim->put('/account/:id', function ($id) use ($slim) {
+    $params = new OdaPrepareInterface();
+    $params->arrayInput = array("code","label","salesForce");
+    $params->slim = $slim;
+    $INTERFACE = new AccountInterface($params);
+    $INTERFACE->updateAccount($id);
+});
+
 $slim->get('/account/:id/search/item', function ($id) use ($slim) {
     $params = new OdaPrepareInterface();
     $params->slim = $slim;
