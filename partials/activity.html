@@ -313,6 +313,7 @@
     <h3 class="popover-title" style="font-weight: bold">{{title}}</h3>
     <div class="popover-content">
         <ul>
+            <li><span style="font-weight: bold" oda-label="activity.activityAllDay"></span> : {{allDay}}</li>
             <li><span style="font-weight: bold" oda-label="activity.activityStart"></span> : {{start}}</li>
             <li><span style="font-weight: bold" oda-label="activity.activityEnd"></span> : {{end}}</li>
             <li><span style="font-weight: bold" oda-label="activity.activityCmt"></span> : {{cmt}}</li>
@@ -334,5 +335,5 @@
 </style>
 
 <script>
-    $.Oda.App.Controler.Activity.start();
+    setTimeout($.Oda.App.Controler.Activity.start, 500);
 </script>

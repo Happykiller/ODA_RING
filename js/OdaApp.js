@@ -287,7 +287,8 @@
                                         "title": calEvent.title,
                                         "start": calEvent.eventStart.substr(10),
                                         "end": calEvent.eventEnd.substr(10),
-                                        "cmt": calEvent.cmt.substr(0,40)
+                                        "cmt": calEvent.cmt.substr(0,40),
+                                        "allDay": (calEvent.allDay==="1")?'Oui':'non'
                                     }
                                 });
 
