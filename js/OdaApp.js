@@ -997,20 +997,6 @@
                     }
                 },
                 /**
-                 * @param {Object} p_params
-                 * @returns {$.Oda.App.Controler.ManageAccounts}
-                 */
-                convert: function (p_params) {
-                    try {
-                        var str = JSON.stringify(p_params);
-                        str = $.Oda.Tooling.replaceAll({"str":str, "find":'"', "by":"'"});
-                        return str;
-                    } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.ManageAccounts.convert : " + er.message);
-                        return null;
-                    }
-                },
-                /**
                  * @returns {$.Oda.App.Controler.ManageAccounts}
                  */
                 displayAccounts : function (p_params) {
@@ -1018,7 +1004,7 @@
                         var retour = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/", { functionRetour : function(response) {
                             var objDataTable = $.Oda.Tooling.objDataTableFromJsonArray(response.data);
                             var strhtml = '<table style="width: 100%" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered hover" id="tableAccounts">';
-                            strhtml += '<tfoot><tr><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></tfoot></table>';
+                            strhtml += '<tfoot><tr><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th></tr></tfoot></table>';
                             $('#tabAccounts').html(strhtml);
 
                             var oTable = $('#tableAccounts').DataTable({
@@ -1046,7 +1032,7 @@
                                                     salesForce: row[objDataTable.entete["salesForce"]],
                                                     statusId: row[objDataTable.entete["statusId"]]
                                                 }
-                                                strHtml += '<a onclick="$.Oda.App.Controler.ManageAccounts.accountEdit('+$.Oda.App.Controler.ManageAccounts.convert(datas)+')" class="btn btn-primary btn-xs">' + row[objDataTable.entete["id"]] + '</a>';
+                                                strHtml += '<a onclick="$.Oda.App.Controler.ManageAccounts.accountEdit('+$.Oda.Display.jsonToStringSingleQuote({"json":datas})+')" class="btn btn-primary btn-xs">' + row[objDataTable.entete["id"]] + '</a>';
                                                 return strHtml;
                                             }
                                             return row[objDataTable.entete["id"]];
@@ -1084,7 +1070,14 @@
                                             for(var indice in items){
                                                 var elt = items[indice];
                                                 if(elt.code !== 'default'){
-                                                    strHtml += '<a onclick="$.Oda.App.Controler.ManageAccounts.itemEdit({id:\'' + elt.id + '\'})" class="btn btn-primary btn-xs">' + elt.code + '</a> ';
+                                                    var datas = {
+                                                        "id": elt.id,
+                                                        "code": elt.code,
+                                                        "label": elt.label,
+                                                        "salesForce": elt.salesForce,
+                                                        "charge": elt.charge
+                                                    }
+                                                    strHtml += '<a onclick="$.Oda.App.Controler.ManageAccounts.itemEdit('+$.Oda.Display.jsonToStringSingleQuote({"json":datas})+')" class="btn btn-primary btn-xs">' + elt.code + '</a> ';
                                                 }
                                             }
                                             strHtml += '<a onclick="$.Oda.App.Controler.ManageAccounts.itemNew({accountId:'+row[objDataTable.entete["id"]]+', accountCode:\''+row[objDataTable.entete["code"]]+'\'})" class="btn btn-success btn-xs">Ajouter</a> ';
@@ -1345,14 +1338,74 @@
                 /**
                  * @param {Object} p_params
                  * @param p_params.id
+                 * @param p_params.code
+                 * @param p_params.label
+                 * @param p_params.salesForces
+                 * @param p_params.charge
                  * @returns {$.Oda.App.Controler.ManageAccounts}
                  */
                 itemEdit : function (p_params) {
                     try {
-                        //TODO itemEdit
+                        var strHtml = $.Oda.Display.TemplateHtml.create({
+                            template : "templateEditItem"
+                            , scope : {
+                                "code": p_params.code,
+                                "label": p_params.label,
+                                "salesForce": p_params.salesForce,
+                                "charge": p_params.charge,
+                            }
+                        });
+
+                        var strFooter = "";
+                        strFooter += '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controler.ManageAccounts.submitEditItem({id:\''+p_params.id+'\'});" class="btn btn-primary disabled" disabled>Submit</button >';
+
+                        $.Oda.Display.Popup.open({
+                            "name" : "editItem",
+                            "label" : $.Oda.I8n.get('manage-accounts','editItem') + p_params.code,
+                            "details" : strHtml,
+                            "footer" : strFooter,
+                            "callback" : function(e){
+                                $.Oda.Scope.Gardian.add({
+                                    id: "editAccount",
+                                    listElt: ["code","label","salesForce", "charge"],
+                                    function: function (e) {
+                                        if( ($("#code").data("isOk")) && ($("#label").data("isOk")) && ($("#salesForce").data("isOk")) && ($("#charge").data("isOk")) ){
+                                            $("#submit").removeClass("disabled");
+                                            $("#submit").removeAttr("disabled");
+                                        }else{
+                                            $("#submit").addClass("disabled");
+                                            $("#submit").attr("disabled", true);
+                                        }
+                                    }
+                                });
+                            }
+                        });
                         return this;
                     } catch (er) {
                         $.Oda.Log.error("$.Oda.App.Controler.ManageAccounts.itemEdit : " + er.message);
+                        return null;
+                    }
+                },
+                /**
+                 * @param {Object} p_params
+                 * @param p_params.id
+                 * @returns {$.Oda.App.Controler.ManageAccounts}
+                 */
+                submitEditItem : function (p_params) {
+                    try {
+                        var tabInput = {
+                            "code" : $('#code').val(),
+                            "label" : $('#label').val(),
+                            "salesForce" : $('#salesForce').val(),
+                            "charge" : $('#charge').val()
+                        };
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/item/"+p_params.id, {type:'PUT',functionRetour : function(response){
+                            $.Oda.Display.Popup.close({name:"editItem"});
+                            $.Oda.App.Controler.ManageAccounts.displayAccounts();
+                        }},tabInput);
+                        return this;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controler.ManageAccounts.submitEditItem : " + er.message);
                         return null;
                     }
                 },

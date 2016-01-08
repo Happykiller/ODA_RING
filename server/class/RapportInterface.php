@@ -18,27 +18,6 @@ use \stdClass;
 class RapportInterface extends OdaRestInterface {
     /**
      */
-    function get() {
-        try {
-            $params = new OdaPrepareReqSql();
-            $params->sql = "SELECT a.`id`, a.`title`, a.`allDay`, a.`start`, a.`end`, a.`url`, a.`typeId`, a.`tmp`, a.`time`, a.`cmt`, a.`locationId`, a.`active`, a.`billable`, a.`synGoogle`, a.`googleEtag`, a.`googleId`, a.`googleHtmlLink`, a.`googleICalUID`, a.`synSF`, a.`salesForceId`
-                FROM `tab_events` a
-                WHERE 1=1
-            ;";
-            $params->typeSQL = OdaLibBd::SQL_GET_ALL;
-            $retour = $this->BD_ENGINE->reqODASQL($params);
-
-            $params = new stdClass();
-            $params->retourSql = $retour;
-            $this->addDataObject($retour->data);
-        } catch (Exception $ex) {
-            $this->object_retour->strErreur = $ex.'';
-            $this->object_retour->statut = self::STATE_ERROR;
-            die();
-        }
-    }
-    /**
-     */
     function getEvents() {
         try {
             $filtreAccount = "";
@@ -66,7 +45,7 @@ class RapportInterface extends OdaRestInterface {
                 AND a.`tmp` = 0
                 ${filtreBillable}
                 ${filtreAccount}
-                ORDER BY a.`start`
+                ORDER BY a.`start` DESC
             ;";
             $params->typeSQL = OdaLibBd::SQL_GET_ALL;
             $retour = $this->BD_ENGINE->reqODASQL($params);
@@ -96,6 +75,7 @@ class RapportInterface extends OdaRestInterface {
                   SELECT a.`typeId`, SUM(a.`time`) as 'sumTime'
                   FROM `tab_events` a
                   WHERE 1=1
+                  AND a.`active` = 1
                   ${filtreUser}
                   GROUP BY a.`typeId`
                 ) b, `tab_events_type` c
@@ -132,6 +112,7 @@ class RapportInterface extends OdaRestInterface {
                   SELECT a.`locationId`, SUM(a.`time`) as 'sumTime'
                   FROM `tab_events` a
                   WHERE 1=1
+                  AND a.`active` = 1
                   ${filtreUser}
                   GROUP BY a.`locationId`
                 ) b, `tab_events_location` c
@@ -159,6 +140,7 @@ class RapportInterface extends OdaRestInterface {
             $params->sql = "SELECT SUM(a.`time`) as 'time', a.`autorId`, DATE_FORMAT(a.`start`, '%Y-%m-%d') as 'start'
                 FROM `tab_events` a
                 WHERE 1=1
+                AND a.`active` = 1
                 GROUP BY a.`autorId`, DATE_FORMAT(a.`start`, '%Y%m%d')
                 ORDER BY a.`start`
             ;";

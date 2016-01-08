@@ -153,7 +153,7 @@ class AccountInterface extends OdaRestInterface {
 
             foreach($retour->data->data as $value) {
                 $params = new OdaPrepareReqSql();
-                $params->sql = "SELECT a.`id`, a.`code`, a.`label`, a.`salesForce`,
+                $params->sql = "SELECT a.`id`, a.`code`, a.`label`, a.`salesForce`, a.`charge`,
                     a.`statusId`, b.`label` as  'statusLabel', b.`active` as 'statusActive',
                     a.`accountId`
                     FROM `tab_accounts_items` a, `tab_accounts_items_status` b
@@ -284,7 +284,42 @@ class AccountInterface extends OdaRestInterface {
                 "id" => $accountId,
                 "code" => $this->inputs["code"],
                 "label" => $this->inputs["label"],
+                "salesForce" => $this->inputs["salesForce"]
+            ];
+            $params->typeSQL = OdaLibBd::SQL_SCRIPT;
+            $retour = $this->BD_ENGINE->reqODASQL($params);
+
+            $params = new stdClass();
+            $params->value = $retour->data;
+            $this->addDataStr($params);
+        } catch (Exception $ex) {
+            $this->object_retour->strErreur = $ex.'';
+            $this->object_retour->statut = self::STATE_ERROR;
+            die();
+        }
+    }
+
+    /**
+     * @param $id
+     */
+    function updateItem($id) {
+        try {
+            $params = new OdaPrepareReqSql();
+            $params->sql = "UPDATE `tab_accounts_items`
+                SET
+                `code`= :code,
+                `label`= :label,
+                `salesForce`= :salesForce,
+                `charge`= :charge
+                WHERE 1=1
+                AND `id` = :id
+                ;";
+            $params->bindsValue = [
+                "id" => $id,
+                "code" => $this->inputs["code"],
+                "label" => $this->inputs["label"],
                 "salesForce" => $this->inputs["salesForce"],
+                "charge" => $this->inputs["charge"]
             ];
             $params->typeSQL = OdaLibBd::SQL_SCRIPT;
             $retour = $this->BD_ENGINE->reqODASQL($params);
