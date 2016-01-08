@@ -108,10 +108,13 @@ class EventInterface extends OdaRestInterface {
     function getByUser($id) {
         try {
             $params = new OdaPrepareReqSql();
-            $params->sql = "SELECT a.`id`, a.`title`, a.`allDay`, a.`start`, a.`end`, a.`url`, b.`className`, a.`tmp`, a.`active`, a.`time`
-                FROM `tab_events` a, `tab_events_type` b
+            $params->sql = "SELECT a.`id`, a.`title`, a.`allDay`, a.`start`, a.`end`, a.`url`, b.`className`, a.`tmp`, a.`active`, a.`time`, a.`cmt`,
+                d.`code` as 'accountCode'
+                FROM `tab_events` a, `tab_events_type` b, `tab_accounts_items` c, `tab_accounts` d
                 WHERE 1=1
                 AND a.`typeId` = b.`id`
+                AND a.`itemId` = c.`id`
+                AND c.`accountId` = d.`id`
                 AND a.`autorId` = :id
                 AND a.`active` = 1
                 ORDER BY a.`id`

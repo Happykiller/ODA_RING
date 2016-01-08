@@ -308,6 +308,19 @@
     </div>
 </script>
 
+<script id="colendarTooltip" type="text/template">
+<div class="tooltipevent popover" style="position:absolute;z-index:10001;display:block;">
+    <h3 class="popover-title" style="font-weight: bold">{{title}}</h3>
+    <div class="popover-content">
+        <ul>
+            <li><span style="font-weight: bold" oda-label="activity.activityStart"></span> : {{start}}</li>
+            <li><span style="font-weight: bold" oda-label="activity.activityEnd"></span> : {{end}}</li>
+            <li><span style="font-weight: bold" oda-label="activity.activityCmt"></span> : {{cmt}}</li>
+        </ul>
+    </div>
+</div>
+</script>
+
 <style>
     .fc-sun {
         background-color: rgba(211, 211, 211, 0.24) !important;

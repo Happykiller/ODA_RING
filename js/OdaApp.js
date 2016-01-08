@@ -270,13 +270,39 @@
                                 var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/search/user/"+ $.Oda.Session.id, {functionRetour : function(response){
                                     for(var index in response.data){
                                         var elt = response.data[index];
-                                        elt.title = elt.time + ': ' + elt.title;
+                                        elt.title = elt.time + ': ' + ((elt.accountCode==='default')?"":elt.accountCode)  + ': ' + elt.title;
+                                        elt.eventStart = elt.start;
+                                        elt.eventEnd = elt.end;
                                         if(elt.tmp === "1"){
                                             elt.className += "-stripe";
                                         }
                                     }
                                     callback(response.data);
                                 }});
+                            },
+                            eventMouseover: function(calEvent, jsEvent) {
+                                $.Oda.Log.trace(calEvent);
+                                var tooltip = $.Oda.Display.TemplateHtml.create({
+                                    template : "colendarTooltip"
+                                    , scope : {
+                                        "title": calEvent.title,
+                                        "start": calEvent.eventStart.substr(10),
+                                        "end": calEvent.eventEnd.substr(10),
+                                        "cmt": calEvent.cmt.substr(0,40)
+                                    }
+                                });
+
+                                $("body").append(tooltip);
+                                $(this).mouseover(function(e) {
+                                    $(this).css('z-index', 10000);
+                                }).mousemove(function(e) {
+                                    $('.tooltipevent').css('top', e.pageY + 10);
+                                    $('.tooltipevent').css('left', e.pageX + 20);
+                                });
+                            },
+                            eventMouseout: function(calEvent, jsEvent) {
+                                $(this).css('z-index', 8);
+                                $('.tooltipevent').remove();
                             },
                             eventClick: function(calEvent, jsEvent, view) {
                                 var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/"+ calEvent.id, {functionRetour : function(response){
@@ -1346,6 +1372,11 @@
                  */
                 itemEdit : function (p_params) {
                     try {
+                        var strUrlSaleForce = "";
+                        if(p_params.salesForce !== ""){
+                            strUrlSaleForce = '<a href="https://c.eu4.visual.force.com/apex/DeliverableDetail?id='+p_params.salesForce+'&sfdc.override=1" target="_black">'+ $.Oda.I8n.get('activity','here') +'</a>'
+                        }
+
                         var strHtml = $.Oda.Display.TemplateHtml.create({
                             template : "templateEditItem"
                             , scope : {
@@ -1353,6 +1384,7 @@
                                 "label": p_params.label,
                                 "salesForce": p_params.salesForce,
                                 "charge": p_params.charge,
+                                "urlSaleForce": strUrlSaleForce
                             }
                         });
 
