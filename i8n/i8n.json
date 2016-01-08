@@ -128,7 +128,9 @@
       "itemSalesForce-placeholder" : "code salesForce",
       "itemCharge" : "Charge",
       "itemCharge-tips" : "En heure",
-      "itemCharge-placeholder" : "Ici les charges"
+      "itemCharge-placeholder" : "Ici les charges",
+      "editAccount": "Editer compte n°",
+      "editItem": "Editer item n°"
     },
     "en" : {
       "title" : "Home"
