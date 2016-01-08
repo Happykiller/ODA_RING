@@ -281,7 +281,6 @@
                                 }});
                             },
                             eventMouseover: function(calEvent, jsEvent) {
-                                $.Oda.Log.trace(calEvent);
                                 var tooltip = $.Oda.Display.TemplateHtml.create({
                                     template : "colendarTooltip"
                                     , scope : {
