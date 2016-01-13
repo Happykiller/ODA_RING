@@ -173,6 +173,7 @@ class RapportInterface extends OdaRestInterface {
                 AND a.`locationId` = e.`id`
                 AND a.`typeId` = f.`id`
                 AND a.`tmp` = 0
+                AND a.`active` = 1
                 AND a.`autorId` = :userId
                 AND a.`start` >= :startDate
                 AND a.`start` <= :endDate
