@@ -143,6 +143,14 @@ $slim->get('/rapport/event/consolidated/', function () use ($slim) {
     $INTERFACE->getConsolidated();
 });
 
+$slim->get('/rapport/event/forStaff/', function () use ($slim) {
+    $params = new OdaPrepareInterface();
+    $params->arrayInput = array("userId", "startDate", "endDate");
+    $params->slim = $slim;
+    $INTERFACE = new RapportInterface($params);
+    $INTERFACE->getForStaff();
+});
+
 //----------- ACCOUNT -------------------------------
 
 $slim->get('/account/', function () use ($slim) {

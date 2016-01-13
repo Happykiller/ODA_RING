@@ -67,6 +67,9 @@
     * optional params : "userId" 
 * `/rapport/event/consolidated/`
     * type : GET
+* `/rapport/event/forStaff/`
+    * type : GET
+    * ex : rapport/event/forStaff/?userId=3&startDate=2016-01-01&endDate=2016-01-31&ODAFileType=csv&ODAFileName=test
 
     
 
