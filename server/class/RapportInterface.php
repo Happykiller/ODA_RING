@@ -163,7 +163,7 @@ class RapportInterface extends OdaRestInterface {
         try {
             $params = new OdaPrepareReqSql();
             $params->sql = "SELECT DATE_FORMAT(a.`start`, '%Y-%m-%d') as 'startdate', DATE_FORMAT(a.`start`, '%Y-%m-%d') as 'enddate', WEEK(a.`start`) as 'week', MONTH(a.`start`) as 'month',
-                IF(d.`code`='default','BONITASOFT',d.`code`) as 'Customer', IF(a.`billable`,0,1) as 'Free', c.`code_user` as 'Consultant', 0 as 'days', a.`time` as 'hours',
+                IF(d.`code`='default','BONITASOFT',d.`code`) as 'Customer', IF(a.`billable`,0,1) as 'Free', c.`code_user` as 'Consultant', REPLACE(TRUNCATE(a.`time`/8,4),'.',',') as 'days', REPLACE(a.`time`,'.',',') as 'hours',
                 f.`code` as 'deliverytype', e.`code` as 'Location', 'EMEA' as 'Region', b.`salesForce` as 'deliverable', a.`googleICalUID` as 'EventID', 'na' as 'ConsultingID', CONCAT(a.`title`,', comment:',a.`cmt`) as 'Notes'
                 FROM `tab_events` a, `tab_accounts_items` b, `api_tab_utilisateurs` c, `tab_accounts` d, `tab_events_location` e, `tab_events_type` f
                 WHERE 1=1
@@ -177,7 +177,7 @@ class RapportInterface extends OdaRestInterface {
                 AND a.`autorId` = :userId
                 AND a.`start` >= :startDate
                 AND a.`start` <= :endDate
-                ORDER BY a.`start` DESC
+                ORDER BY a.`start` ASC
             ;";
             $params->bindsValue = [
                 "userId" => $this->inputs["userId"],

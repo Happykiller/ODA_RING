@@ -51,8 +51,8 @@ CREATE TABLE IF NOT EXISTS `@prefix@tab_events_type` (
 INSERT INTO `@prefix@tab_events_type` (`code`, `className`, `label`)
 VALUES
   ('free', 'code-green', 'activity.type-free'),
-  ('expertise', 'code-yellow', 'activity.type-expertise'),
-  ('trip', 'code-blue', 'activity.type-trip'),
+  ('EXP', 'code-yellow', 'activity.type-expertise'),
+  ('TRIP', 'code-blue', 'activity.type-trip'),
   ('case', 'code-red', 'activity.type-case'),
   ('training', 'code-orange', 'activity.type-training'),
   ('pre-up', 'code-violet', 'activity.type-preup'),
