@@ -14,8 +14,6 @@
   "dependencies": {
     "Oda" : "*",
     "fullcalendar" : "*",
-    "fullcalendar-scheduler" : "*",
-    "font-awesome" : "*",
-    "awesome-bootstrap-checkbox" : "*"
+    "fullcalendar-scheduler" : "*"
   }
 }
