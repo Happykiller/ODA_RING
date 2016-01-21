@@ -64,9 +64,13 @@ class RapportInterface extends OdaRestInterface {
     function getPieActivityType() {
         try {
             $filtreUser = "";
-
             if(!is_null($this->inputs["userId"])){
                 $filtreUser = " AND a.`autorId` = ".$this->inputs["userId"];
+            }
+
+            $filtreStart = "";
+            if((!is_null($this->inputs["nbMonth"])) && ($this->inputs["nbMonth"] !== "0")){
+                $filtreStart = " AND a.`start` >= DATE_ADD(NOW(),INTERVAL -".$this->inputs["nbMonth"]." MONTH)";
             }
 
             $params = new OdaPrepareReqSql();
@@ -77,6 +81,7 @@ class RapportInterface extends OdaRestInterface {
                   WHERE 1=1
                   AND a.`active` = 1
                   ${filtreUser}
+                  ${filtreStart}
                   GROUP BY a.`typeId`
                 ) b, `tab_events_type` c
                 WHERE 1=1
@@ -101,9 +106,13 @@ class RapportInterface extends OdaRestInterface {
     function getPieLocation() {
         try {
             $filtreUser = "";
-
             if(!is_null($this->inputs["userId"])){
                 $filtreUser = " AND a.`autorId` = ".$this->inputs["userId"];
+            }
+
+            $filtreStart = "";
+            if((!is_null($this->inputs["nbMonth"])) && ($this->inputs["nbMonth"] !== "0")){
+                $filtreStart = " AND a.`start` >= DATE_ADD(NOW(),INTERVAL -".$this->inputs["nbMonth"]." MONTH)";
             }
 
             $params = new OdaPrepareReqSql();
@@ -114,6 +123,7 @@ class RapportInterface extends OdaRestInterface {
                   WHERE 1=1
                   AND a.`active` = 1
                   ${filtreUser}
+                  ${filtreStart}
                   GROUP BY a.`locationId`
                 ) b, `tab_events_location` c
                 WHERE 1=1

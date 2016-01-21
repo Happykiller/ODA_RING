@@ -5,7 +5,8 @@
       "title" : "Accueil",
       "hello" : "Bonjour sur le service de gestion d'activité avec le FrameWork Oda",
       "pieEventByType" : "Répartition des types d'activité",
-      "pieEventByLocation" : "Répartition d'activité par emplacement"
+      "pieEventByLocation" : "Répartition d'activité par emplacement",
+      "nbMonth": "Nombre de mois"
     },
     "en" : {
       "title" : "Home",

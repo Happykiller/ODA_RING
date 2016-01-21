@@ -122,7 +122,7 @@ $slim->get('/rapport/event/client/', function () use ($slim) {
 
 $slim->get('/rapport/event/type/', function () use ($slim) {
     $params = new OdaPrepareInterface();
-    $params->arrayInputOpt = array("userId"=>null);
+    $params->arrayInputOpt = array("userId"=>null, "nbMonth"=>null);
     $params->slim = $slim;
     $INTERFACE = new RapportInterface($params);
     $INTERFACE->getPieActivityType();
@@ -130,7 +130,7 @@ $slim->get('/rapport/event/type/', function () use ($slim) {
 
 $slim->get('/rapport/event/location/', function () use ($slim) {
     $params = new OdaPrepareInterface();
-    $params->arrayInputOpt = array("userId"=>null);
+    $params->arrayInputOpt = array("userId"=>null, "nbMonth"=>null);
     $params->slim = $slim;
     $INTERFACE = new RapportInterface($params);
     $INTERFACE->getPieLocation();

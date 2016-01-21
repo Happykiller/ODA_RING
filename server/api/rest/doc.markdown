@@ -61,10 +61,10 @@
     * optional params : "accountId","billable"
 * `/rapport/event/type/`
     * type : GET
-    * optional params : "userId"
+    * optional params : "userId", "nbMonth"
 * `/rapport/event/location/`
     * type : GET
-    * optional params : "userId" 
+    * optional params : "userId" , "nbMonth"
 * `/rapport/event/consolidated/`
     * type : GET
 * `/rapport/event/forStaff/`

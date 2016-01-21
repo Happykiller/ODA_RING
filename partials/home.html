@@ -7,6 +7,22 @@
         </div>
     </div>
     <div class="row">
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="nbMonth" oda-label="home.nbMonth">home.nbMonth</label>
+                <select class="form-control" oda-input-select="nbMonth">
+                    <option value="1">1</option>
+                    <option value="2" selected>2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="6">6</option>
+                    <option value="12">12</option>
+                    <option value="0">All</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-6" style="text-align: center" id="pieEventByType">
             <oda-loading></oda-loading>
         </div>
@@ -17,5 +33,5 @@
 </div>
 
 <script>
-    $.Oda.App.Controler.Home.start();
+    $.Oda.App.Controller.Home.start();
 </script>

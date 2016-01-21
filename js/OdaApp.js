@@ -111,7 +111,7 @@
             }
         },
 
-        "Controler" : {
+        "Controller" : {
             "config" : {
                 "activityGoogleCalendar" : "primary"
             },
@@ -120,10 +120,31 @@
                  */
                 start: function () {
                     try {
+                        this.displayGraph({nbMonth: $('#nbMonth').val()});
+                        $.Oda.Scope.Gardian.add({
+                            id: "nbMonth",
+                            listElt: ["nbMonth"],
+                            function: function (e) {
+                                $.Oda.App.Controller.Home.displayGraph({nbMonth: $('#nbMonth').val()});
+                            }
+                        });
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controller.Home.start : " + er.message);
+                        return null;
+                    }
+                },
+                /**
+                 * @param {Object} p_params
+                 * @param p_params.nbMonth
+                 * @returns {$.Oda.App.Controller.Home}
+                 */
+                displayGraph : function (p_params) {
+                    try {
                         var tabInput = {
-                            "userId" : $.Oda.Session.id
+                            "userId" : $.Oda.Session.id,
+                            "nbMonth": p_params.nbMonth
                         };
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/rapport/event/type/", { functionRetour : function(response){
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/rapport/event/type/", { callback : function(response){
                             var datas = [];
 
                             for(var indice in response.data.data){
@@ -170,9 +191,10 @@
                         }},tabInput);
 
                         var tabInput = {
-                            "userId" : $.Oda.Session.id
+                            "userId" : $.Oda.Session.id,
+                            "nbMonth": p_params.nbMonth
                         };
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/rapport/event/location/", { functionRetour : function(response){
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/rapport/event/location/", { callback : function(response){
                             var datas = [];
 
                             for(var indice in response.data.data){
@@ -217,8 +239,9 @@
                                 }]
                             });
                         }},tabInput);
+                        return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.Home.start : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.Home.displayGraph : " + er.message);
                         return null;
                     }
                 },
@@ -234,40 +257,40 @@
                  */
                 start: function () {
                     try {
-                        $.Oda.App.Controler.Activity.sessionGoogleStart();
+                        $.Oda.App.Controller.Activity.sessionGoogleStart();
 
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/config/search/user/"+ $.Oda.Session.id, {functionRetour : function(response){
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/config/search/user/"+ $.Oda.Session.id, {callback : function(response){
                             if(response.data){
-                                $.Oda.App.Controler.config = response.data;
+                                $.Oda.App.Controller.config = response.data;
                             }
                         }});
 
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/location/", {functionRetour : function(response){
-                            $.Oda.App.Controler.Activity.activityLocation = response.data;
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/location/", {callback : function(response){
+                            $.Oda.App.Controller.Activity.activityLocation = response.data;
                         }});
 
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/type/", {functionRetour : function(response){
-                            $.Oda.App.Controler.Activity.activityTypes = response.data;
-                            $.Oda.App.Controler.Activity.buildLegend();
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/type/", {callback : function(response){
+                            $.Oda.App.Controller.Activity.activityTypes = response.data;
+                            $.Oda.App.Controller.Activity.buildLegend();
                         }});
 
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/", {functionRetour : function(response){
-                            $.Oda.App.Controler.Activity.accounts = response.data;
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/", {callback : function(response){
+                            $.Oda.App.Controller.Activity.accounts = response.data;
                         }});
 
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/item/", {functionRetour : function(response){
-                            $.Oda.App.Controler.Activity.items = response.data;
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/item/", {callback : function(response){
+                            $.Oda.App.Controller.Activity.items = response.data;
                         }});
 
                         $('#calendar').fullCalendar({
                             lang: 'fr',
                             weekNumbers : true,
                             dayClick: function(date, jsEvent, view) {
-                                $.Oda.App.Controler.Activity.dayClickData = {"date":date, "jsEvent":jsEvent, "view":view, "cell" : $(this)}
-                                $.Oda.App.Controler.Activity.createEvent();
+                                $.Oda.App.Controller.Activity.dayClickData = {"date":date, "jsEvent":jsEvent, "view":view, "cell" : $(this)}
+                                $.Oda.App.Controller.Activity.createEvent();
                             },
                             events: function(start, end, timezone, callback) {
-                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/search/user/"+ $.Oda.Session.id, {functionRetour : function(response){
+                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/search/user/"+ $.Oda.Session.id, {callback : function(response){
                                     for(var index in response.data){
                                         var elt = response.data[index];
                                         elt.title = elt.time + ': ' + ((elt.accountCode==='default')?"":elt.accountCode)  + ': ' + elt.title;
@@ -305,7 +328,7 @@
                                 $('.tooltipevent').remove();
                             },
                             eventClick: function(calEvent, jsEvent, view) {
-                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/"+ calEvent.id, {functionRetour : function(response){
+                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/"+ calEvent.id, {callback : function(response){
 
                                     var testHours = (response.data.end !== "0000-00-00 00:00:00");
                                     var date = response.data.start.substr(0,10);
@@ -322,15 +345,15 @@
                                     }
 
                                     var strHtmlTypes = "";
-                                    for(var index in $.Oda.App.Controler.Activity.activityTypes){
-                                        var elt = $.Oda.App.Controler.Activity.activityTypes[index];
+                                    for(var index in $.Oda.App.Controller.Activity.activityTypes){
+                                        var elt = $.Oda.App.Controller.Activity.activityTypes[index];
                                         var label = $.Oda.I8n.getByString(elt.label);
                                         strHtmlTypes += '<option value="'+ elt.id +'" '+ ((response.data.typeId === elt.id)?'selected':'') +'>'+ label + '</option>';
                                     }
 
                                     var locations = "";
-                                    for(var index in $.Oda.App.Controler.Activity.activityLocation){
-                                        var elt = $.Oda.App.Controler.Activity.activityLocation[index];
+                                    for(var index in $.Oda.App.Controller.Activity.activityLocation){
+                                        var elt = $.Oda.App.Controller.Activity.activityLocation[index];
                                         if(elt.active === "1"){
                                             var label = $.Oda.I8n.getByString(elt.label);
                                             locations += '<option value="'+ elt.id +'" '+ ((response.data.locationId === elt.id)?'selected':'') +'>'+ label + '</option>';
@@ -338,8 +361,8 @@
                                     }
 
                                     var accounts = "";
-                                    for(var index in $.Oda.App.Controler.Activity.accounts){
-                                        var elt = $.Oda.App.Controler.Activity.accounts[index];
+                                    for(var index in $.Oda.App.Controller.Activity.accounts){
+                                        var elt = $.Oda.App.Controller.Activity.accounts[index];
                                         if(elt.statusId !== "3"){
                                             var label = $.Oda.I8n.getByString(elt.label);
                                             accounts += '<option value="'+ elt.id +'"'+ ((response.data.accountId === elt.id)?'selected':'') +'>'+ label + '</option>';
@@ -373,8 +396,8 @@
                                     });
 
                                     var strFooter = "";
-                                    strFooter += '<button type="button" oda-label="oda-main.bt-delete" oda-submit="delete" onclick="$.Oda.App.Controler.Activity.deleteEvent({id:'+response.data.id+', googleId:\''+response.data.googleId+'\'});" class="btn btn-danger pull-left">oda-main.bt-delete</button >';
-                                    strFooter += '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controler.Activity.submitEditEvent({id:'+response.data.id+', date:\''+date+'\', googleId:\''+response.data.googleId+'\'});" class="btn btn-primary disabled" disabled>Submit</button >';
+                                    strFooter += '<button type="button" oda-label="oda-main.bt-delete" oda-submit="delete" onclick="$.Oda.App.Controller.Activity.deleteEvent({id:'+response.data.id+', googleId:\''+response.data.googleId+'\'});" class="btn btn-danger pull-left">oda-main.bt-delete</button >';
+                                    strFooter += '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controller.Activity.submitEditEvent({id:'+response.data.id+', date:\''+date+'\', googleId:\''+response.data.googleId+'\'});" class="btn btn-primary disabled" disabled>Submit</button >';
 
                                     $.Oda.Display.Popup.open({
                                         "name" : "editEvent",
@@ -384,13 +407,13 @@
                                         "footer" : strFooter,
                                         "callback" : function(e){
 
-                                            $.Oda.App.Controler.Activity.getHtmlSelectItems({id:$('#account').val(), itemId : response.data.itemId });
+                                            $.Oda.App.Controller.Activity.getHtmlSelectItems({id:$('#account').val(), itemId : response.data.itemId });
 
                                             $.Oda.Scope.Gardian.add({
                                                 id: "accountItem",
                                                 listElt: ["account"],
                                                 function: function (e) {
-                                                    $.Oda.App.Controler.Activity.getHtmlSelectItems({id:$('#account').val()});
+                                                    $.Oda.App.Controller.Activity.getHtmlSelectItems({id:$('#account').val()});
                                                 }
                                             });
 
@@ -441,12 +464,12 @@
                         })
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.Activity.start : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.Activity.start : " + er.message);
                         return null;
                     }
                 },
                 /**
-                 * @returns {$.Oda.App.Controler.Activity}
+                 * @returns {$.Oda.App.Controller.Activity}
                  */
                 createEvent: function () {
                     try {
@@ -457,8 +480,8 @@
                         }
 
                         var strHtmlTypes = "";
-                        for(var index in $.Oda.App.Controler.Activity.activityTypes){
-                            var elt = $.Oda.App.Controler.Activity.activityTypes[index];
+                        for(var index in $.Oda.App.Controller.Activity.activityTypes){
+                            var elt = $.Oda.App.Controller.Activity.activityTypes[index];
                             if(elt.active === "1"){
                                 var label = $.Oda.I8n.getByString(elt.label);
                                 strHtmlTypes += '<option value="'+ elt.id +'">'+ label + '</option>';
@@ -466,8 +489,8 @@
                         }
 
                         var locations = "";
-                        for(var index in $.Oda.App.Controler.Activity.activityLocation){
-                            var elt = $.Oda.App.Controler.Activity.activityLocation[index];
+                        for(var index in $.Oda.App.Controller.Activity.activityLocation){
+                            var elt = $.Oda.App.Controller.Activity.activityLocation[index];
                             if(elt.active === "1"){
                                 var label = $.Oda.I8n.getByString(elt.label);
                                 locations += '<option value="'+ elt.id +'">'+ label + '</option>';
@@ -475,8 +498,8 @@
                         }
 
                         var accounts = "";
-                        for(var index in $.Oda.App.Controler.Activity.accounts){
-                            var elt = $.Oda.App.Controler.Activity.accounts[index];
+                        for(var index in $.Oda.App.Controller.Activity.accounts){
+                            var elt = $.Oda.App.Controller.Activity.accounts[index];
                             if(elt.statusId !== "3"){
                                 var label = $.Oda.I8n.getByString(elt.label);
                                 accounts += '<option value="'+ elt.id +'">'+ label + '</option>';
@@ -497,15 +520,15 @@
                         $.Oda.Display.Popup.open({
                             "name" : "createEvent",
                             "size" : "lg",
-                            "label" : $.Oda.I8n.get('activity','createEvent') + ', ' + $.Oda.App.Controler.Activity.dayClickData.date.format(),
+                            "label" : $.Oda.I8n.get('activity','createEvent') + ', ' + $.Oda.App.Controller.Activity.dayClickData.date.format(),
                             "details" : strHtml,
-                            "footer" : '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controler.Activity.submitNewActivity();" class="btn btn-primary disabled" disabled>Submit</button >',
+                            "footer" : '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controller.Activity.submitNewActivity();" class="btn btn-primary disabled" disabled>Submit</button >',
                             "callback" : function(){
                                 $.Oda.Scope.Gardian.add({
                                     id: "accountItem",
                                     listElt: ["account"],
                                     function: function (e) {
-                                        $.Oda.App.Controler.Activity.getHtmlSelectItems({id:$('#account').val()});
+                                        $.Oda.App.Controller.Activity.getHtmlSelectItems({id:$('#account').val()});
                                     }
                                 });
 
@@ -552,21 +575,21 @@
                         });
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.Activity.createEvent : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.Activity.createEvent : " + er.message);
                         return null;
                     }
                 },
                 /**
-                 * @returns {$.Oda.App.Controler.Activity}
+                 * @returns {$.Oda.App.Controller.Activity}
                  */
                 submitNewActivity: function () {
                     try {
-                        var start = $.Oda.App.Controler.Activity.dayClickData.date.format();
+                        var start = $.Oda.App.Controller.Activity.dayClickData.date.format();
                         var end = null;
                         var allDay = $('#allDay');
                         if(!allDay.prop("checked")){
                             start +=  " " +  $("#start").val() +  ":00";
-                            end = $.Oda.App.Controler.Activity.dayClickData.date.format() + " " +  $("#end").val() +  ":00";
+                            end = $.Oda.App.Controller.Activity.dayClickData.date.format() + " " +  $("#end").val() +  ":00";
                         }
 
                         var tabInput = {
@@ -585,14 +608,14 @@
                             "autorId" : $.Oda.Session.id,
                             "itemId" : ($('#item').val() !== null)?$('#item').val():1
                         };
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/", {type:'POST',functionRetour : function(response){
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/", {type:'POST',callback : function(response){
                             $.Oda.Display.Popup.close({name:"createEvent"});
                             $('#calendar').fullCalendar( 'refetchEvents' );
-                            $.Oda.App.Controler.Activity.newEventGoogleCalendar({id:response.data});
+                            $.Oda.App.Controller.Activity.newEventGoogleCalendar({id:response.data});
                         }},tabInput);
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.Activity.submitNewActivity : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.Activity.submitNewActivity : " + er.message);
                         return null;
                     }
                 },
@@ -600,7 +623,7 @@
                  * @param {object} p_params
                  * @param p_params.id
                  * @param p_params.date
-                 * @returns {$.Oda.App.Controler.Activity}
+                 * @returns {$.Oda.App.Controller.Activity}
                  */
                 submitEditEvent: function (p_params) {
                     try {
@@ -627,29 +650,29 @@
                             "synchSF" : ($('#synchSF').prop("checked"))?1:0,
                             "itemId" : ($('#item').val() !== null)?$('#item').val():1
                         };
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/"+p_params.id, { type : 'PUT', functionRetour : function(response){
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/"+p_params.id, { type : 'PUT', callback : function(response){
                             $.Oda.Display.Popup.close({name:"editEvent"});
                             $('#calendar').fullCalendar( 'refetchEvents' );
                             if(p_params.googleId !== ""){
-                                $.Oda.App.Controler.Activity.updateEventGoogleCalendar({id:p_params.id});
+                                $.Oda.App.Controller.Activity.updateEventGoogleCalendar({id:p_params.id});
                             }else{
-                                $.Oda.App.Controler.Activity.newEventGoogleCalendar({id:p_params.id});
+                                $.Oda.App.Controller.Activity.newEventGoogleCalendar({id:p_params.id});
                             }
                         }},tabInput);
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.Activity.submitEditEvent : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.Activity.submitEditEvent : " + er.message);
                         return null;
                     }
                 },
                 /**
-                 * @returns {$.Oda.App.Controler.Activity}
+                 * @returns {$.Oda.App.Controller.Activity}
                  */
                 buildLegend: function () {
                     try {
                         var strHtml = "";
-                        for(var index in $.Oda.App.Controler.Activity.activityTypes){
-                            var elt = $.Oda.App.Controler.Activity.activityTypes[index];
+                        for(var index in $.Oda.App.Controller.Activity.activityTypes){
+                            var elt = $.Oda.App.Controller.Activity.activityTypes[index];
                             strHtml += $.Oda.Display.TemplateHtml.create({
                                 template : "templateLegend"
                                 , scope : {
@@ -662,12 +685,12 @@
                         $('#legend').html(strHtml);
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.Activity.buildLegend : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.Activity.buildLegend : " + er.message);
                         return null;
                     }
                 },
                 /**
-                 * @returns {$.Oda.App.Controler.Activity}
+                 * @returns {$.Oda.App.Controller.Activity}
                  */
                 displayLegend : function () {
                     try {
@@ -679,12 +702,12 @@
                         }
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.Activity.displayLegend : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.Activity.displayLegend : " + er.message);
                         return null;
                     }
                 },
                 /**
-                 * @returns {$.Oda.App.Controler.Activity}
+                 * @returns {$.Oda.App.Controller.Activity}
                  */
                 sessionGoogleStart: function () {
                     try {
@@ -692,20 +715,20 @@
                         $.Oda.Google.ready = false;
                         $.Oda.Google.startSessionAuth(
                             function(){
-                                $.Oda.App.Controler.Activity.returnGoogleSession();
+                                $.Oda.App.Controller.Activity.returnGoogleSession();
                             }
                             , function(){
-                                $('#google').html('<button type="button" onclick="$.Oda.Google.callServiceGoogleAuth($.Oda.App.Controler.Activity.returnGoogleSession);" class="btn btn-danger center-block">'+$.Oda.I8n.get("activity","syn-google")+'</button>');
+                                $('#google').html('<button type="button" onclick="$.Oda.Google.callServiceGoogleAuth($.Oda.App.Controller.Activity.returnGoogleSession);" class="btn btn-danger center-block">'+$.Oda.I8n.get("activity","syn-google")+'</button>');
                             }
                         );
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.Activity.sessionGoogleStart : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.Activity.sessionGoogleStart : " + er.message);
                         return null;
                     }
                 },
                 /**
-                 * @returns {$.Oda.App.Controler.Activity}
+                 * @returns {$.Oda.App.Controller.Activity}
                  */
                 returnGoogleSession: function () {
                     try {
@@ -721,7 +744,7 @@
                         });
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.Activity.returnGoogleSession : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.Activity.returnGoogleSession : " + er.message);
                         return null;
                     }
                 },
@@ -732,14 +755,14 @@
                  */
                 newEventGoogleCalendar: function (p_params) {
                     try {
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/"+ p_params.id, {functionRetour : function(response){
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/"+ p_params.id, {callback : function(response){
                             if((response.data.synGoogle === "1")&&($.Oda.Google.ready)){
-                                $.Oda.App.Controler.Activity.createAppointment(response.data);
+                                $.Oda.App.Controller.Activity.createAppointment(response.data);
                             }
                         }});
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.Activity.newEventGoogleCalendar : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.Activity.newEventGoogleCalendar : " + er.message);
                         return null;
                     }
                 },
@@ -750,14 +773,14 @@
                  */
                 updateEventGoogleCalendar: function (p_params) {
                     try {
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/"+ p_params.id, {functionRetour : function(response){
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/"+ p_params.id, {callback : function(response){
                             if((response.data.googleId !== "")&&(response.data.synGoogle === "1")&&($.Oda.Google.ready)){
-                                $.Oda.App.Controler.Activity.updateAppointment(response.data);
+                                $.Oda.App.Controller.Activity.updateAppointment(response.data);
                             }
                         }});
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.Activity.updateEventGoogleCalendar : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.Activity.updateEventGoogleCalendar : " + er.message);
                         return null;
                     }
                 },
@@ -775,13 +798,13 @@
                         var strDateGoole = +arrayDate[0]+"-"+arrayDate[1]+"-"+arrayDate[2]+"T"+array0[1]+".000";
                         return strDateGoole;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.Activity.getDateGoole :" + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.Activity.getDateGoole :" + er.message);
                         return null;
                     }
                 },
                 /**
                  * @param {Object} p_params
-                 * @returns {$.Oda.App.Controler.Activity}
+                 * @returns {$.Oda.App.Controller.Activity}
                  */
                 updateAppointment : function (p_params) {
                     try {
@@ -804,13 +827,13 @@
 
                         var resource = {
                             "summary": summary,
-                            "description": p_params.cmt + "\n \n Last update : " + $.Oda.Date.getStrDateTime() + "\n \n Template title : " + $.Oda.App.Controler.Activity.templateCalendar,
+                            "description": p_params.cmt + "\n \n Last update : " + $.Oda.Date.getStrDateTime() + "\n \n Template title : " + $.Oda.App.Controller.Activity.templateCalendar,
                             "start": start,
                             "end": end
                         };
 
                         var request = $.Oda.Google.gapi.client.calendar.events.update({
-                            'calendarId': $.Oda.App.Controler.config.activityGoogleCalendar,
+                            'calendarId': $.Oda.App.Controller.config.activityGoogleCalendar,
                             'eventId' : p_params.googleId,
                             'resource': resource
                         });
@@ -826,7 +849,7 @@
 
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.Activity.updateAppointment : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.Activity.updateAppointment : " + er.message);
                         return null;
                     }
                 },
@@ -855,7 +878,7 @@
 
                         var resource = {
                             "summary": summary,
-                            "description": p_params.cmt + "\n \n Template title : " + $.Oda.App.Controler.Activity.templateCalendar,
+                            "description": p_params.cmt + "\n \n Template title : " + $.Oda.App.Controller.Activity.templateCalendar,
                             "start": start,
                             "end": end,
                             "source": {
@@ -865,7 +888,7 @@
                         };
 
                         var request = $.Oda.Google.gapi.client.calendar.events.insert({
-                            'calendarId': $.Oda.App.Controler.config.activityGoogleCalendar,
+                            'calendarId': $.Oda.App.Controller.config.activityGoogleCalendar,
                             'resource': resource
                         });
 
@@ -877,7 +900,7 @@
                                     "googleHtmlLink" : resp.htmlLink,
                                     "googleICalUID" : resp.iCalUID
                                 };
-                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/"+p_params.id+"/googleCalendar/", { type : 'PUT', functionRetour : function(response){
+                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/"+p_params.id+"/googleCalendar/", { type : 'PUT', callback : function(response){
                                     $.Oda.Display.Notification.info($.Oda.I8n.get('activity','okCreateAppointmentGoogle'));
                                 }},datas);
                             }else{
@@ -886,7 +909,7 @@
                             }
                         });
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.Activity..createAppointment :" + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.Activity..createAppointment :" + er.message);
                     }
                 },
                 /**
@@ -896,27 +919,27 @@
                 generateTitleGoogleCalendar: function (p_params) {
                     try {
                         var type = "";
-                        for(var index in $.Oda.App.Controler.Activity.activityTypes){
-                            if(p_params.typeId === $.Oda.App.Controler.Activity.activityTypes[index].id){
-                                type = $.Oda.App.Controler.Activity.activityTypes[index].code;
+                        for(var index in $.Oda.App.Controller.Activity.activityTypes){
+                            if(p_params.typeId === $.Oda.App.Controller.Activity.activityTypes[index].id){
+                                type = $.Oda.App.Controller.Activity.activityTypes[index].code;
                                 break;
                             }
                         }
 
                         var account = "none";
-                        for(var index in $.Oda.App.Controler.Activity.accounts){
-                            var elt = $.Oda.App.Controler.Activity.accounts[index];
+                        for(var index in $.Oda.App.Controller.Activity.accounts){
+                            var elt = $.Oda.App.Controller.Activity.accounts[index];
                             if(elt.id === p_params.accountId){
-                                account = $.Oda.App.Controler.Activity.accounts[index].code;
+                                account = $.Oda.App.Controller.Activity.accounts[index].code;
                                 break;
                             }
                         }
 
                         var item = "none";
-                        for(var index in $.Oda.App.Controler.Activity.items){
-                            var elt = $.Oda.App.Controler.Activity.items[index];
+                        for(var index in $.Oda.App.Controller.Activity.items){
+                            var elt = $.Oda.App.Controller.Activity.items[index];
                             if(elt.id === p_params.itemId){
-                                item = $.Oda.App.Controler.Activity.items[index].code;
+                                item = $.Oda.App.Controller.Activity.items[index].code;
                                 break;
                             }
                         }
@@ -924,7 +947,7 @@
                         var str = "[" + type.toUpperCase() + "][" + account + "][" + item + "][" + p_params.title + "][" + p_params.time + "H][" + ((p_params.billable === "1")?"a0jD":"free") + "][" + $.Oda.Session.code_user.toUpperCase() + "]" + ((p_params.tmp === "1")?"-TMP":"");
                         return str;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.Activity.generateTitleGoogleCalendar : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.Activity.generateTitleGoogleCalendar : " + er.message);
                         return null;
                     }
                 },
@@ -932,13 +955,13 @@
                  * @param {Object} p_params
                  * @param p_params.id
                  * @param p_params.googleId
-                 * @returns {$.Oda.App.Controler.Activity}
+                 * @returns {$.Oda.App.Controller.Activity}
                  */
                 deleteEvent : function (p_params) {
                     try {
                         if((p_params.googleId !== "")&&($.Oda.Google.ready)) {
                             var request = $.Oda.Google.gapi.client.calendar.events.delete({
-                                'calendarId': $.Oda.App.Controler.config.activityGoogleCalendar,
+                                'calendarId': $.Oda.App.Controller.config.activityGoogleCalendar,
                                 'eventId': p_params.googleId
                             });
 
@@ -952,14 +975,14 @@
                             });
                         }
 
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest + "api/rest/event/"+p_params.id, {type : 'DELETE', functionRetour: function (response) {
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest + "api/rest/event/"+p_params.id, {type : 'DELETE', callback: function (response) {
                             $.Oda.Display.Popup.close({name:"editEvent"});
                             $('#calendar').fullCalendar( 'refetchEvents' );
                         }});
 
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.Activity.deleteEvent : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.Activity.deleteEvent : " + er.message);
                         return null;
                     }
                 },
@@ -967,11 +990,11 @@
                  * @param {object} p_params
                  * @param p_params.id
                  * @param p_params.itemId (optional)
-                 * @returns {$.Oda.Controler.Activity}
+                 * @returns {$.Oda.Controller.Activity}
                  */
                 getHtmlSelectItems : function(p_params) {
                     try {
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/"+p_params.id+"/search/item", {functionRetour : function(response){
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/"+p_params.id+"/search/item", {callback : function(response){
                             if(response.data.length > 0){
                                 $('#item')
                                     .find('option')
@@ -1004,30 +1027,30 @@
                         }});
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.Controler.Activity.getHtmlSelectItems : " + er.message);
+                        $.Oda.Log.error("$.Oda.Controller.Activity.getHtmlSelectItems : " + er.message);
                         return null;
                     }
                 },
             },
             "ManageAccounts" : {
                 /**
-                 * @returns {$.Oda.App.Controler.ManageAccounts}
+                 * @returns {$.Oda.App.Controller.ManageAccounts}
                  */
                 start : function () {
                     try {
-                        $.Oda.App.Controler.ManageAccounts.displayAccounts();
+                        $.Oda.App.Controller.ManageAccounts.displayAccounts();
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.ManageAccounts.start : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.ManageAccounts.start : " + er.message);
                         return null;
                     }
                 },
                 /**
-                 * @returns {$.Oda.App.Controler.ManageAccounts}
+                 * @returns {$.Oda.App.Controller.ManageAccounts}
                  */
                 displayAccounts : function (p_params) {
                     try {
-                        var retour = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/", { functionRetour : function(response) {
+                        var retour = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/", { callback : function(response) {
                             var objDataTable = $.Oda.Tooling.objDataTableFromJsonArray(response.data);
                             var strhtml = '<table style="width: 100%" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered hover" id="tableAccounts">';
                             strhtml += '<tfoot><tr><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th></tr></tfoot></table>';
@@ -1058,7 +1081,7 @@
                                                     salesForce: row[objDataTable.entete["salesForce"]],
                                                     statusId: row[objDataTable.entete["statusId"]]
                                                 }
-                                                strHtml += '<a onclick="$.Oda.App.Controler.ManageAccounts.accountEdit('+$.Oda.Display.jsonToStringSingleQuote({"json":datas})+')" class="btn btn-primary btn-xs">' + row[objDataTable.entete["id"]] + '</a>';
+                                                strHtml += '<a onclick="$.Oda.App.Controller.ManageAccounts.accountEdit('+$.Oda.Display.jsonToStringSingleQuote({"json":datas})+')" class="btn btn-primary btn-xs">' + row[objDataTable.entete["id"]] + '</a>';
                                                 return strHtml;
                                             }
                                             return row[objDataTable.entete["id"]];
@@ -1103,10 +1126,10 @@
                                                         "salesForce": elt.salesForce,
                                                         "charge": elt.charge
                                                     }
-                                                    strHtml += '<a onclick="$.Oda.App.Controler.ManageAccounts.itemEdit('+$.Oda.Display.jsonToStringSingleQuote({"json":datas})+')" class="btn btn-primary btn-xs">' + elt.code + '</a> ';
+                                                    strHtml += '<a onclick="$.Oda.App.Controller.ManageAccounts.itemEdit('+$.Oda.Display.jsonToStringSingleQuote({"json":datas})+')" class="btn btn-primary btn-xs">' + elt.code + '</a> ';
                                                 }
                                             }
-                                            strHtml += '<a onclick="$.Oda.App.Controler.ManageAccounts.itemNew({accountId:'+row[objDataTable.entete["id"]]+', accountCode:\''+row[objDataTable.entete["code"]]+'\'})" class="btn btn-success btn-xs">Ajouter</a> ';
+                                            strHtml += '<a onclick="$.Oda.App.Controller.ManageAccounts.itemNew({accountId:'+row[objDataTable.entete["id"]]+', accountCode:\''+row[objDataTable.entete["code"]]+'\'})" class="btn btn-success btn-xs">Ajouter</a> ';
                                             return strHtml;
                                         },
                                         "aTargets": [5]
@@ -1160,12 +1183,12 @@
                         }}, {"mode":"full"});
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.ManageAccounts.displayAccounts : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.ManageAccounts.displayAccounts : " + er.message);
                         return null;
                     }
                 },
                 /**
-                 * @returns {$.Oda.App.Controler.ManageAccounts}
+                 * @returns {$.Oda.App.Controller.ManageAccounts}
                  */
                 newAccount : function () {
                     try {
@@ -1176,7 +1199,7 @@
                         });
 
                         var strFooter = "";
-                        strFooter += '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controler.ManageAccounts.submitNewAccount();" class="btn btn-primary disabled" disabled>Submit</button >';
+                        strFooter += '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controller.ManageAccounts.submitNewAccount();" class="btn btn-primary disabled" disabled>Submit</button >';
 
                         $.Oda.Display.Popup.open({
                             "name" : "newAccount",
@@ -1201,14 +1224,14 @@
                         });
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.ManageAccounts.newAccount : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.ManageAccounts.newAccount : " + er.message);
                         return null;
                     }
                 },
                 /**
                  * @param {Object} p_params
                  * @param p_params.id
-                 * @returns {$.Oda.App.Controler.ManageAccounts}
+                 * @returns {$.Oda.App.Controller.ManageAccounts}
                  */
                 submitNewAccount : function (p_params) {
                     try {
@@ -1218,19 +1241,19 @@
                             "salesForce" : ($('#salesForce').val()===undefined)?"":$('#salesForce').val(),
                             "userId" : $.Oda.Session.id
                         };
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/", {type:'POST',functionRetour : function(response){
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/", {type:'POST',callback : function(response){
                             $.Oda.Display.Popup.close({name:"newAccount"});
-                            $.Oda.App.Controler.ManageAccounts.displayAccounts();
+                            $.Oda.App.Controller.ManageAccounts.displayAccounts();
                         }},tabInput);
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.ManageAccounts.submitNewAccount : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.ManageAccounts.submitNewAccount : " + er.message);
                         return null;
                     }
                 },
                 /**
                  * @param {Object} p_params
-                 * @returns {$.Oda.App.Controler.ManageAccounts}
+                 * @returns {$.Oda.App.Controller.ManageAccounts}
                  */
                 accountEdit : function (p_params) {
                     try {
@@ -1244,7 +1267,7 @@
                         });
 
                         var strFooter = "";
-                        strFooter += '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controler.ManageAccounts.submitEditAccount({id:'+p_params.id+'});" class="btn btn-primary disabled" disabled>Submit</button >';
+                        strFooter += '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controller.ManageAccounts.submitEditAccount({id:'+p_params.id+'});" class="btn btn-primary disabled" disabled>Submit</button >';
 
                         $.Oda.Display.Popup.open({
                             "name" : "editAccount",
@@ -1269,14 +1292,14 @@
                         });
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.ManageAccounts.accountEdit : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.ManageAccounts.accountEdit : " + er.message);
                         return null;
                     }
                 },
                 /**
                  * @param {Object} p_params
                  * @param p_params.id
-                 * @returns {$.Oda.App.Controler.ManageAccounts}
+                 * @returns {$.Oda.App.Controller.ManageAccounts}
                  */
                 submitEditAccount : function (p_params) {
                     try {
@@ -1285,18 +1308,18 @@
                             "label" : $('#label').val(),
                             "salesForce" : $('#salesForce').val()
                         };
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/"+p_params.id, {type:'PUT',functionRetour : function(response){
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/"+p_params.id, {type:'PUT',callback : function(response){
                             $.Oda.Display.Popup.close({name:"editAccount"});
-                            $.Oda.App.Controler.ManageAccounts.displayAccounts();
+                            $.Oda.App.Controller.ManageAccounts.displayAccounts();
                         }},tabInput);
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.ManageAccounts.submitNewAccount : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.ManageAccounts.submitNewAccount : " + er.message);
                         return null;
                     }
                 },
                 /**
-                 * @returns {$.Oda.App.Controler.ManageAccounts}
+                 * @returns {$.Oda.App.Controller.ManageAccounts}
                  */
                 itemNew : function (p_params) {
                     try {
@@ -1307,7 +1330,7 @@
                         });
 
                         var strFooter = "";
-                        strFooter += '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controler.ManageAccounts.submitNewItem({accountId:\''+p_params.accountId+'\'});" class="btn btn-primary disabled" disabled>Submit</button >';
+                        strFooter += '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controller.ManageAccounts.submitNewItem({accountId:\''+p_params.accountId+'\'});" class="btn btn-primary disabled" disabled>Submit</button >';
 
                         $.Oda.Display.Popup.open({
                             "name" : "newItem",
@@ -1332,14 +1355,14 @@
                         });
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.ManageAccounts.itemNew : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.ManageAccounts.itemNew : " + er.message);
                         return null;
                     }
                 },
                 /**
                  * @param {Object} p_params
                  * @param p_params.accountId
-                 * @returns {$.Oda.App.Controler.ManageAccounts}
+                 * @returns {$.Oda.App.Controller.ManageAccounts}
                  */
                 submitNewItem : function (p_params) {
                     try {
@@ -1351,13 +1374,13 @@
                             "userId" : $.Oda.Session.id,
                             "accountId" : p_params.accountId
                         };
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/item/", {type:'POST',functionRetour : function(response){
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/item/", {type:'POST',callback : function(response){
                             $.Oda.Display.Popup.close({name:"newItem"});
-                            $.Oda.App.Controler.ManageAccounts.displayAccounts();
+                            $.Oda.App.Controller.ManageAccounts.displayAccounts();
                         }},tabInput);
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.ManageAccounts.submitNewItem : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.ManageAccounts.submitNewItem : " + er.message);
                         return null;
                     }
                 },
@@ -1368,7 +1391,7 @@
                  * @param p_params.label
                  * @param p_params.salesForces
                  * @param p_params.charge
-                 * @returns {$.Oda.App.Controler.ManageAccounts}
+                 * @returns {$.Oda.App.Controller.ManageAccounts}
                  */
                 itemEdit : function (p_params) {
                     try {
@@ -1389,7 +1412,7 @@
                         });
 
                         var strFooter = "";
-                        strFooter += '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controler.ManageAccounts.submitEditItem({id:\''+p_params.id+'\'});" class="btn btn-primary disabled" disabled>Submit</button >';
+                        strFooter += '<button type="button" oda-label="oda-main.bt-submit" oda-submit="submit" onclick="$.Oda.App.Controller.ManageAccounts.submitEditItem({id:\''+p_params.id+'\'});" class="btn btn-primary disabled" disabled>Submit</button >';
 
                         $.Oda.Display.Popup.open({
                             "name" : "editItem",
@@ -1414,14 +1437,14 @@
                         });
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.ManageAccounts.itemEdit : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.ManageAccounts.itemEdit : " + er.message);
                         return null;
                     }
                 },
                 /**
                  * @param {Object} p_params
                  * @param p_params.id
-                 * @returns {$.Oda.App.Controler.ManageAccounts}
+                 * @returns {$.Oda.App.Controller.ManageAccounts}
                  */
                 submitEditItem : function (p_params) {
                     try {
@@ -1431,36 +1454,36 @@
                             "salesForce" : $('#salesForce').val(),
                             "charge" : $('#charge').val()
                         };
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/item/"+p_params.id, {type:'PUT',functionRetour : function(response){
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/item/"+p_params.id, {type:'PUT',callback : function(response){
                             $.Oda.Display.Popup.close({name:"editItem"});
-                            $.Oda.App.Controler.ManageAccounts.displayAccounts();
+                            $.Oda.App.Controller.ManageAccounts.displayAccounts();
                         }},tabInput);
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.ManageAccounts.submitEditItem : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.ManageAccounts.submitEditItem : " + er.message);
                         return null;
                     }
                 },
             },
             "RapportClient" : {
                 /**
-                 * @returns {$.Oda.App.Controler.RapportClient}
+                 * @returns {$.Oda.App.Controller.RapportClient}
                  */
                 start: function () {
                     try {
-                        $.Oda.App.Controler.RapportClient.loadSearch();
+                        $.Oda.App.Controller.RapportClient.loadSearch();
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.RapportClient.start : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.RapportClient.start : " + er.message);
                         return null;
                     }
                 },
                 /**
-                 * @returns {$.Oda.$.Oda.App.Controler.RapportClient}
+                 * @returns {$.Oda.$.Oda.App.Controller.RapportClient}
                  */
                 loadSearch : function () {
                     try {
-                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/", {functionRetour : function(response){
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/", {callback : function(response){
                             var accounts = "";
                             for(var index in response.data){
                                 var elt = response.data[index];
@@ -1476,18 +1499,18 @@
                                 id : "selectSearch",
                                 listElt : ["account","billable"],
                                 function : function(e){
-                                    $.Oda.App.Controler.RapportClient.search();
+                                    $.Oda.App.Controller.RapportClient.search();
                                 }
                             });
                         }});
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.RapportClient.loadSearch : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.RapportClient.loadSearch : " + er.message);
                         return null;
                     }
                 },
                 /**
-                 * @returns {$.Oda.App.Controler.RapportClient}
+                 * @returns {$.Oda.App.Controller.RapportClient}
                  */
                 search : function () {
                     try {
@@ -1501,7 +1524,7 @@
                                 "accountId" : account.val(),
                                 "billable" : billable.val()
                             };
-                            var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/rapport/event/client/", {functionRetour : function(response){
+                            var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/rapport/event/client/", {callback : function(response){
                                 $('#divRapport').html('');
                                 var listDataDisplayEvent = {};
                                 var listDataItemRapport = {};
@@ -1579,7 +1602,7 @@
                         }
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.RapportClient.search : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.RapportClient.search : " + er.message);
                         return null;
                     }
                 },
@@ -1588,21 +1611,21 @@
                 /**
                  * @param {Object} p_params
                  * @param p_params.id
-                 * @returns {$.Oda.App.Controler.ActivityList}
+                 * @returns {$.Oda.App.Controller.ActivityList}
                  */
                 start : function (p_params) {
                     try {
-                        $.Oda.App.Controler.ActivityList.displayGantt();
+                        $.Oda.App.Controller.ActivityList.displayGantt();
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.ActivityList.start : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.ActivityList.start : " + er.message);
                         return null;
                     }
                 },
                 /**
                  * @param {Object} p_params
                  * @param p_params.id
-                 * @returns {$.Oda.App.Controler.ActivityList}
+                 * @returns {$.Oda.App.Controller.ActivityList}
                  */
                 displayGantt : function (p_params) {
                     try {
@@ -1615,7 +1638,7 @@
                             defaultView: 'timelineMonth',
                             resourceLabelText: 'Consultants',
                             resources: function(callback) {
-                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/config/", {functionRetour : function(response){
+                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/config/", {callback : function(response){
                                     var datas = [];
                                     for(var index in response.data){
                                         var elt = response.data[index];
@@ -1629,7 +1652,7 @@
                                 }});
                             },
                             events: function(start, end, timezone, callback) {
-                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/rapport/event/consolidated/", {functionRetour : function(response){
+                                var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/rapport/event/consolidated/", {callback : function(response){
                                     var datas = [];
                                     for(var index in response.data){
                                         var elt = response.data[index];
@@ -1659,7 +1682,7 @@
                         });
                         return this;
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controler.ActivityList.displayGantt : " + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.ActivityList.displayGantt : " + er.message);
                         return null;
                     }
                 },
