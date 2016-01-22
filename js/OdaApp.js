@@ -721,6 +721,7 @@
                                 $('#google').html('<button type="button" onclick="$.Oda.Google.callServiceGoogleAuth($.Oda.App.Controller.Activity.returnGoogleSession);" class="btn btn-danger center-block">'+$.Oda.I8n.get("activity","syn-google")+'</button>');
                             }
                         );
+                        $.Oda.Tooling.timeout($.Oda.App.Controller.Activity.sessionGoogleStart, 3500000);
                         return this;
                     } catch (er) {
                         $.Oda.Log.error("$.Oda.App.Controller.Activity.sessionGoogleStart : " + er.message);
