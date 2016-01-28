@@ -50,15 +50,25 @@ CREATE TABLE IF NOT EXISTS `@prefix@tab_events_type` (
 
 INSERT INTO `@prefix@tab_events_type` (`code`, `className`, `label`)
 VALUES
-  ('free', 'code-green', 'activity.type-free'),
-  ('EXP', 'code-yellow', 'activity.type-expertise'),
-  ('TRIP', 'code-blue', 'activity.type-trip'),
-  ('case', 'code-red', 'activity.type-case'),
-  ('training', 'code-orange', 'activity.type-training'),
-  ('pre-up', 'code-violet', 'activity.type-preup'),
-  ('corporate', 'code-aqua', 'activity.type-corporate'),
-  ('assist', 'code-black', 'activity.type-assist'),
-  ('abs', 'code-grey', 'activity.type-abs')
+  ('INTERNAL', 'code-wisteria', 'activity-type.internal', 1),
+  ('EXP', 'code-turquoise', 'activity-type.expertise', 1),
+  ('TRIP', 'code-emerald', 'activity-type.trip', 1),
+  ('SUPPORT', 'code-belizeHole', 'activity-type.support', 1),
+  ('PUBLIC TRAINING', 'code-nephritis', 'activity-type.publicTraining', 1),
+  ('PREPUP', 'code-greenSea', 'activity-type.preup', 1),
+  ('CORPORATE', 'code-wetAsphalt', 'activity-type.corporate', 1),
+  ('SELF TRAINING', 'code-amethyst', 'activity-type.selfTraining', 1),
+  ('HOLIDAYS', 'code-peterRiver', 'activity-type.holidays', 1),
+  ('PRESALES', 'code-midnightBlue', 'activity-type.preSales', 1),
+  ('CUSTOMER SUCCESS', 'code-sunFlower', 'activity-type.customerSuccess', 1),
+  ('PRIVATE TRAINING', 'code-carrot', 'activity-type.privateTraining', 1),
+  ('DELIVERY REPORT', 'code-alizarin', 'activity-type.delivery-report', 1),
+  ('ADMIN', 'code-clouds', 'activity-type.admin', 1),
+  ('SALES', 'code-concrete', 'activity-type.sales', 1),
+  ('MIGRATION SIZING', 'code-orange', 'activity-type.migrationSizing', 1),
+  ('PROJECT FOLLOW UP', 'code-pumkin', 'activity-type.projectFollowUp', 1),
+  ('REACTIVATION', 'code-pomegranate', 'activity-type.reactivation', 1),
+  ('SICK DAYS', 'code-silver', 'activity-type.sickDays', 1)
 ;
 
 --
