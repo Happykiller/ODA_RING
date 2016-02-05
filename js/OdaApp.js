@@ -36,7 +36,7 @@
         startApp: function () {
             try {
                 $.Oda.Router.addDependencies("fullcalendar", {
-                    ordered : false,
+                    ordered : true,
                     "list" : [
                         { "elt" : $.Oda.Context.rootPath + $.Oda.Context.vendorName + "/fullcalendar/dist/fullcalendar.min.css", "type" : "css"},
                         { "elt" : $.Oda.Context.rootPath + $.Oda.Context.vendorName + "/moment/min/moment.min.js", "type" : "script"},
