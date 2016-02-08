@@ -574,6 +574,8 @@
                                     id : "createEvent",
                                     listElt : ["title", "allDay", "type", "start", "end", "tmp", "time", "cmt"],
                                     function : function(e){
+                                        $(document).unbind("keypress");
+
                                         if($("#allDay").prop("checked")){
                                             $('#start').addClass("disabled");
                                             $('#start').attr("disabled", true);
