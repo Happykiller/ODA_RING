@@ -295,6 +295,24 @@
 
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/", {callback : function(response){
                             $.Oda.App.Controller.Activity.accounts = response.data;
+
+                            for(var index in $.Oda.App.Controller.Activity.accounts){
+                                var elt = $.Oda.App.Controller.Activity.accounts[index];
+                                var label = $.Oda.I8n.getByString(elt.label);
+                                elt.i8nLabel = label;
+                            }
+
+                            $.Oda.App.Controller.Activity.accounts = $.Oda.Tooling.order({
+                                collection: $.Oda.App.Controller.Activity.accounts,
+                                compare: function (a, b) {
+                                    if(a.i8nLabel > b.i8nLabel){
+                                        return 1;
+                                    }else if(a.i8nLabel < b.i8nLabel){
+                                        return -1;
+                                    }
+                                    return 0;
+                                }
+                            });
                         }});
 
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/item/", {callback : function(response){
@@ -383,8 +401,7 @@
                                     for(var index in $.Oda.App.Controller.Activity.accounts){
                                         var elt = $.Oda.App.Controller.Activity.accounts[index];
                                         if(elt.statusId !== "3"){
-                                            var label = $.Oda.I8n.getByString(elt.label);
-                                            accounts += '<option value="'+ elt.id +'"'+ ((response.data.accountId === elt.id)?'selected':'') +'>'+ label + '</option>';
+                                            accounts += '<option value="'+ elt.id +'"'+ ((response.data.accountId === elt.id)?'selected':'') +'>'+ elt.i8nLabel + '</option>';
                                         }
                                     }
 
@@ -440,6 +457,10 @@
                                                 id : "editEvent",
                                                 listElt : ["title", "allDay", "type", "start", "end", "tmp", "time", "cmt"],
                                                 function : function(e){
+                                                    $(document).unbind("keypress");
+
+                                                    var submit = $("#submit");
+
                                                     if($("#allDay").prop("checked")){
                                                         $('#start').addClass("disabled");
                                                         $('#start').attr("disabled", true);
@@ -454,19 +475,19 @@
 
                                                     if($("#allDay").prop("checked")){
                                                         if( ($("#title").data("isOk")) && ($("#type").data("isOk")) && ($("#time").data("isOk")) && ($("#cmt").data("isOk")) ){
-                                                            $("#submit").removeClass("disabled");
-                                                            $("#submit").removeAttr("disabled");
+                                                            submit.removeClass("disabled");
+                                                            submit.removeAttr("disabled");
                                                         }else{
-                                                            $("#submit").addClass("disabled");
-                                                            $("#submit").attr("disabled", true);
+                                                            submit.addClass("disabled");
+                                                            submit.attr("disabled", true);
                                                         }
                                                     }else{
                                                         if( ($("#title").data("isOk")) && ($("#start").data("isOk")) && ($("#end").data("isOk")) && ($("#start").val() !== $("#end").val()) && ($("#type").data("isOk")) && ($("#time").data("isOk")) && ($("#cmt").data("isOk")) ){
-                                                            $("#submit").removeClass("disabled");
-                                                            $("#submit").removeAttr("disabled");
+                                                            submit.removeClass("disabled");
+                                                            submit.removeAttr("disabled");
                                                         }else{
-                                                            $("#submit").addClass("disabled");
-                                                            $("#submit").attr("disabled", true);
+                                                            submit.addClass("disabled");
+                                                            submit.attr("disabled", true);
                                                         }
                                                     }
 
@@ -519,8 +540,7 @@
                         for(var index in $.Oda.App.Controller.Activity.accounts){
                             var elt = $.Oda.App.Controller.Activity.accounts[index];
                             if(elt.statusId !== "3"){
-                                var label = $.Oda.I8n.getByString(elt.label);
-                                accounts += '<option value="'+ elt.id +'">'+ label + '</option>';
+                                accounts += '<option value="'+ elt.id +'" '+((elt.id==='1')?'selected':'')+'>'+ elt.i8nLabel + '</option>';
                             }
                         }
 
