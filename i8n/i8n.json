@@ -71,7 +71,7 @@
   },
   {
     "groupName" : "activity-type",
-    "fr" : {
+    "en" : {
       "expertise" : "Expertise",
       "internal" : "Internal project",
       "preSales" : "Pre-sales",
@@ -91,6 +91,27 @@
       "projectFollowUp" : "Project follow up",
       "reactivation" : "Reactivation",
       "sickDays" : "Sick days"
+    },
+    "fr": {
+      "expertise" : "Expertise",
+      "internal" : "Projet interne",
+      "preSales" : "Pre-sales",
+      "support" : "Support",
+      "customerSuccess" : "Customer success",
+      "corporate" : "Corporate",
+      "trip" : "Voyage",
+      "holidays" : "Vacances",
+      "publicTraining" : "Formation publique",
+      "privateTraining" : "Formation privée",
+      "delivery-report" : "Delivery report",
+      "admin" : "Administration",
+      "sales" : "Sales",
+      "selfTraining" : "Auto-formation",
+      "preup" : "Pre-up",
+      "migrationSizing" : "Migration sizing",
+      "projectFollowUp" : "Gestion de projet",
+      "reactivation" : "Reactivation",
+      "sickDays" : "Maladie"
     }
   },
   {
