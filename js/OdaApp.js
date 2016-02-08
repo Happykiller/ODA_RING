@@ -271,6 +271,25 @@
 
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/type/", {callback : function(response){
                             $.Oda.App.Controller.Activity.activityTypes = response.data;
+
+                            for(var index in $.Oda.App.Controller.Activity.activityTypes){
+                                var elt = $.Oda.App.Controller.Activity.activityTypes[index];
+                                var label = $.Oda.I8n.getByString(elt.label);
+                                elt.i8nLabel = label;
+                            }
+
+                            $.Oda.App.Controller.Activity.activityTypes = $.Oda.Tooling.order({
+                                collection: $.Oda.App.Controller.Activity.activityTypes,
+                                compare: function (a, b) {
+                                    if(a.i8nLabel > b.i8nLabel){
+                                        return 1;
+                                    }else if(a.i8nLabel < b.i8nLabel){
+                                        return -1;
+                                    }
+                                    return 0;
+                                }
+                            });
+
                             $.Oda.App.Controller.Activity.buildLegend();
                         }});
 
@@ -289,6 +308,7 @@
                                 $.Oda.App.Controller.Activity.dayClickData = {"date":date, "jsEvent":jsEvent, "view":view, "cell" : $(this)}
                                 $.Oda.App.Controller.Activity.createEvent();
                             },
+                            eventOrder: 'eventStart',
                             events: function(start, end, timezone, callback) {
                                 var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/search/user/"+ $.Oda.Session.id, {callback : function(response){
                                     for(var index in response.data){
@@ -347,8 +367,7 @@
                                     var strHtmlTypes = "";
                                     for(var index in $.Oda.App.Controller.Activity.activityTypes){
                                         var elt = $.Oda.App.Controller.Activity.activityTypes[index];
-                                        var label = $.Oda.I8n.getByString(elt.label);
-                                        strHtmlTypes += '<option value="'+ elt.id +'" '+ ((response.data.typeId === elt.id)?'selected':'') +'>'+ label + '</option>';
+                                        strHtmlTypes += '<option value="'+ elt.id +'" '+ ((response.data.typeId === elt.id)?'selected':'') +'>'+ elt.i8nLabel + '</option>';
                                     }
 
                                     var locations = "";
@@ -483,8 +502,7 @@
                         for(var index in $.Oda.App.Controller.Activity.activityTypes){
                             var elt = $.Oda.App.Controller.Activity.activityTypes[index];
                             if(elt.active === "1"){
-                                var label = $.Oda.I8n.getByString(elt.label);
-                                strHtmlTypes += '<option value="'+ elt.id +'">'+ label + '</option>';
+                                strHtmlTypes += '<option value="'+ elt.id +'">'+ elt.i8nLabel + '</option>';
                             }
                         }
 
@@ -676,7 +694,7 @@
                             strHtml += $.Oda.Display.TemplateHtml.create({
                                 template : "templateLegend"
                                 , scope : {
-                                    "label" : $.Oda.I8n.getByString(elt.label),
+                                    "label" : elt.i8nLabel,
                                     "illusStable" : elt.className,
                                     "illusNoStable" : elt.className+"-stripe"
                                 }
