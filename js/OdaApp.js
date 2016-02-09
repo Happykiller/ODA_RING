@@ -950,7 +950,7 @@
                             }
                         });
                     } catch (er) {
-                        $.Oda.Log.error("$.Oda.App.Controller.Activity..createAppointment :" + er.message);
+                        $.Oda.Log.error("$.Oda.App.Controller.Activity.createAppointment :" + er.message);
                     }
                 },
                 /**
@@ -1528,13 +1528,31 @@
                 loadSearch : function () {
                     try {
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/account/", {callback : function(response){
-                            var accounts = "";
+
                             for(var index in response.data){
                                 var elt = response.data[index];
+                                var label = $.Oda.I8n.getByString(elt.label);
+                                elt.i8nLabel = label;
+                            }
+
+                            var orderAccount = $.Oda.Tooling.order({
+                                collection: response.data,
+                                compare: function (a, b) {
+                                    if(a.i8nLabel > b.i8nLabel){
+                                        return 1;
+                                    }else if(a.i8nLabel < b.i8nLabel){
+                                        return -1;
+                                    }
+                                    return 0;
+                                }
+                            });
+
+                            var accounts = "";
+                            for(var index in orderAccount){
+                                var elt = orderAccount[index];
                                 if(elt.statusId !== "3"){
-                                    var label = $.Oda.I8n.getByString(elt.label);
                                     $('#account')
-                                        .append('<option value="'+ elt.id +'">'+ label + '</option>')
+                                        .append('<option value="'+ elt.id +'">'+ elt.i8nLabel + '</option>')
                                     ;
                                 }
                             }
