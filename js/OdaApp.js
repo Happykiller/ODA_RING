@@ -1049,7 +1049,7 @@
                                         gardian = true;
                                         var label = $.Oda.I8n.getByString(elt.label);
                                         $('#item')
-                                            .append('<option value="'+ elt.id +'" '+ ((p_params.itemId === elt.id)?'selected':'') +'>'+ label + '</option>')
+                                            .append('<option value="'+ elt.id +'" '+ ((p_params.itemId === elt.id)?'selected':'') +'>' + label + ' ('+ $.Oda.Tooling.arrondir(parseFloat(elt.consume),0)+'/'+elt.charge+')</option>')
                                         ;
                                     }
                                 }
@@ -1165,9 +1165,10 @@
                                                         "code": elt.code,
                                                         "label": elt.label,
                                                         "salesForce": elt.salesForce,
-                                                        "charge": elt.charge
+                                                        "charge": elt.charge,
+                                                        "consume": elt.consume
                                                     }
-                                                    strHtml += '<a onclick="$.Oda.App.Controller.ManageAccounts.itemEdit('+$.Oda.Display.jsonToStringSingleQuote({"json":datas})+')" class="btn btn-primary btn-xs">' + elt.code + '</a> ';
+                                                    strHtml += '<a onclick="$.Oda.App.Controller.ManageAccounts.itemEdit('+$.Oda.Display.jsonToStringSingleQuote({"json":datas})+')" class="btn btn-primary btn-xs">' + elt.code + ' ('+ $.Oda.Tooling.arrondir(parseFloat(elt.consume),0)+'/'+elt.charge+')</a> ';
                                                 }
                                             }
                                             strHtml += '<a onclick="$.Oda.App.Controller.ManageAccounts.itemNew({accountId:'+row[objDataTable.entete["id"]]+', accountCode:\''+row[objDataTable.entete["code"]]+'\'})" class="btn btn-success btn-xs">Ajouter</a> ';
@@ -1432,6 +1433,7 @@
                  * @param p_params.label
                  * @param p_params.salesForces
                  * @param p_params.charge
+                 * @param p_params.consume
                  * @returns {$.Oda.App.Controller.ManageAccounts}
                  */
                 itemEdit : function (p_params) {
@@ -1448,7 +1450,8 @@
                                 "label": p_params.label,
                                 "salesForce": p_params.salesForce,
                                 "charge": p_params.charge,
-                                "urlSaleForce": strUrlSaleForce
+                                "urlSaleForce": strUrlSaleForce,
+                                "consume": p_params.consume
                             }
                         });
 

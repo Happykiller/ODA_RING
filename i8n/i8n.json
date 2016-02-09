@@ -176,7 +176,8 @@
       "itemCharge-tips" : "En heure",
       "itemCharge-placeholder" : "Ici les charges",
       "editAccount": "Editer compte n°",
-      "editItem": "Editer item n°"
+      "editItem": "Editer item n°",
+      "consume": "Consommé"
     },
     "en" : {
       "title" : "Home"

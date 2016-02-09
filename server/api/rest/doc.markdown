@@ -39,7 +39,7 @@
 
 * `/account/`
     * type : GET
-    * optional params : "withItem","mode"
+    * optional params : "mode"
 * `/account/`
     * type : POST
     * mandatory params : "code","label","salesForce","userId"
