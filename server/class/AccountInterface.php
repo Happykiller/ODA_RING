@@ -155,7 +155,7 @@ class AccountInterface extends OdaRestInterface {
                 $params = new OdaPrepareReqSql();
                 $params->sql = "SELECT a.`id`, a.`code`, a.`label`, a.`salesForce`, a.`charge`,
                     a.`statusId`, b.`label` as  'statusLabel', b.`active` as 'statusActive',
-                    a.`accountId`, (SELECT IFNULL(SUM(c.`time`),0) FROM `tab_events` c where 1=1 and c.`itemId` = a.`id`) as 'consume'
+                    a.`accountId`, (SELECT IFNULL(SUM(c.`time`),0) FROM `tab_events` c where 1=1 and c.`active` = 1 and c.`itemId` = a.`id`) as 'consume'
                     FROM `tab_accounts_items` a, `tab_accounts_items_status` b
                     WHERE 1=1
                     AND a.`statusId` = b.`id`
@@ -243,7 +243,7 @@ class AccountInterface extends OdaRestInterface {
                 a.`statusId`,b.`label` as 'statusLabel', b.`active` as 'statusActive',
                 a.`accountId`, c.`code` as 'accountCode', c.`label` as 'accountLabel', c.`salesForce` as 'accountSaleForce',
                 c.`statusId` as 'accountStatusId', d.`label` as  'accountStatusLabel', d.`active` as 'accountStatusActive',
-                (SELECT IFNULL(SUM(e.`time`),0) FROM `tab_events` e where 1=1 and e.`itemId` = a.`id`) as 'consume'
+                (SELECT IFNULL(SUM(e.`time`),0) FROM `tab_events` e where 1=1 and e.`active` = 1 and e.`itemId` = a.`id`) as 'consume'
                 FROM `tab_accounts_items` a, `tab_accounts_items_status` b, `tab_accounts` c, `tab_accounts_status` d
                 WHERE 1=1
                 AND a.`statusId` = b.`id`

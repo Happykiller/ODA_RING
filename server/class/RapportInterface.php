@@ -43,6 +43,7 @@ class RapportInterface extends OdaRestInterface {
                 AND a.`autorId` = c.`id`
                 and b.`accountId` = d.`id`
                 AND a.`tmp` = 0
+                AND a.`active` = 1
                 ${filtreBillable}
                 ${filtreAccount}
                 ORDER BY a.`start` DESC
