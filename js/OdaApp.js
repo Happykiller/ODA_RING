@@ -1091,7 +1091,7 @@
                                 dayDom.removeClass('dayCompletionOver');
                                 dayDom.removeClass('dayCompletionLow');
                                 dayDom.removeClass('dayCompletionRisk');
-                                dayDom.html(dayDom.html()+'('+day.time+')');
+                                dayDom.html('<span class="dayText">'+dayDom.html()+'</span> <span class="dayTime">('+day.time+')</span>');
                                 var time = parseFloat(day.time,10);
                                 if(time > 8){
                                     dayDom.addClass('dayCompletionOver');
