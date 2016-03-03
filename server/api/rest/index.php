@@ -151,6 +151,14 @@ $slim->get('/rapport/event/forStaff/', function () use ($slim) {
     $INTERFACE->getForStaff();
 });
 
+$slim->get('/rapport/day/completion/:id', function ($id) use ($slim) {
+    $params = new OdaPrepareInterface();
+    $params->arrayInputOpt = array("startDate"=>null, "endDate"=>null);
+    $params->slim = $slim;
+    $INTERFACE = new RapportInterface($params);
+    $INTERFACE->getDayCompletion($id);
+});
+
 //----------- ACCOUNT -------------------------------
 
 $slim->get('/account/', function () use ($slim) {

@@ -70,6 +70,8 @@
 * `/rapport/event/forStaff/`
     * type : GET
     * ex : server/api/rest/rapport/event/forStaff/?userId=3&startDate=2016-01-01&endDate=2016-01-31&ODAFileType=csv&ODAFileName=test
-
+* `/rapport/day/completion/:id`
+    * type : GET
+    * optional params : "startDate" , "endDate"
     
 

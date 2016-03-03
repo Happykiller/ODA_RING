@@ -187,13 +187,53 @@ class RapportInterface extends OdaRestInterface {
                 AND a.`active` = 1
                 AND a.`autorId` = :userId
                 AND a.`start` >= :startDate
-                AND a.`start` <= :endDate
+                AND a.`end` <= :endDate
                 ORDER BY a.`start` ASC
             ;";
             $params->bindsValue = [
                 "userId" => $this->inputs["userId"],
                 "startDate" => $this->inputs["startDate"],
                 "endDate" => $this->inputs["endDate"]
+            ];
+            $params->typeSQL = OdaLibBd::SQL_GET_ALL;
+            $retour = $this->BD_ENGINE->reqODASQL($params);
+
+            $params = new stdClass();
+            $params->retourSql = $retour;
+            $this->addDataObject($retour->data->data);
+        } catch (Exception $ex) {
+            $this->object_retour->strErreur = $ex.'';
+            $this->object_retour->statut = self::STATE_ERROR;
+            die();
+        }
+    }
+
+    /**
+     */
+    function getDayCompletion($id) {
+        try {
+            $filtreStartDate = "";
+            if(!is_null($this->inputs["startDate"])){
+                $filtreStartDate = " AND a.`start` >= ".$this->inputs["startDate"];
+            }
+
+            $filtreEndDate = "";
+            if(!is_null($this->inputs["startDate"])){
+                $filtreEndDate = " AND a.`end` >= ".$this->inputs["endDate"];
+            }
+
+            $params = new OdaPrepareReqSql();
+            $params->sql = "SELECT DATE_FORMAT(a.`start`, '%Y-%m-%d') as 'date', SUM(a.`time`) as 'time' FROM `tab_events` a
+                WHERE 1=1
+                AND a.`active` = 1
+                AND a.`autorId` = :userId
+                $filtreStartDate
+                $filtreEndDate
+                GROUP BY DATE_FORMAT(a.`start`, '%Y-%m-%d')
+                ORDER BY a.`start` ASC
+            ;";
+            $params->bindsValue = [
+                "userId" => $id
             ];
             $params->typeSQL = OdaLibBd::SQL_GET_ALL;
             $retour = $this->BD_ENGINE->reqODASQL($params);

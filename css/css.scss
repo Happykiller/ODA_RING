@@ -1,3 +1,9 @@
+//variables
+$emerald: #2ecc71;
+$alizarim: #e74c3c;
+$carrot: #e67e22;
+$peterRiver: #3498db;
+
 /* COLOR BEGIN */
 .code-turquoise {
   color: white !important;
@@ -318,4 +324,17 @@
 
 div .greyOnHover:hover {
   background-color: rgba(182, 182, 182, 0.59);
+}
+
+.dayCompletionFull {
+  background-color: $peterRiver !important;
+}
+.dayCompletionOver {
+  background-color: $emerald !important;
+}
+.dayCompletionLow {
+  background-color: $carrot !important;
+}
+.dayCompletionRisk {
+  background-color: $alizarim !important;
 }

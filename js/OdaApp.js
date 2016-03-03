@@ -500,6 +500,9 @@
                                         }
                                     });
                                 }});
+                            },
+                            "viewRender": function(view, element){
+                                $.Oda.App.Controller.Activity.showDayCompletion();
                             }
                         })
                         return this;
@@ -1031,7 +1034,7 @@
                  * @param {object} p_params
                  * @param p_params.id
                  * @param p_params.itemId (optional)
-                 * @returns {$.Oda.Controller.Activity}
+                 * @returns {$.Oda.App.Controller.Activity}
                  */
                 getHtmlSelectItems : function(p_params) {
                     try {
@@ -1069,6 +1072,38 @@
                         return this;
                     } catch (er) {
                         $.Oda.Log.error("$.Oda.Controller.Activity.getHtmlSelectItems : " + er.message);
+                        return null;
+                    }
+                },
+                /**
+                 * @returns {$.Oda.App.Controller.Activity}
+                 */
+                showDayCompletion : function () {
+                    try {
+                        var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/rapport/day/completion/"+ $.Oda.Session.id, { callback : function(response) {
+                            for(var index in response.data){
+                                var day = response.data[index];
+                                $('.fc-day-number[data-date="'+day.date+'"]').removeClass('dayCompletionFull');
+                                $('.fc-day-number[data-date="'+day.date+'"]').removeClass('dayCompletionOver');
+                                $('.fc-day-number[data-date="'+day.date+'"]').removeClass('dayCompletionLow');
+                                $('.fc-day-number[data-date="'+day.date+'"]').removeClass('dayCompletionRisk');
+                                var time = parseFloat(day.time,10);
+                                if(time > 8){
+                                    $('.fc-day-number[data-date="'+day.date+'"]').addClass('dayCompletionOver');
+                                }else if(time = 8){
+                                    $('.fc-day-number[data-date="'+day.date+'"]').addClass('dayCompletionFull');
+                                }else if(time >= 2 && time <8){
+                                    $('.fc-day-number[data-date="'+day.date+'"]').addClass('dayCompletionLow');
+                                }else if(time < 2){
+                                    $('.fc-day-number[data-date="'+day.date+'"]').addClass('dayCompletionRisk');
+                                }
+                            }
+                        }},{
+                            //Todo dateStart dateEnd
+                        });
+                        return this;
+                    } catch (er) {
+                        $.Oda.Log.error("$.Oda.App.Controller.Activity.showDayCompletion : " + er.message);
                         return null;
                     }
                 },
