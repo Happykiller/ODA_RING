@@ -1083,19 +1083,20 @@
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/rapport/day/completion/"+ $.Oda.Session.id, { callback : function(response) {
                             for(var index in response.data){
                                 var day = response.data[index];
-                                $('.fc-day-number[data-date="'+day.date+'"]').removeClass('dayCompletionFull');
-                                $('.fc-day-number[data-date="'+day.date+'"]').removeClass('dayCompletionOver');
-                                $('.fc-day-number[data-date="'+day.date+'"]').removeClass('dayCompletionLow');
-                                $('.fc-day-number[data-date="'+day.date+'"]').removeClass('dayCompletionRisk');
+                                var dayDom = $('.fc-day-number[data-date="'+day.date+'"]');
+                                dayDom.removeClass('dayCompletionFull');
+                                dayDom.removeClass('dayCompletionOver');
+                                dayDom.removeClass('dayCompletionLow');
+                                dayDom.removeClass('dayCompletionRisk');
                                 var time = parseFloat(day.time,10);
                                 if(time > 8){
-                                    $('.fc-day-number[data-date="'+day.date+'"]').addClass('dayCompletionOver');
-                                }else if(time = 8){
-                                    $('.fc-day-number[data-date="'+day.date+'"]').addClass('dayCompletionFull');
-                                }else if(time >= 2 && time <8){
-                                    $('.fc-day-number[data-date="'+day.date+'"]').addClass('dayCompletionLow');
+                                    dayDom.addClass('dayCompletionOver');
+                                }else if(time == 8){
+                                    dayDom.addClass('dayCompletionFull');
+                                }else if(time >= 2 && time < 8){
+                                    dayDom.addClass('dayCompletionLow');
                                 }else if(time < 2){
-                                    $('.fc-day-number[data-date="'+day.date+'"]').addClass('dayCompletionRisk');
+                                    dayDom.addClass('dayCompletionRisk');
                                 }
                             }
                         }},{
