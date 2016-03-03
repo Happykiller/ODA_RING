@@ -654,6 +654,7 @@
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/", {type:'POST',callback : function(response){
                             $.Oda.Display.Popup.close({name:"createEvent"});
                             $('#calendar').fullCalendar( 'refetchEvents' );
+                            $.Oda.App.Controller.Activity.showDayCompletion();
                             $.Oda.App.Controller.Activity.newEventGoogleCalendar({id:response.data});
                         }},tabInput);
                         return this;
@@ -696,6 +697,7 @@
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest+"api/rest/event/"+p_params.id, { type : 'PUT', callback : function(response){
                             $.Oda.Display.Popup.close({name:"editEvent"});
                             $('#calendar').fullCalendar( 'refetchEvents' );
+                            $.Oda.App.Controller.Activity.showDayCompletion();
                             if(p_params.googleId !== ""){
                                 $.Oda.App.Controller.Activity.updateEventGoogleCalendar({id:p_params.id});
                             }else{
@@ -1022,6 +1024,7 @@
                         var call = $.Oda.Interface.callRest($.Oda.Context.rest + "api/rest/event/"+p_params.id, {type : 'DELETE', callback: function (response) {
                             $.Oda.Display.Popup.close({name:"editEvent"});
                             $('#calendar').fullCalendar( 'refetchEvents' );
+                            $.Oda.App.Controller.Activity.showDayCompletion();
                         }});
 
                         return this;
@@ -1088,6 +1091,7 @@
                                 dayDom.removeClass('dayCompletionOver');
                                 dayDom.removeClass('dayCompletionLow');
                                 dayDom.removeClass('dayCompletionRisk');
+                                dayDom.html(dayDom.html()+'('+day.time+')');
                                 var time = parseFloat(day.time,10);
                                 if(time > 8){
                                     dayDom.addClass('dayCompletionOver');
